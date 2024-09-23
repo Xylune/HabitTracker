@@ -7,7 +7,7 @@ plugins {
     // Add the Google services Gradle plugin
     id("com.google.gms.google-services")
 
-    }
+}
 
 android {
     namespace = "no.hiof.groupone.habittracker"
@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.threetenabp)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -10,6 +10,7 @@ class Habit(
     val startTime: LocalDateTime? = LocalDateTime.now(),
     val endTime: LocalDateTime? = null,
     val basePoints: Int = 0,
+    val currentStreak: Int = 0
 ) {
 
 }
