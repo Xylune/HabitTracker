@@ -4,10 +4,9 @@ import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.api.Context
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.rpc.context.AttributeContext.Auth
 
 class ViewModel : ViewModel(){
 
@@ -29,34 +28,46 @@ class ViewModel : ViewModel(){
         }
     }
 
-    fun signup(email: String, password: String) {
-        if (email.isEmpty() || password.isEmpty()) {
-            authenticationState.value = AuthState.Error("Email and password cannot be empty")
+    fun signup(email: String, password: String, displayName: String) {
+        if (email.isEmpty() || password.isEmpty() || displayName.isEmpty()) {
+            authenticationState.value = AuthState.Error("Email, password, and display name cannot be empty")
             return
         }
 
         authenticationState.value = AuthState.Loading
         auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener{task ->
+            .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     user?.let {
-                        val userId = it.uid
-                        val userDocument = FirebaseFirestore.getInstance().collection("users").document(userId)
-                        val userData = hashMapOf(
-                            "friends" to listOf<String>(),
-                            "habits" to listOf<String>()
-                        )
-                        userDocument.set(userData)
-                            .addOnSuccessListener {
-                                authenticationState.value = AuthState.Authenticated
-                            }
-                            .addOnFailureListener { exception ->
-                                authenticationState.value = AuthState.Error(exception.message ?: "Firestore error")
+                        val profileUpdates = UserProfileChangeRequest.Builder()
+                            .setDisplayName(displayName)
+                            .build()
+
+                        it.updateProfile(profileUpdates)
+                            .addOnCompleteListener { profileTask ->
+                                if (profileTask.isSuccessful) {
+                                    val userId = it.uid
+                                    val userDocument = FirebaseFirestore.getInstance().collection("users").document(userId)
+                                    val userData = hashMapOf(
+                                        "displayName" to displayName,
+                                        "friends" to listOf<String>(),
+                                        "habits" to listOf<String>()
+                                    )
+                                    userDocument.set(userData)
+                                        .addOnSuccessListener {
+                                            authenticationState.value = AuthState.Authenticated
+                                        }
+                                        .addOnFailureListener { exception ->
+                                            authenticationState.value = AuthState.Error(exception.message ?: "Firestore error")
+                                        }
+                                } else {
+                                    authenticationState.value = AuthState.Error(profileTask.exception?.message ?: "Profile update error")
+                                }
                             }
                     }
                 } else {
-                    authenticationState.value = AuthState.Error(task.exception?.message?: "Unknown error")
+                    authenticationState.value = AuthState.Error(task.exception?.message ?: "Unknown error")
                 }
             }
     }
