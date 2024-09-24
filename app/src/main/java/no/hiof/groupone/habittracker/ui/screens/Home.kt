@@ -1,4 +1,4 @@
-package no.hiof.groupone.habittracker.screens
+package no.hiof.groupone.habittracker.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,8 +17,6 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import no.hiof.groupone.habittracker.AuthState
-import no.hiof.groupone.habittracker.ViewModel
 
 @Composable
 fun Home(modifier: Modifier = Modifier, navController: NavController, viewModel: ViewModel) {

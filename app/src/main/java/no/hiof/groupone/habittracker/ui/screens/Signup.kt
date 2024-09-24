@@ -1,4 +1,4 @@
-package no.hiof.groupone.habittracker.screens
+package no.hiof.groupone.habittracker.ui.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -22,11 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import no.hiof.groupone.habittracker.AuthState
-import no.hiof.groupone.habittracker.ViewModel
 
 @Composable
-fun Login(modifier: Modifier = Modifier, navController: NavController, viewModel: ViewModel) {
+fun Signup(modifier: Modifier = Modifier, navController: NavController, viewModel: ViewModel) {
 
     var email by remember {
         mutableStateOf("")
@@ -34,6 +32,7 @@ fun Login(modifier: Modifier = Modifier, navController: NavController, viewModel
     var password by remember {
         mutableStateOf("")
     }
+    var displayName by remember { mutableStateOf("") }
 
     val authState = viewModel.authState.observeAsState()
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -54,12 +53,13 @@ fun Login(modifier: Modifier = Modifier, navController: NavController, viewModel
         }
     }
 
+
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Login", fontSize = 26.sp)
+        Text(text = "Create Account", fontSize = 26.sp)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -77,22 +77,30 @@ fun Login(modifier: Modifier = Modifier, navController: NavController, viewModel
             label = { Text(text = "Password") }
         )
 
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = displayName,
+            onValueChange = { displayName = it },
+            label = { Text(text = "Display name") }
+        )
+
         Spacer(modifier = Modifier.height(12.dp))
 
         Button( onClick = {
-            viewModel.login(email, password)
+            viewModel.signup(email, password, displayName)
         },
             enabled = email.isNotBlank() && password.isNotBlank() && authState.value != AuthState.Loading
         ) {
-            Text(text = "Login")
+            Text(text = "Create account")
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
         TextButton(onClick = {
-            navController.navigate("signup")
+            navController.navigate("login")
         }) {
-            Text(text = "New user? signup here.")
+            Text(text = "Go to Login")
         }
     }
 }
