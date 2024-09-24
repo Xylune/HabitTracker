@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/userIdInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter User ID" />
+
+    <EditText
+        android:id="@+id/friendIdInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Friend ID" />
+
+    <Button
+        android:id="@+id/addFriendButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Friend" />
+
+    <Button
+        android:id="@+id/removeFriendButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Remove Friend" />
+
+    <Button
+        android:id="@+id/getFriendsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Get Friends List" />
+
+    <Button
+        android:id="@+id/checkIfFriendButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Check If Friend" />
+
+    <TextView
+        android:id="@+id/outputTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Output will be shown here" />
+</LinearLayout>
