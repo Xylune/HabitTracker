@@ -12,8 +12,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import no.hiof.groupone.habittracker.navigation.AppNavigation
+import no.hiof.groupone.habittracker.ui.navigation.AppNavigation
+import no.hiof.groupone.habittracker.ui.navigation.navbars.BottomNavBar
 import no.hiof.groupone.habittracker.ui.theme.HabitTrackerTheme
+import no.hiof.groupone.habittracker.ui.navigation.navbars.TopNavBar
+import no.hiof.groupone.habittracker.ui.screens.ViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +25,10 @@ class MainActivity : ComponentActivity() {
         val viewModel : ViewModel by viewModels()
         setContent {
             HabitTrackerTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    topBar = { TopNavBar() },
+                    bottomBar = { BottomNavBar() }) { innerPadding ->
                         AppNavigation(viewModel = viewModel, modifier = Modifier.padding(innerPadding))
                 }
             }
@@ -31,20 +37,3 @@ class MainActivity : ComponentActivity() {
 }
 
 
-
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    HabitTrackerTheme {
-        Greeting("Android")
-    }
-}

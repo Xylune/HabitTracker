@@ -1,6 +1,5 @@
-package no.hiof.groupone.habittracker
+package no.hiof.groupone.habittracker.ui.screens
 
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,7 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 
-class ViewModel : ViewModel(){
+class ViewModel : ViewModel() {
 
     private val auth : FirebaseAuth = FirebaseAuth.getInstance()
 
@@ -21,7 +20,7 @@ class ViewModel : ViewModel(){
 
     fun checkAuthState(){
         val currentUser = auth.currentUser
-        if(currentUser!=null) {
+        if (currentUser != null) {
             authenticationState.value = AuthState.Authenticated
         } else {
             authenticationState.value = AuthState.Unauthenticated
@@ -84,7 +83,8 @@ class ViewModel : ViewModel(){
                 if (task.isSuccessful) {
                     authenticationState.value = AuthState.Authenticated
                 } else {
-                    authenticationState.value = AuthState.Error(task.exception?.message?: "Unknown error")
+                    authenticationState.value =
+                        AuthState.Error(task.exception?.message ?: "Unknown error")
                 }
             }
     }
@@ -94,8 +94,6 @@ class ViewModel : ViewModel(){
         auth.signOut()
         authenticationState.value = AuthState.Unauthenticated
     }
-
-
 }
 
 sealed class AuthState{
