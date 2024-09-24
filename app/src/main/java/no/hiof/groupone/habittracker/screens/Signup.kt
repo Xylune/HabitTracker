@@ -34,6 +34,7 @@ fun Signup(modifier: Modifier = Modifier, navController: NavController, viewMode
     var password by remember {
         mutableStateOf("")
     }
+    var displayName by remember { mutableStateOf("") }
 
     val authState = viewModel.authState.observeAsState()
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -78,10 +79,18 @@ fun Signup(modifier: Modifier = Modifier, navController: NavController, viewMode
             label = { Text(text = "Password") }
         )
 
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = displayName,
+            onValueChange = { displayName = it },
+            label = { Text(text = "Display name") }
+        )
+
         Spacer(modifier = Modifier.height(12.dp))
 
         Button( onClick = {
-            viewModel.signup(email, password)
+            viewModel.signup(email, password, displayName)
         },
             enabled = email.isNotBlank() && password.isNotBlank() && authState.value != AuthState.Loading
         ) {
