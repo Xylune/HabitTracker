@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -15,8 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 @Composable
 fun Home(modifier: Modifier = Modifier, navController: NavController, viewModel: ViewModel) {
@@ -57,9 +58,12 @@ fun Home(modifier: Modifier = Modifier, navController: NavController, viewModel:
             }
         }
 
+        Button(onClick = { navController.navigate("friendManager") }) {
+            Text(text = "Go to Friend Manager")
+        }
+
         TextButton(onClick = { viewModel.signout() }) {
             Text(text = "Sign out")
         }
     }
-
 }

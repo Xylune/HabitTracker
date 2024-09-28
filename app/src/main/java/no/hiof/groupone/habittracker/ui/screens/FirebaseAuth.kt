@@ -94,6 +94,7 @@ class ViewModel : ViewModel() {
         auth.signOut()
         authenticationState.value = AuthState.Unauthenticated
     }
+    fun getCurrentUser() = auth.currentUser
 }
 
 sealed class AuthState{
