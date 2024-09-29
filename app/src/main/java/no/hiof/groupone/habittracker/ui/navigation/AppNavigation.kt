@@ -8,10 +8,9 @@ import androidx.navigation.compose.rememberNavController
 import no.hiof.groupone.habittracker.ui.screens.CreateHabit
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 import no.hiof.groupone.habittracker.FriendManagementScreen
-import no.hiof.groupone.habittracker.ui.screens.ViewModel
-import no.hiof.groupone.habittracker.ui.screens.Home
-import no.hiof.groupone.habittracker.ui.screens.Login
-import no.hiof.groupone.habittracker.ui.screens.Signup
+import no.hiof.groupone.habittracker.screens.Home
+import no.hiof.groupone.habittracker.screens.Login
+import no.hiof.groupone.habittracker.screens.Signup
 
 @Composable
 fun AppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel) {
@@ -29,6 +28,7 @@ fun AppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel) {
         }
         composable("createHabit") {
             CreateHabit(modifier, navController, authViewModel)
+        }
         composable("friendManager") {
             FriendManagementScreen(modifier, navController, authViewModel)
         }
