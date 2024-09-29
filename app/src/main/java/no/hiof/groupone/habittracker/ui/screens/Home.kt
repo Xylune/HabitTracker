@@ -72,20 +72,20 @@ fun Home(modifier: Modifier = Modifier, navController: NavController, authViewMo
         }
 
         TextButton(onClick = { authViewModel.signout() }) {
-        Button(onClick = { navController.navigate("friendManager") }) {
-            Text(text = "Go to Friend Manager")
+            Button(onClick = { navController.navigate("friendManager") }) {
+                Text(text = "Go to Friend Manager")
+            }
+
+            TextButton(onClick = { authViewModel.signout() }) {
+                Text(text = "Sign out")
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextButton(onClick = { navController.navigate("createHabit") }) {
+                Text(text = "Create Habit")
+            }
+
         }
-
-        TextButton(onClick = { authViewModel.signout() }) {
-            Text(text = "Sign out")
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TextButton(onClick = { navController.navigate("createHabit") }) {
-            Text(text = "Create Habit")
-        }
-
     }
-
 }
