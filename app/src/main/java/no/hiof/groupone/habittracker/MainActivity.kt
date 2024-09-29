@@ -1,5 +1,6 @@
 package no.hiof.groupone.habittracker
 
+import TopNavBar
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
