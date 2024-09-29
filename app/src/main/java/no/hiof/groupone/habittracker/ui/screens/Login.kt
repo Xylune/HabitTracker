@@ -1,4 +1,4 @@
-package no.hiof.groupone.habittracker.screens
+package no.hiof.groupone.habittracker.ui.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -22,11 +22,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import no.hiof.groupone.habittracker.AuthState
-import no.hiof.groupone.habittracker.ViewModel
+import no.hiof.groupone.habittracker.viewmodel.AuthState
+import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 
 @Composable
-fun Signup(modifier: Modifier = Modifier, navController: NavController, viewModel: ViewModel) {
+fun Login(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
 
     var email by remember {
         mutableStateOf("")
@@ -35,7 +35,7 @@ fun Signup(modifier: Modifier = Modifier, navController: NavController, viewMode
         mutableStateOf("")
     }
 
-    val authState = viewModel.authState.observeAsState()
+    val authState = authViewModel.authState.observeAsState()
     val context = androidx.compose.ui.platform.LocalContext.current
 
     LaunchedEffect(authState.value) {
@@ -54,13 +54,12 @@ fun Signup(modifier: Modifier = Modifier, navController: NavController, viewMode
         }
     }
 
-
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Create Account", fontSize = 26.sp)
+        Text(text = "Login", fontSize = 26.sp)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -81,19 +80,19 @@ fun Signup(modifier: Modifier = Modifier, navController: NavController, viewMode
         Spacer(modifier = Modifier.height(12.dp))
 
         Button( onClick = {
-            viewModel.signup(email, password)
+            authViewModel.login(email, password)
         },
             enabled = email.isNotBlank() && password.isNotBlank() && authState.value != AuthState.Loading
         ) {
-            Text(text = "Create account")
+            Text(text = "Login")
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
         TextButton(onClick = {
-            navController.navigate("login")
+            navController.navigate("signup")
         }) {
-            Text(text = "Go to Login")
+            Text(text = "New user? signup here.")
         }
     }
 }

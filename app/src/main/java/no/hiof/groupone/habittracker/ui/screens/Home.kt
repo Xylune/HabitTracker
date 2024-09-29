@@ -1,8 +1,10 @@
-package no.hiof.groupone.habittracker.screens
+package no.hiof.groupone.habittracker.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -17,13 +19,14 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import no.hiof.groupone.habittracker.AuthState
-import no.hiof.groupone.habittracker.ViewModel
+import no.hiof.groupone.habittracker.viewmodel.AuthState
+import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
+
 
 @Composable
-fun Home(modifier: Modifier = Modifier, navController: NavController, viewModel: ViewModel) {
+fun Home(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
 
-    val authState = viewModel.authState.observeAsState()
+    val authState = authViewModel.authState.observeAsState()
 
     LaunchedEffect(authState.value) {
         when (authState.value) {
@@ -46,8 +49,15 @@ fun Home(modifier: Modifier = Modifier, navController: NavController, viewModel:
         user?.let {
             Text(text = "Welcome ${user.email}", fontSize = 22.sp)
 
+            Spacer(modifier = Modifier.height(8.dp))
+
             Text("Display Name: ${it.displayName ?: "N/A"}")
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             Text("Phone Number: ${it.phoneNumber ?: "N/A"}")
+
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Display photo if available
             it.photoUrl?.let { photoUrl ->
@@ -59,9 +69,16 @@ fun Home(modifier: Modifier = Modifier, navController: NavController, viewModel:
             }
         }
 
-        TextButton(onClick = { viewModel.signout() }) {
+        TextButton(onClick = { authViewModel.signout() }) {
             Text(text = "Sign out")
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        TextButton(onClick = { navController.navigate("createHabit") }) {
+            Text(text = "Create Habit")
+        }
+
     }
 
 }

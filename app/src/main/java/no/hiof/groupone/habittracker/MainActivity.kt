@@ -1,5 +1,6 @@
 package no.hiof.groupone.habittracker
 
+import TopNavBar
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,43 +9,54 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import no.hiof.groupone.habittracker.navigation.AppNavigation
+import no.hiof.groupone.habittracker.ui.navigation.AppNavigation
+import no.hiof.groupone.habittracker.ui.navigation.navbars.BottomNavBar
+import no.hiof.groupone.habittracker.ui.navigation.navbars.PopupScrollContent
+import no.hiof.groupone.habittracker.viewmodel.AuthState
 import no.hiof.groupone.habittracker.ui.theme.HabitTrackerTheme
+import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val viewModel : ViewModel by viewModels()
+        val authViewModel: AuthViewModel by viewModels()
+
         setContent {
+            val openDialog = remember { mutableStateOf(false) }
             HabitTrackerTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                        AppNavigation(viewModel = viewModel, modifier = Modifier.padding(innerPadding))
+                // Observe authentication state changes
+                val authState = authViewModel.authState.observeAsState()
+                when (authState.value) {
+                    AuthState.Authenticated -> {
+                        Scaffold(
+                            modifier = Modifier.fillMaxSize(),
+                            topBar = { TopNavBar(openDialog = { openDialog.value = true }) },
+                            bottomBar = { BottomNavBar() }
+                        ) { innerPadding ->
+                            AppNavigation(
+                                authViewModel = authViewModel,
+                                modifier = Modifier
+                                    .padding(innerPadding)
+                                    .fillMaxSize()
+                            )
+                            if (openDialog.value) {
+                                PopupScrollContent(onDismiss = { openDialog.value = false })
+                            }
+                        }
+                    }
+                    else -> {
+                        AppNavigation(
+                            authViewModel = authViewModel,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                 }
             }
         }
-    }
-}
-
-
-
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    HabitTrackerTheme {
-        Greeting("Android")
     }
 }
