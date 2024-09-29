@@ -26,7 +26,7 @@ import no.hiof.groupone.habittracker.viewmodel.AuthState
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 
 @Composable
-fun Signup(modifier: Modifier = Modifier, navController: NavController, viewModel: ViewModel) {
+fun Signup(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
 
     var email by remember {
         mutableStateOf("")
