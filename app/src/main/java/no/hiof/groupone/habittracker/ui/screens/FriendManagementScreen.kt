@@ -8,11 +8,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import no.hiof.groupone.habittracker.ui.screens.ViewModel
+import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 import no.hiof.groupone.habittracker.model.SocialManager
 
 @Composable
-fun FriendManagementScreen(modifier: Modifier = Modifier, navController: NavHostController, viewModel: ViewModel) {
+fun FriendManagementScreen(modifier: Modifier = Modifier, navController: NavHostController, viewModel: AuthViewModel) {
     var displayName by remember { mutableStateOf("") }
     val friends = remember { mutableStateListOf<String>() }
     val socialManager = SocialManager()
