@@ -75,7 +75,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation ("io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc")
 
+    implementation("com.jakewharton.threetenabp:threetenabp:1.4.6")
 
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:33.2.0"))

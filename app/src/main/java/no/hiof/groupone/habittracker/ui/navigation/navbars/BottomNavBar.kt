@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun BottomNavBar() {
+
     BottomAppBar {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -31,7 +32,7 @@ fun BottomNavBar() {
                     contentDescription = "Habits",
                 )
             }
-            IconButton(onClick = { /* do something */ }) {
+            IconButton(onClick = {  }) {
                 Icon(
                     Icons.Outlined.Add,
                     contentDescription = "Add"

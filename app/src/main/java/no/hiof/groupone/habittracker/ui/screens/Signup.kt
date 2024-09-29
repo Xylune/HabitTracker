@@ -1,4 +1,4 @@
-package no.hiof.groupone.habittracker.ui.screens
+package no.hiof.groupone.habittracker.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import no.hiof.groupone.habittracker.viewmodel.AuthState
+import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 
 @Composable
 fun Signup(modifier: Modifier = Modifier, navController: NavController, viewModel: ViewModel) {
@@ -34,7 +36,7 @@ fun Signup(modifier: Modifier = Modifier, navController: NavController, viewMode
     }
     var displayName by remember { mutableStateOf("") }
 
-    val authState = viewModel.authState.observeAsState()
+    val authState = authViewModel.authState.observeAsState()
     val context = androidx.compose.ui.platform.LocalContext.current
 
     LaunchedEffect(authState.value) {
@@ -88,7 +90,7 @@ fun Signup(modifier: Modifier = Modifier, navController: NavController, viewMode
         Spacer(modifier = Modifier.height(12.dp))
 
         Button( onClick = {
-            viewModel.signup(email, password, displayName)
+            authViewModel.signup(email, password, displayName)
         },
             enabled = email.isNotBlank() && password.isNotBlank() && authState.value != AuthState.Loading
         ) {
