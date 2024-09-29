@@ -29,8 +29,7 @@ class AuthViewModel : ViewModel() {
 
     fun signup(email: String, password: String, displayName: String) {
         if (email.isEmpty() || password.isEmpty() || displayName.isEmpty()) {
-            authenticationState.value =
-                AuthState.Error("Email, password, and display name cannot be empty")
+            authenticationState.value = AuthState.Error("Email, password, and display name cannot be empty")
             return
         }
 
@@ -59,20 +58,15 @@ class AuthViewModel : ViewModel() {
                                             authenticationState.value = AuthState.Authenticated
                                         }
                                         .addOnFailureListener { exception ->
-                                            authenticationState.value = AuthState.Error(
-                                                exception.message ?: "Firestore error"
-                                            )
+                                            authenticationState.value = AuthState.Error(exception.message ?: "Firestore error")
                                         }
                                 } else {
-                                    authenticationState.value = AuthState.Error(
-                                        profileTask.exception?.message ?: "Profile update error"
-                                    )
+                                    authenticationState.value = AuthState.Error(profileTask.exception?.message ?: "Profile update error")
                                 }
                             }
                     }
                 } else {
-                    authenticationState.value =
-                        AuthState.Error(task.exception?.message ?: "Unknown error")
+                    authenticationState.value = AuthState.Error(task.exception?.message ?: "Unknown error")
                 }
             }
     }
@@ -100,6 +94,7 @@ class AuthViewModel : ViewModel() {
         auth.signOut()
         authenticationState.value = AuthState.Unauthenticated
     }
+    fun getCurrentUser() = auth.currentUser
 }
 
 sealed class AuthState{
