@@ -15,6 +15,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -23,9 +26,11 @@ import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.launch
 import no.hiof.groupone.habittracker.model.Frequency
 import no.hiof.groupone.habittracker.model.Habit
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
@@ -63,8 +69,15 @@ fun CreateHabit(modifier: Modifier = Modifier, navController: NavController = re
     var expanded by remember { mutableStateOf(false) }
     val frequencyOptions = listOf(null, "Daily", "Weekly", "Monthly")
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    var showSnackbar by remember { mutableStateOf(false) }
+    var snackbarSuccess by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+
     Column(
-        modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -213,9 +226,38 @@ fun CreateHabit(modifier: Modifier = Modifier, navController: NavController = re
                 currentStreak = 0
             )
 
-            habitViewModel.createHabit(habit)
+
+            coroutineScope.launch {
+                val success = habitViewModel.createHabit(habit)
+                snackbarSuccess = success
+                showSnackbar = true
+            }
         }) {
             Text(text = "Create habit")
+        }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+        )
+
+        LaunchedEffect(key1 = showSnackbar) {
+            if (showSnackbar) {
+                if (snackbarSuccess) {
+                    snackbarHostState.showSnackbar(
+                        message = "Habit created successfully",
+                        actionLabel = "Dismiss",
+                        duration = SnackbarDuration.Short
+                    )
+                    navController.navigate("home")
+                } else {
+                    snackbarHostState.showSnackbar(
+                        message = "Failed to create habit",
+                        duration = SnackbarDuration.Short
+                    )
+                }
+                showSnackbar = false
+            }
         }
     }
 }
