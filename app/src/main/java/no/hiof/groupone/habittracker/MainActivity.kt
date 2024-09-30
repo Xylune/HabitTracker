@@ -13,6 +13,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
 import no.hiof.groupone.habittracker.ui.navigation.AppNavigation
 import no.hiof.groupone.habittracker.ui.navigation.navbars.BottomNavBar
 import no.hiof.groupone.habittracker.ui.navigation.navbars.PopupScrollContent
@@ -27,6 +28,7 @@ class MainActivity : ComponentActivity() {
         val authViewModel: AuthViewModel by viewModels()
 
         setContent {
+            val navController = rememberNavController()
             val openDialog = remember { mutableStateOf(false) }
             HabitTrackerTheme {
                 // Observe authentication state changes
@@ -35,10 +37,11 @@ class MainActivity : ComponentActivity() {
                     AuthState.Authenticated -> {
                         Scaffold(
                             modifier = Modifier.fillMaxSize(),
-                            topBar = { TopNavBar(openDialog = { openDialog.value = true }) },
-                            bottomBar = { BottomNavBar() }
+                            topBar = { TopNavBar(navController = navController, openDialog = { openDialog.value = true }) },
+                            bottomBar = { BottomNavBar(navController) }
                         ) { innerPadding ->
                             AppNavigation(
+                                navController = navController,
                                 authViewModel = authViewModel,
                                 modifier = Modifier
                                     .padding(innerPadding)
@@ -51,6 +54,7 @@ class MainActivity : ComponentActivity() {
                     }
                     else -> {
                         AppNavigation(
+                            navController = navController,
                             authViewModel = authViewModel,
                             modifier = Modifier.fillMaxSize()
                         )
