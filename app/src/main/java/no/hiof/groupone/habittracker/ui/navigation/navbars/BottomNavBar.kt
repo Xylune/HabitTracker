@@ -1,58 +1,57 @@
 package no.hiof.groupone.habittracker.ui.navigation.navbars
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Menu
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.navigation.NavHostController
 
 @Composable
-fun BottomNavBar(navController: NavController) {
+fun BottomNavBar(navController: NavHostController) {
+    var selectedItem by remember { mutableIntStateOf(0) }
+    val items = listOf("Home", "Menu", "Add Habit", "Calendar", "Profile")
 
-    BottomAppBar {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            IconButton(onClick = { /* do something */ }) {
-                Icon(Icons.Outlined.Home, contentDescription = "Home")
-            }
-            IconButton(onClick = { /* do something */ }) {
-                Icon(
-                    Icons.Outlined.Menu,
-                    contentDescription = "Habits",
-                )
-            }
-            IconButton(onClick = {
-                navController.navigate("createHabit")
-            }) {
-                Icon(
-                    Icons.Outlined.Add,
-                    contentDescription = "Add"
-                )
-            }
-            IconButton(onClick = { /* do something */ }) {
-                Icon(
-                    Icons.Outlined.DateRange,
-                    contentDescription = "Calendar"
-                )
-            }
-            IconButton(onClick = { /* do something */ }) {
-                Icon(
-                    Icons.Outlined.AccountCircle,
-                    contentDescription = "Profile"
-                )
-            }
+    NavigationBar {
+        items.forEachIndexed { index, item ->
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        imageVector = when (index) {
+                            0 -> Icons.Outlined.Home
+                            1 -> Icons.Outlined.Menu
+                            2 -> Icons.Outlined.Add
+                            3 -> Icons.Outlined.DateRange
+                            4 -> Icons.Outlined.AccountCircle
+                            else -> Icons.Outlined.Home
+                        },
+                        contentDescription = item
+                    )
+                },
+                label = { Text(item) },
+                selected = selectedItem == index,
+                onClick = {
+                    selectedItem = index
+                    when (index) {
+                        0 -> navController.navigate("home")
+                        1 -> navController.navigate("menu")
+                        2 -> navController.navigate("createHabit")
+                        3 -> navController.navigate("calendar")
+                        4 -> navController.navigate("profile")
+                    }
+                }
+            )
         }
     }
 }

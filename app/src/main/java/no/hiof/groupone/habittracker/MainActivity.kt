@@ -20,7 +20,6 @@ import no.hiof.groupone.habittracker.ui.navigation.navbars.PopupScrollContent
 import no.hiof.groupone.habittracker.viewmodel.AuthState
 import no.hiof.groupone.habittracker.ui.theme.HabitTrackerTheme
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
-import no.hiof.groupone.habittracker.ui.navigation.AppNavigation
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +37,7 @@ class MainActivity : ComponentActivity() {
                     AuthState.Authenticated -> {
                         Scaffold(
                             modifier = Modifier.fillMaxSize(),
-                            topBar = { TopNavBar(openDialog = { openDialog.value = true }) },
+                            topBar = { TopNavBar(navController = navController, openDialog = { openDialog.value = true }) },
                             bottomBar = { BottomNavBar(navController) }
                         ) { innerPadding ->
                             AppNavigation(
