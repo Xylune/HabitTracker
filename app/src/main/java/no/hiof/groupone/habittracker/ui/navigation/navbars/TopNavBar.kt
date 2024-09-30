@@ -24,7 +24,7 @@ import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopNavBar(navController: NavHostController, openDialog: () -> Unit) {
+fun TopNavBar(navController: NavHostController) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     // Remember the state of the menu (open or closed)
@@ -72,7 +72,7 @@ fun TopNavBar(navController: NavHostController, openDialog: () -> Unit) {
                 DropdownMenuItem(
                     text = { Text("Profile") },
                     onClick = {
-                        // Handle Profile click action here
+                        navController.navigate("profile")
                         isMenuExpanded.value = false // Close the menu after click
                     }
                 )
@@ -81,7 +81,7 @@ fun TopNavBar(navController: NavHostController, openDialog: () -> Unit) {
                 DropdownMenuItem(
                     text = { Text("Settings") },
                     onClick = {
-                        // Handle Settings click action here
+                        navController.navigate("settings")
                         isMenuExpanded.value = false // Close the menu after click
                     }
                 )

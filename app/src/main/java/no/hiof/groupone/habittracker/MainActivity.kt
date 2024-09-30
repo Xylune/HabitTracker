@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
                     AuthState.Authenticated -> {
                         Scaffold(
                             modifier = Modifier.fillMaxSize(),
-                            topBar = { TopNavBar(navController = navController, openDialog = { openDialog.value = true }) },
+                            topBar = { TopNavBar(navController = navController) },
                             bottomBar = { BottomNavBar(navController) }
                         ) { innerPadding ->
                             AppNavigation(
