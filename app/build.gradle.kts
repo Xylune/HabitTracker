@@ -46,7 +46,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
     packaging {
         resources {
@@ -75,6 +75,11 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation("androidx.compose.ui:ui:1.3.3")            // Jetpack Compose UI
+    implementation("androidx.compose.material:material:1.3.1")    // Material Design
+    implementation("androidx.compose.ui:ui-tooling-preview:1.3.3") // Preview
+
     implementation ("io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc")
 
     implementation("com.jakewharton.threetenabp:threetenabp:1.4.6")

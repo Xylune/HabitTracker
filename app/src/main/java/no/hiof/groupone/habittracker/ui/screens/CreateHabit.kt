@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -30,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import no.hiof.groupone.habittracker.model.Frequency
@@ -48,32 +51,29 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateHabit(modifier: Modifier = Modifier, navController: NavController = rememberNavController(),
-                authViewModel: AuthViewModel = AuthViewModel(),
-                habitViewModel: HabitViewModel = HabitViewModel()
+                authViewModel: AuthViewModel = viewModel(),
+                habitViewModel: HabitViewModel = viewModel()
 ) {
-    var name by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
+    val habitName by habitViewModel.habitName
+    val habitDescription by habitViewModel.habitDescription
+    val frequency by habitViewModel.frequency
+    val selectedDate by habitViewModel.selectedDate
+    val selectedTime by habitViewModel.selectedTime
 
     var expanded by remember { mutableStateOf(false) }
-    var frequency by remember { mutableStateOf<String?>(null) }
     val frequencyOptions = listOf(null, "Daily", "Weekly", "Monthly")
 
-    var startTime by remember { mutableStateOf<LocalDateTime?>(null) }
-    var endTime by remember { mutableStateOf<LocalDateTime?>(null) }
-
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = "Create Habit", fontSize = 26.sp)
-
         Spacer(modifier = Modifier.height(16.dp))
 
-
         OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
+            value = habitName,
+            onValueChange = { habitViewModel.updateHabitName(it) },
             label = { Text(text = "Habit name") },
             singleLine = true
         )
@@ -81,8 +81,8 @@ fun CreateHabit(modifier: Modifier = Modifier, navController: NavController = re
         Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(
-            value = description,
-            onValueChange = { description = it },
+            value = habitDescription,
+            onValueChange = { habitViewModel.updateHabitDescription(it) },
             label = { Text(text = "Habit description") },
             singleLine = true
         )
@@ -110,7 +110,7 @@ fun CreateHabit(modifier: Modifier = Modifier, navController: NavController = re
                     DropdownMenuItem(
                         text = { Text(option ?: "One-time") },
                         onClick = {
-                            frequency = option
+                            habitViewModel.updateFrequency(option)
                             expanded = false
                         }
                     )
@@ -121,12 +121,11 @@ fun CreateHabit(modifier: Modifier = Modifier, navController: NavController = re
         Spacer(modifier = Modifier.height(12.dp))
 
         var showModal by remember { mutableStateOf(false) }
-        var selectedDate by remember { mutableStateOf<Long?>(null) }
-
         Text("Select a date and time:")
         Button(onClick = { showModal = true }) {
             Text("Pick a date")
         }
+
         if (selectedDate != null) {
             val date = Date(selectedDate!!)
             val formattedDate = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(date)
@@ -137,10 +136,7 @@ fun CreateHabit(modifier: Modifier = Modifier, navController: NavController = re
 
         if (showModal) {
             DatePickerModal(
-                onDateSelected = {
-                    selectedDate = it
-                    showModal = false
-                },
+                onDateSelected = { habitViewModel.updateSelectedDate(it) },
                 onDismiss = { showModal = false }
             )
         }
@@ -149,26 +145,25 @@ fun CreateHabit(modifier: Modifier = Modifier, navController: NavController = re
 
         var showMenu by remember { mutableStateOf(true) }
         var showInputExample by remember { mutableStateOf(false) }
-        var selectedTime: TimePickerState? by remember { mutableStateOf(null) }
         val formatter = remember { SimpleDateFormat("hh:mm a", Locale.getDefault()) }
 
         if (showMenu) {
-                Button(onClick = {
-                    showInputExample = true
-                    showMenu = false
-                }) {
-                    Text("Pick a time")
-                }
-                if (selectedTime != null) {
-                    val cal = Calendar.getInstance()
-                    cal.set(Calendar.HOUR_OF_DAY, selectedTime!!.hour)
-                    cal.set(Calendar.MINUTE, selectedTime!!.minute)
-                    cal.isLenient = false
-                    Text("Selected time = ${formatter.format(cal.time)}")
-                } else {
-                    Text("No time selected.")
-                }
+            Button(onClick = {
+                showInputExample = true
+                showMenu = false
+            }) {
+                Text("Pick a time")
+            }
 
+            if (selectedTime != null) {
+                val cal = Calendar.getInstance()
+                cal.set(Calendar.HOUR_OF_DAY, selectedTime!!.hour)
+                cal.set(Calendar.MINUTE, selectedTime!!.minute)
+                cal.isLenient = false
+                Text("Selected time = ${formatter.format(cal.time)}")
+            } else {
+                Text("No time selected.")
+            }
         }
 
         when {
@@ -177,22 +172,13 @@ fun CreateHabit(modifier: Modifier = Modifier, navController: NavController = re
                     showInputExample = false
                     showMenu = true
                 },
-                onConfirm = {
-                        time ->
-                    selectedTime = time
+                onConfirm = { time ->
+                    habitViewModel.updateSelectedTime(time)
                     showInputExample = false
                     showMenu = true
-                },
+                }
             )
         }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Text(text = "End time")
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Text(text = "Base points")
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -215,8 +201,8 @@ fun CreateHabit(modifier: Modifier = Modifier, navController: NavController = re
 
             val habit = Habit(
                 id = 0,
-                name = name,
-                description = description,
+                name = habitName,
+                description = habitDescription,
                 frequency = habitFrequency,
                 startTime = LocalDateTime.ofInstant(
                     Instant.ofEpochMilli(calendar.timeInMillis),
@@ -231,7 +217,6 @@ fun CreateHabit(modifier: Modifier = Modifier, navController: NavController = re
         }) {
             Text(text = "Create habit")
         }
-
     }
 }
 
