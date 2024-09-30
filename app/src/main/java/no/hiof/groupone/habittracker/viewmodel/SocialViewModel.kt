@@ -17,6 +17,9 @@ class SocialViewModel : ViewModel() {
     private val _friendsList = mutableStateOf<List<String>>(emptyList())
     val friendsList: State<List<String>> = _friendsList
 
+    private val _userHabits = mutableStateOf<List<Pair<String, String>>>(emptyList())
+    val userHabits: State<List<Pair<String, String>>> = _userHabits
+
     private val socialManager = SocialManager()
 
     fun loadFriends() {
@@ -59,6 +62,25 @@ class SocialViewModel : ViewModel() {
                     _friendsList.value = _friendsList.value.filter { it != friendDisplayName }
                     updateFriendName("")
                 }
+            }
+        }
+    }
+
+    fun loadUserHabits() {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser == null) {
+            return
+        }
+        viewModelScope.launch {
+            socialManager.getUserHabits(currentUser.uid) { habits ->
+                _userHabits.value = habits
+            }
+        }
+    }
+
+    fun shareHabit(habitId: String, friendDisplayName: String) {
+        viewModelScope.launch {
+            socialManager.shareHabit(habitId, friendDisplayName) { success ->
             }
         }
     }
