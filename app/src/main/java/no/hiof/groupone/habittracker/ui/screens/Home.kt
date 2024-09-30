@@ -24,6 +24,7 @@ import no.hiof.groupone.habittracker.viewmodel.AuthState
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 
 import com.google.firebase.auth.ktx.auth
+import no.hiof.groupone.habittracker.ui.navigation.navbars.BottomNavBar
 
 @Composable
 fun Home(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {

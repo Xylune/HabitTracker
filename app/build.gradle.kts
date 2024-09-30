@@ -76,6 +76,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation("androidx.navigation:navigation-compose:2.8.1") // Navigation dependency
     implementation("androidx.compose.ui:ui:1.3.3")            // Jetpack Compose UI
     implementation("androidx.compose.material:material:1.3.1")    // Material Design
     implementation("androidx.compose.ui:ui-tooling-preview:1.3.3") // Preview

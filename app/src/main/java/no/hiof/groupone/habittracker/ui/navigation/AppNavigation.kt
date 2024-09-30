@@ -2,6 +2,7 @@ package no.hiof.groupone.habittracker.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -13,8 +14,11 @@ import no.hiof.groupone.habittracker.screens.Signup
 import no.hiof.groupone.habittracker.ui.SocialManagement
 
 @Composable
-fun AppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel) {
-    val navController = rememberNavController()
+fun AppNavigation(
+    modifier: Modifier = Modifier,
+    authViewModel: AuthViewModel,
+    navController: NavHostController
+) {
 
     NavHost(navController = navController, startDestination = "login", builder = {
         composable("login") {
