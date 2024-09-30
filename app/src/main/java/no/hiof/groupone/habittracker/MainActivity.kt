@@ -17,8 +17,8 @@ import no.hiof.groupone.habittracker.ui.navigation.AppNavigation
 import no.hiof.groupone.habittracker.ui.navigation.navbars.BottomNavBar
 import no.hiof.groupone.habittracker.ui.navigation.navbars.PopupScrollContent
 import no.hiof.groupone.habittracker.ui.navigation.navbars.TopNavBar
-import no.hiof.groupone.habittracker.viewmodel.AuthState
 import no.hiof.groupone.habittracker.ui.theme.HabitTrackerTheme
+import no.hiof.groupone.habittracker.viewmodel.AuthState
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 
 class MainActivity : ComponentActivity() {
@@ -28,9 +28,14 @@ class MainActivity : ComponentActivity() {
         val authViewModel: AuthViewModel by viewModels()
 
         setContent {
-            val navController = rememberNavController()
-            val openDialog = remember { mutableStateOf(false) }
-            HabitTrackerTheme {
+            // Dark mode state to control the theme
+            val isDarkMode = remember { mutableStateOf(false) }
+
+            // Apply the theme based on dark mode state
+            HabitTrackerTheme(darkTheme = isDarkMode.value) {
+                val navController = rememberNavController()
+                val openDialog = remember { mutableStateOf(false) }
+
                 // Observe authentication state changes
                 val authState = authViewModel.authState.observeAsState()
                 when (authState.value) {
@@ -45,7 +50,9 @@ class MainActivity : ComponentActivity() {
                                 authViewModel = authViewModel,
                                 modifier = Modifier
                                     .padding(innerPadding)
-                                    .fillMaxSize()
+                                    .fillMaxSize(),
+                                isDarkMode = isDarkMode.value,
+                                onDarkModeToggle = { isDarkMode.value = it }
                             )
                             if (openDialog.value) {
                                 PopupScrollContent(onDismiss = { openDialog.value = false })
@@ -56,7 +63,9 @@ class MainActivity : ComponentActivity() {
                         AppNavigation(
                             navController = navController,
                             authViewModel = authViewModel,
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize(),
+                            isDarkMode = isDarkMode.value,
+                            onDarkModeToggle = { isDarkMode.value = it }
                         )
                     }
                 }
@@ -64,3 +73,5 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+
