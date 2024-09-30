@@ -5,19 +5,21 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import no.hiof.groupone.habittracker.ui.screens.CreateHabit
-import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 import no.hiof.groupone.habittracker.screens.Home
 import no.hiof.groupone.habittracker.screens.Login
 import no.hiof.groupone.habittracker.screens.Signup
 import no.hiof.groupone.habittracker.ui.SocialManagement
+import no.hiof.groupone.habittracker.ui.screens.CreateHabit
+import no.hiof.groupone.habittracker.ui.screens.SettingsScreen
+import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 
 @Composable
 fun AppNavigation(
     modifier: Modifier = Modifier,
     authViewModel: AuthViewModel,
-    navController: NavHostController
+    navController: NavHostController,
+    isDarkMode: Boolean,
+    onDarkModeToggle: (Boolean) -> Unit
 ) {
 
     NavHost(navController = navController, startDestination = "login", builder = {
@@ -35,6 +37,15 @@ fun AppNavigation(
         }
         composable("SocialManagement") {
             SocialManagement(modifier, navController, authViewModel)
+        }
+        composable("settings") {
+            SettingsScreen(
+                modifier = modifier,
+                navController = navController,
+                authViewModel = authViewModel,
+                isDarkMode = isDarkMode,
+                onDarkModeToggle = onDarkModeToggle
+            )
         }
     })
 }
