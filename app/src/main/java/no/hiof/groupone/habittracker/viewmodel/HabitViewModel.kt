@@ -56,7 +56,8 @@ class HabitViewModel : ViewModel() {
 
 
 
-    fun createHabit(habit: Habit) {
+    fun createHabit(habit: Habit): Boolean {
+        return try {
         viewModelScope.launch {
             // adding habit to habits collection
             val habitId = FirebaseFirestore.getInstance()
@@ -73,6 +74,11 @@ class HabitViewModel : ViewModel() {
                 .document(currentUserId)
                 .update("habits", FieldValue.arrayUnion(habitId))
                 .await()
+            }
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
     }
 
