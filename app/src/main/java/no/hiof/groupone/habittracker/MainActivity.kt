@@ -1,6 +1,5 @@
 package no.hiof.groupone.habittracker
 
-import TopNavBar
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import no.hiof.groupone.habittracker.ui.navigation.AppNavigation
 import no.hiof.groupone.habittracker.ui.navigation.navbars.BottomNavBar
 import no.hiof.groupone.habittracker.ui.navigation.navbars.PopupScrollContent
+import no.hiof.groupone.habittracker.ui.navigation.navbars.TopNavBar
 import no.hiof.groupone.habittracker.viewmodel.AuthState
 import no.hiof.groupone.habittracker.ui.theme.HabitTrackerTheme
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
