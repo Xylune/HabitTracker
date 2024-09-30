@@ -1,6 +1,6 @@
 package no.hiof.groupone.habittracker.model
 
-import com.google.firebase.firestore.FieldPath
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -8,13 +8,13 @@ class SocialManager {
 
     private val db = FirebaseFirestore.getInstance()
 
-    fun addFriend(userId: String, friendDisplayName: String) {
+    fun addFriend(userId: String, friendDisplayName: String, onComplete: (Boolean) -> Unit) {
         val usersRef = db.collection("users")
 
         usersRef.whereEqualTo("displayName", friendDisplayName).get()
             .addOnSuccessListener { documents ->
                 if (documents.isEmpty) {
-                    println("Friend with display name $friendDisplayName not found!")
+                    onComplete(false)
                     return@addOnSuccessListener
                 }
                 val friendDoc = documents.first()
@@ -23,24 +23,24 @@ class SocialManager {
                 val userRef = usersRef.document(userId)
                 userRef.update("friends", FieldValue.arrayUnion(friendId))
                     .addOnSuccessListener {
-                        println("Friend $friendDisplayName added successfully!")
+                        onComplete(true)
                     }
                     .addOnFailureListener { e ->
-                        println("Error adding friend: ${e.message}")
+                        onComplete(false)
                     }
             }
             .addOnFailureListener { e ->
-                println("Error finding friend: ${e.message}")
+                onComplete(false)
             }
     }
 
-    fun removeFriend(userId: String, friendDisplayName: String) {
+    fun removeFriend(userId: String, friendDisplayName: String, onComplete: (Boolean) -> Unit) {
         val usersRef = db.collection("users")
 
         usersRef.whereEqualTo("displayName", friendDisplayName).get()
             .addOnSuccessListener { documents ->
                 if (documents.isEmpty) {
-                    println("Friend with display name $friendDisplayName not found!")
+                    onComplete(false)
                     return@addOnSuccessListener
                 }
                 val friendDoc = documents.first()
@@ -49,47 +49,49 @@ class SocialManager {
                 val userRef = usersRef.document(userId)
                 userRef.update("friends", FieldValue.arrayRemove(friendId))
                     .addOnSuccessListener {
-                        println("Friend $friendDisplayName removed successfully!")
+                        onComplete(true)
                     }
                     .addOnFailureListener { e ->
-                        println("Error removing friend: ${e.message}")
+                        onComplete(false)
                     }
             }
             .addOnFailureListener { e ->
-                println("Error finding friend: ${e.message}")
+                onComplete(false)
             }
     }
 
-    fun getFriends(userId: String, callback: (List<String>) -> Unit) {
-        val usersRef = db.collection("users")
-        val userRef = usersRef.document(userId)
+    fun getFriends(userId: String, onFriendsRetrieved: (List<String>) -> Unit) {
+        val userRef = db.collection("users").document(userId)
 
         userRef.get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
-                    val friendsList = document.get("friends") as? List<String> ?: listOf()
+                    val friendsList = document.get("friends") as? List<String> ?: emptyList()
 
-                    if (friendsList.isNotEmpty()) {
-                        usersRef.whereIn(FieldPath.documentId(), friendsList).get()
-                            .addOnSuccessListener { friendDocs ->
-                                val friendNames = friendDocs.documents.mapNotNull { it.getString("displayName") }
-                                callback(friendNames)
-                            }
-                            .addOnFailureListener { e ->
-                                println("Error fetching friend names: ${e.message}")
-                                callback(emptyList())
-                            }
+                    if (friendsList.isEmpty()) {
+                        onFriendsRetrieved(emptyList())
                     } else {
-                        callback(emptyList())
+                        val displayNames = mutableListOf<String>()
+                        val tasks = friendsList.map { friendId ->
+                            db.collection("users").document(friendId).get()
+                                .addOnSuccessListener { friendDoc ->
+                                    if (friendDoc != null && friendDoc.exists()) {
+                                        val displayName = friendDoc.getString("displayName") ?: "Unknown"
+                                        displayNames.add(displayName)
+                                    }
+                                }
+                        }
+
+                        Tasks.whenAll(tasks).addOnCompleteListener {
+                            onFriendsRetrieved(displayNames)
+                        }
                     }
                 } else {
-                    println("No such user found!")
-                    callback(emptyList())
+                    onFriendsRetrieved(emptyList())
                 }
             }
             .addOnFailureListener { e ->
-                println("Error getting friends: ${e.message}")
-                callback(emptyList())
+                onFriendsRetrieved(emptyList())
             }
     }
 }

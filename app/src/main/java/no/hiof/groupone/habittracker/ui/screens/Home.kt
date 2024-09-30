@@ -72,7 +72,7 @@ fun Home(modifier: Modifier = Modifier, navController: NavController, authViewMo
         }
 
         TextButton(onClick = { authViewModel.signout() }) {
-            Button(onClick = { navController.navigate("friendManager") }) {
+            Button(onClick = { navController.navigate("SocialManagement") }) {
                 Text(text = "Go to Friend Manager")
             }
 
