@@ -1,5 +1,6 @@
 package no.hiof.groupone.habittracker.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -22,25 +23,31 @@ fun Habits(modifier: Modifier = Modifier,
            navController: NavController,
            authViewModel: AuthViewModel,
            habitListViewModel: HabitListViewModel = viewModel()) {
-    when (val uiState = habitListViewModel.uiState.collectAsState().value) {
+
+    val uiState by habitListViewModel.uiState.collectAsState()
+    when (uiState) {
         is HabitsUiState.Loading -> {
             LoadingIndicator()
         }
         is HabitsUiState.Success -> {
-            val habits = uiState.habits
-            HabitList(habits)
+            val habits = (uiState as HabitsUiState.Success).habits
+            HabitList(habits, modifier)
         }
         is HabitsUiState.Error -> {
-            val errorMessage = uiState.exception
+            val errorMessage = (uiState as HabitsUiState.Error).exception
             ErrorMessage(errorMessage)
         }
     }
 }
 
 @Composable
-fun HabitList(habits: List<Habit>) {
+fun HabitList(habits: List<Habit>, modifier: Modifier = Modifier) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+            .statusBarsPadding()
+            .navigationBarsPadding(),
         contentPadding = PaddingValues(16.dp)
     ) {
         items(habits) { habit ->
@@ -51,8 +58,8 @@ fun HabitList(habits: List<Habit>) {
 
 @Composable
 fun HabitListItem(habit: Habit) {
+    Log.d("HabitListItem", "Habit: $habit")
     Card(
-
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
