@@ -7,6 +7,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import no.hiof.groupone.habittracker.model.Habit
 
 class ProfileViewModel : ViewModel() {
+    var loading = mutableStateOf(true)
+        private set
 
     private val _userName = mutableStateOf("")
     val userName = _userName
@@ -26,38 +28,69 @@ class ProfileViewModel : ViewModel() {
     private val _habitList = mutableStateOf<List<Habit>>(emptyList())
     val habitList = _habitList
 
+
     fun fetchUserData(user: FirebaseUser?) {
-        if (user != null) {
-            _userName.value = user.displayName ?: ""
-            _email.value = user.email ?: ""
+        if (user == null) {
+            loading.value = false
+            return
+        }
 
-            val db = FirebaseFirestore.getInstance()
-            val userId = user.uid
-            db.collection("users")
-                .document(userId)
+        loading.value = true // Start loading
+        _userName.value = user.displayName ?: ""
+        _email.value = user.email ?: ""
+
+        val db = FirebaseFirestore.getInstance()
+        val userId = user.uid
+
+        // Fetch user data
+        db.collection("users")
+            .document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document == null || !document.exists()) {
+                    stopLoading()
+                    return@addOnSuccessListener
+                }
+
+                val habitIds = document.get("habits") as? List<String> ?: emptyList()
+                _totalHabits.value = habitIds.size
+
+                if (habitIds.isEmpty()) {
+                    stopLoading()
+                    return@addOnSuccessListener
+                }
+                loadHabits(db, habitIds)
+            }
+            .addOnFailureListener {
+                stopLoading()
+            }
+    }
+
+    private fun loadHabits(db: FirebaseFirestore, habitIds: List<String>) {
+        val habitObjects = mutableListOf<Habit>()
+
+        habitIds.forEach { habitId ->
+            db.collection("habits")
+                .document(habitId)
                 .get()
-                .addOnSuccessListener { document ->
-                    if (document != null && document.exists()) {
-                        val habitIds = document.get("habits") as? List<String> ?: emptyList()
-                        _totalHabits.value = habitIds.size
-
-                        val habitObjects = mutableListOf<Habit>()
-                        for (habitId in habitIds) {
-                            db.collection("habits")
-                                .document(habitId)
-                                .get()
-                                .addOnSuccessListener { habitDocument ->
-                                    if (habitDocument != null && habitDocument.exists()) {
-                                        val habit = habitDocument.toObject(Habit::class.java)
-                                        if (habit != null) {
-                                            habitObjects.add(habit)
-                                        }
-                                    }
-                                    _habitList.value = habitObjects
-                                }
-                        }
+                .addOnSuccessListener { habitDocument ->
+                    val habit = habitDocument?.toObject(Habit::class.java)
+                    if (habit != null) {
+                        habitObjects.add(habit)
                     }
+                    if (habitObjects.size == habitIds.size) {
+                        _habitList.value = habitObjects
+                        stopLoading()
+                    }
+                }
+                .addOnFailureListener {
+                    stopLoading()
                 }
         }
     }
+
+    private fun stopLoading() {
+        loading.value = false
+    }
+
 }
