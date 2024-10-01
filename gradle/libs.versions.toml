@@ -14,6 +14,7 @@ runtimeLivedata = "1.7.2"
 threetenabp = "1.4.7"
 
 [libraries]
+desugar = { group = "com.android.tools", name = "desugar_jdk_libs", version = "1.1.6" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
