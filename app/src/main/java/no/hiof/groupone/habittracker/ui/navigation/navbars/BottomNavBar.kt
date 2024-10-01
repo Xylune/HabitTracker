@@ -20,7 +20,7 @@ import androidx.navigation.NavHostController
 @Composable
 fun BottomNavBar(navController: NavHostController) {
     var selectedItem by remember { mutableIntStateOf(0) }
-    val items = listOf("Home", "Menu", "Add Habit", "Calendar", "Profile")
+    val items = listOf("Home", "My Habits", "Add Habit", "Calendar", "Profile")
 
     NavigationBar {
         items.forEachIndexed { index, item ->
@@ -44,7 +44,7 @@ fun BottomNavBar(navController: NavHostController) {
                     selectedItem = index
                     when (index) {
                         0 -> navController.navigate("home")
-                        1 -> navController.navigate("menu")
+                        1 -> navController.navigate("habits")
                         2 -> navController.navigate("createHabit")
                         3 -> navController.navigate("calendar")
                         4 -> navController.navigate("profile")
