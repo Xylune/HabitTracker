@@ -13,7 +13,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import no.hiof.groupone.habittracker.model.Habit
 
-class HabitViewModel : ViewModel() {
+
+class HabitViewModel(private val habitListViewModel: HabitListViewModel) : ViewModel() {
     private val _habitName = mutableStateOf("")
     val habitName: State<String> = _habitName
     fun updateHabitName(name: String) { _habitName.value = name }
@@ -75,6 +76,7 @@ class HabitViewModel : ViewModel() {
                 .update("habits", FieldValue.arrayUnion(habitId))
                 .await()
             }
+            habitListViewModel.refreshHabits()
             true
         } catch (e: Exception) {
             e.printStackTrace()
