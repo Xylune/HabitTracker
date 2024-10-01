@@ -45,9 +45,6 @@ import no.hiof.groupone.habittracker.model.Frequency
 import no.hiof.groupone.habittracker.model.Habit
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 import no.hiof.groupone.habittracker.viewmodel.HabitViewModel
-import org.threeten.bp.Instant
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZoneId
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -213,14 +210,10 @@ fun CreateHabit(modifier: Modifier = Modifier, navController: NavController = re
             }
 
             val habit = Habit(
-                id = 0,
                 name = habitName,
                 description = habitDescription,
                 frequency = habitFrequency,
-                startTime = LocalDateTime.ofInstant(
-                    Instant.ofEpochMilli(calendar.timeInMillis),
-                    ZoneId.of(calendar.timeZone.id)
-                ),
+                startTime = calendar.timeInMillis,
                 endTime = null,
                 basePoints = 0,
                 currentStreak = 0
