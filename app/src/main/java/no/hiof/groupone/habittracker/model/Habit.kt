@@ -1,7 +1,7 @@
 package no.hiof.groupone.habittracker.model
 
 
-class Habit(
+data class Habit(
     val id: Int = generateId(),
     val name: String,
     val description: String?,

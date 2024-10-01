@@ -12,6 +12,7 @@ import no.hiof.groupone.habittracker.ui.screens.CreateHabit
 import no.hiof.groupone.habittracker.ui.screens.ProfileScreen
 import no.hiof.groupone.habittracker.ui.SocialManagement
 import no.hiof.groupone.habittracker.ui.screens.CreateHabit
+import no.hiof.groupone.habittracker.ui.screens.Habits
 import no.hiof.groupone.habittracker.ui.screens.SettingsScreen
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 
@@ -30,6 +31,9 @@ fun AppNavigation(
         }
         composable("signup") {
             Signup(modifier, navController, authViewModel)
+        }
+        composable("habits") {
+            Habits(modifier, navController, authViewModel)
         }
         composable("home") {
             Home(modifier, navController, authViewModel)
