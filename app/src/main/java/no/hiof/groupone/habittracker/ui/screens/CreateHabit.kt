@@ -44,7 +44,9 @@ import kotlinx.coroutines.launch
 import no.hiof.groupone.habittracker.model.Frequency
 import no.hiof.groupone.habittracker.model.Habit
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
+import no.hiof.groupone.habittracker.viewmodel.HabitListViewModel
 import no.hiof.groupone.habittracker.viewmodel.HabitViewModel
+import no.hiof.groupone.habittracker.viewmodel.HabitViewModelFactory
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -53,10 +55,16 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateHabit(modifier: Modifier = Modifier, navController: NavController = rememberNavController(),
-                authViewModel: AuthViewModel = viewModel(),
-                habitViewModel: HabitViewModel = viewModel()
+fun CreateHabit(
+    modifier: Modifier = Modifier,
+    navController: NavController = rememberNavController(),
+    authViewModel: AuthViewModel = viewModel(),
+    habitListViewModel: HabitListViewModel = viewModel(),
 ) {
+    val habitViewModel: HabitViewModel = viewModel(
+        factory = HabitViewModelFactory(habitListViewModel)
+    )
+
     val habitName by habitViewModel.habitName
     val habitDescription by habitViewModel.habitDescription
     val frequency by habitViewModel.frequency

@@ -27,11 +27,11 @@ fun Habits(modifier: Modifier = Modifier,
             LoadingIndicator()
         }
         is HabitsUiState.Success -> {
-            val habits = (uiState as HabitsUiState.Success).habits
+            val habits = uiState.habits
             HabitList(habits)
         }
         is HabitsUiState.Error -> {
-            val errorMessage = (uiState as HabitsUiState.Error).exception
+            val errorMessage = uiState.exception
             ErrorMessage(errorMessage)
         }
     }
@@ -52,6 +52,7 @@ fun HabitList(habits: List<Habit>) {
 @Composable
 fun HabitListItem(habit: Habit) {
     Card(
+
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
