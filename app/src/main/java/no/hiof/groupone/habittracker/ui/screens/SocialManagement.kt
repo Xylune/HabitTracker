@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.SnackbarDuration
@@ -19,8 +20,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -42,6 +46,7 @@ fun SocialManagement(
     var selectedHabitName by remember { mutableStateOf("") }
     var selectedFriendName by remember { mutableStateOf("") }
     var showFriendsListDialog by remember { mutableStateOf(false) }
+    var showSelectFriendDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     var showSnackbar by remember { mutableStateOf(false) }
     var snackbarMessage by remember { mutableStateOf("") }
@@ -51,47 +56,101 @@ fun SocialManagement(
         socialViewModel.loadUserHabits()
     }
 
-    Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
-        Text(text = "Manage Friends", modifier = Modifier.padding(bottom = 16.dp))
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Manage Friends",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
         TextField(
             value = friendName,
             onValueChange = { socialViewModel.updateFriendName(it) },
             label = { Text("Friend's Name") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Button(onClick = {
-            socialViewModel.addFriend()
-            snackbarMessage = "Friend added successfully"
-            showSnackbar = true
-        }) {
+        Button(
+            onClick = {
+                socialViewModel.addFriend()
+                snackbarMessage = "Friend added successfully"
+                showSnackbar = true
+            },
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
             Text("Add Friend")
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Button(onClick = {
-            socialViewModel.removeFriend()
-            snackbarMessage = "Friend removed successfully"
-            showSnackbar = true
-        }) {
+        Button(
+            onClick = {
+                socialViewModel.removeFriend()
+                snackbarMessage = "Friend removed successfully"
+                showSnackbar = true
+            },
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
             Text("Remove Friend")
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "Friends List:")
-        friendsList.forEach { friend ->
-            Text(text = friend)
+        Button(
+            onClick = { showFriendsListDialog = true },
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
+            Text("Friends List")
+        }
+
+        if (showFriendsListDialog) {
+            AlertDialog(
+                onDismissRequest = { showFriendsListDialog = false },
+                title = { Text("Friends List") },
+                text = {
+                    Column {
+                        friendsList.forEach { friend ->
+                            Text(
+                                text = friend,
+                                modifier = Modifier
+                                    .padding(vertical = 4.dp)
+                            )
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { showFriendsListDialog = false }) {
+                        Text("Close")
+                    }
+                }
+            )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Button(onClick = { shareHabitDialog = true }) {
-            Text("Habit")
+        Button(
+            onClick = { shareHabitDialog = true },
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
+            Text("Select Habit")
         }
 
         if (shareHabitDialog) {
@@ -107,7 +166,9 @@ fun SocialManagement(
                                     selectedHabitName = habitName
                                     shareHabitDialog = false
                                 },
-                                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                                shape = RoundedCornerShape(8.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
                             ) {
                                 Text(habitName)
                             }
@@ -122,33 +183,36 @@ fun SocialManagement(
             )
         }
 
-
         TextField(
             value = selectedHabitName,
             onValueChange = {},
             label = { Text("Selected Habit") },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             enabled = false
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(onClick = { showFriendsListDialog = true }) {
-            Text("Friends List")
+        Button(
+            onClick = { showSelectFriendDialog = true },
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Text("Select Friend")
         }
 
         TextField(
             value = selectedFriendName,
             onValueChange = {},
             label = { Text("Selected Friend") },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             enabled = false
         )
 
-
-        if (showFriendsListDialog) {
+        if (showSelectFriendDialog) {
             AlertDialog(
-                onDismissRequest = { showFriendsListDialog = false },
+                onDismissRequest = { showSelectFriendDialog = false },
                 title = { Text("Select a Friend") },
                 text = {
                     Column {
@@ -156,9 +220,11 @@ fun SocialManagement(
                             Button(
                                 onClick = {
                                     selectedFriendName = friend
-                                    showFriendsListDialog = false
+                                    showSelectFriendDialog = false
                                 },
-                                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                                shape = RoundedCornerShape(8.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
                             ) {
                                 Text(friend)
                             }
@@ -166,14 +232,12 @@ fun SocialManagement(
                     }
                 },
                 confirmButton = {
-                    Button(onClick = { showFriendsListDialog = false }) {
+                    Button(onClick = { showSelectFriendDialog = false }) {
                         Text("Cancel")
                     }
                 }
             )
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
@@ -185,14 +249,17 @@ fun SocialManagement(
                     selectedHabitName = ""
                     selectedFriendName = ""
                 }
-            }
+            },
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
             Text("Share")
         }
 
         SnackbarHost(
             hostState = snackbarHostState,
-            modifier = Modifier
+            modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
         LaunchedEffect(key1 = showSnackbar) {

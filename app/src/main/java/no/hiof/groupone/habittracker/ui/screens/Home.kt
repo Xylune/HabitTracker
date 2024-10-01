@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -22,9 +21,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import no.hiof.groupone.habittracker.viewmodel.AuthState
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
-
-import com.google.firebase.auth.ktx.auth
-import no.hiof.groupone.habittracker.ui.navigation.navbars.BottomNavBar
 
 @Composable
 fun Home(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
@@ -73,9 +69,6 @@ fun Home(modifier: Modifier = Modifier, navController: NavController, authViewMo
         }
 
         TextButton(onClick = { authViewModel.signout() }) {
-            Button(onClick = { navController.navigate("SocialManagement") }) {
-                Text(text = "Go to Friend Manager")
-            }
 
             TextButton(onClick = { authViewModel.signout() }) {
                 Text(text = "Sign out")

@@ -143,6 +143,16 @@ fun ProfileScreen(
             }
         }
 
+        // Friend Manager button
+        Button(
+            onClick = { navController.navigate("SocialManagement") },
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(top = 16.dp)
+        ) {
+            Text(text = "Friend Manager")
+        }
+
         // Edit Profile Button
         Button(
             onClick = onEditProfile,
