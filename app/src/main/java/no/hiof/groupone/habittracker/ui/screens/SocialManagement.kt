@@ -87,7 +87,7 @@ fun SocialManagement(
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp)
+                .padding(vertical = 4.dp)
         ) {
             Text("Add Friend")
         }
@@ -101,12 +101,12 @@ fun SocialManagement(
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp)
+                .padding(vertical = 4.dp)
         ) {
             Text("Remove Friend")
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Button(
             onClick = { showFriendsListDialog = true },
@@ -148,7 +148,6 @@ fun SocialManagement(
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp)
         ) {
             Text("Select Habit")
         }

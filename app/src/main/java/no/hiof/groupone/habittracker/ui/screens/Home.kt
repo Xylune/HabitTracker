@@ -1,4 +1,4 @@
-package no.hiof.groupone.habittracker.screens
+package com.example.habittracker.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import no.hiof.groupone.habittracker.viewmodel.AuthState
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 
@@ -68,18 +68,20 @@ fun Home(modifier: Modifier = Modifier, navController: NavController, authViewMo
             }
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        TextButton(onClick = { navController.navigate("createHabit") }) {
+            Text(text = "Create Habit")
+        }
+
+        TextButton(onClick = { navController.navigate("leaderboards") }) {
+            Text(text = "View Leaderboards")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         TextButton(onClick = { authViewModel.signout() }) {
-
-            TextButton(onClick = { authViewModel.signout() }) {
-                Text(text = "Sign out")
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            TextButton(onClick = { navController.navigate("createHabit") }) {
-                Text(text = "Create Habit")
-            }
-
+            Text(text = "Sign out")
         }
     }
 }
