@@ -13,7 +13,6 @@ class LeaderboardManager {
     data class Leaderboard(
         val id: String = "",
         val name: String = "",
-        val creatorId: String = "",
         val users: List<User> = listOf()
     )
 
@@ -30,7 +29,6 @@ class LeaderboardManager {
     ) {
         val leaderboardData = hashMapOf(
             "name" to leaderboardName,
-            "creatorId" to creatorId,
             "users" to allPlayers.map { mapOf("name" to it, "points" to 0) }
         )
 
