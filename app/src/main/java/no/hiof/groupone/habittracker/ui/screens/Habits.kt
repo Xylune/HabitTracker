@@ -16,6 +16,9 @@ import no.hiof.groupone.habittracker.viewmodel.HabitListViewModel
 import no.hiof.groupone.habittracker.model.Habit
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 import no.hiof.groupone.habittracker.viewmodel.HabitsUiState
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,6 +62,13 @@ fun HabitList(habits: List<Habit>, modifier: Modifier = Modifier) {
 @Composable
 fun HabitListItem(habit: Habit) {
     Log.d("HabitListItem", "Habit: $habit")
+
+    // Function to format Unix timestamps (nullable Long)
+    fun formatTime(timestamp: Long?): String {
+        val sdf = SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault())
+        return timestamp?.let { sdf.format(Date(it)) } ?: "N/A" // Return "N/A" if timestamp is null
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -72,6 +82,9 @@ fun HabitListItem(habit: Habit) {
             habit.description?.let {
                 Text(text = it, style = MaterialTheme.typography.bodyMedium)
             }
+            // Display formatted start and end times
+            Text(text = "Start Time: ${formatTime(habit.startTime)}", style = MaterialTheme.typography.bodySmall)
+            Text(text = "End Time: ${formatTime(habit.endTime)}", style = MaterialTheme.typography.bodySmall)
         }
     }
 }
