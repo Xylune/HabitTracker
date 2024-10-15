@@ -12,7 +12,9 @@ import no.hiof.groupone.habittracker.screens.Login
 import no.hiof.groupone.habittracker.ui.screens.CreateHabit
 import no.hiof.groupone.habittracker.ui.screens.ProfileScreen
 import no.hiof.groupone.habittracker.ui.SocialManagement
+import no.hiof.groupone.habittracker.ui.screens.EditProfile
 import no.hiof.groupone.habittracker.ui.screens.Habits
+import no.hiof.groupone.habittracker.ui.screens.ProfileScreen
 import no.hiof.groupone.habittracker.ui.screens.SettingsScreen
 import no.hiof.groupone.habittracker.ui.screens.Signup
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
@@ -61,6 +63,9 @@ fun AppNavigation(
         }
         composable("calendar") {
             CalendarScreen()
+        }
+        composable("editProfile") {
+            EditProfile(modifier, navController, authViewModel)
         }
     })
 }

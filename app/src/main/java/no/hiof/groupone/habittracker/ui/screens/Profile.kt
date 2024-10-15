@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -46,7 +47,7 @@ import java.util.Locale
 fun ProfileScreen(
     modifier: Modifier = Modifier, navController: NavController = rememberNavController(),
     authViewModel: AuthViewModel = viewModel(),
-    ProfileViewModel: ProfileViewModel = viewModel(),
+    profileViewModel: ProfileViewModel = viewModel(),
 
     onEditProfile: () -> Unit = { navController.navigate("edit_profile") }
 
@@ -55,112 +56,131 @@ fun ProfileScreen(
 
     LaunchedEffect(user) {
         if (user != null) {
-            ProfileViewModel.fetchUserData(user)
+            profileViewModel.fetchUserData(user)
         }
     }
-    val userName = ProfileViewModel.userName
-    val email = ProfileViewModel.email
-    val totalHabits = ProfileViewModel.totalHabits
-    val currentStreak = ProfileViewModel.currentStreak
-    val points = ProfileViewModel.points
-    val habitList = ProfileViewModel.habitList
+    val userName = profileViewModel.userName
+    val email = profileViewModel.email
+    val totalHabits = profileViewModel.totalHabits
+    val currentStreak = profileViewModel.currentStreak
+    val points = profileViewModel.points
+    val habitList = profileViewModel.habitList
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-            .statusBarsPadding()
-            .navigationBarsPadding()
-    ) {
-        // Profile Image
+    val isLoading = profileViewModel.loading.value
+
+    if (isLoading) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
+                .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Image(
-                imageVector = Icons.Default.AccountCircle,
-                contentDescription = "Profile Picture",
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary)
-            )
+            CircularProgressIndicator()
         }
-
-        // User Info
-        Text(
-            text = userName.value,
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-        Text(
-            text = email.value,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Habit summary
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+    } else {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+                .statusBarsPadding()
+                .navigationBarsPadding()
         ) {
-            ProfileStat("Total Habits", totalHabits.value)
-            ProfileStat("Current Streak", currentStreak.value)
-            ProfileStat("Points", points.value)
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Habit List
-        Text(
-            text = "Your Habits",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-
-        if (habitList.value.isEmpty()) {
-            Text("You currently don't have any habits, Create one here!")
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = { navController.navigate("createHabit") },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+            // Profile Image
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                contentAlignment = Alignment.Center
             ) {
-                Text("Create Habit")
+                Image(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary)
+                )
             }
-        }else {
-            LazyColumn(modifier = Modifier
-                .fillMaxHeight()
-                .weight(1f)
+
+            // User Info
+            Text(
+                text = userName.value,
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            Text(
+                text = email.value,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Habit summary
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                items(habitList.value) { habit ->
-                    HabitItem(habit)
-                    HorizontalDivider()
+                ProfileStat("Total Habits", totalHabits.value)
+                ProfileStat("Current Streak", currentStreak.value)
+                ProfileStat("Points", points.value)
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Buttons
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                // Friend Manager button
+                Button(
+                    onClick = { navController.navigate("SocialManagement") }
+                ) {
+                    Text(text = "Friend Manager")
+                }
+
+                // Edit Profile button
+                Button(
+                    onClick = { navController.navigate("editProfile") }
+                ) {
+                    Text("Edit Profile")
                 }
             }
-        }
 
-        // Friend Manager button
-        Button(
-            onClick = { navController.navigate("SocialManagement") },
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 16.dp)
-        ) {
-            Text(text = "Friend Manager")
-        }
 
-        // Edit Profile Button
-        Button(
-            onClick = onEditProfile,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 16.dp)
-        ) {
-            Text("Edit Profile")
+            // Habit List
+            Text(
+                text = "Your Habits",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+
+            if (habitList.value.isEmpty()) {
+                Text("You currently don't have any habits, Create one here!")
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = { navController.navigate("createHabit") },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    Text("Create Habit")
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(1f)
+                ) {
+                    items(habitList.value) { habit ->
+                        HabitItem(habit)
+                        HorizontalDivider()
+                    }
+                }
+            }
+
+
+
         }
     }
 }
