@@ -77,6 +77,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.github.composecalendar)
 
     implementation("androidx.navigation:navigation-compose:2.8.1") // Navigation dependency
     implementation("androidx.compose.ui:ui:1.3.3")            // Jetpack Compose UI
