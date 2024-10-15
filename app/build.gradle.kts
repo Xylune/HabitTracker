@@ -82,8 +82,8 @@ dependencies {
     implementation("androidx.compose.ui:ui:1.3.3")            // Jetpack Compose UI
     implementation("androidx.compose.material:material:1.3.1")    // Material Design
     implementation("androidx.compose.ui:ui-tooling-preview:1.3.3") // Preview
-
-    implementation ("io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc")
+    implementation("com.google.accompanist:accompanist-pager:0.28.0")
+    implementation("io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc")
 
     implementation("com.jakewharton.threetenabp:threetenabp:1.4.6")
 

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "706602288178",
+    "project_id": "mobilprog-2024",
+    "storage_bucket": "mobilprog-2024.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:706602288178:android:fe46b4594dd669479c282b",
+        "android_client_info": {
+          "package_name": "no.hiof.groupone.habittracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "706602288178-kmft8th5d4kvgictqk0qsncnm1qc79dh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "no.hiof.groupone.habittracker",
+            "certificate_hash": "e9ef95df9e0737fd733f766bf45204b05d79b496"
+          }
+        },
+        {
+          "client_id": "706602288178-ul16cracajkpvnib4nc45g9aqlbg18en.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXBpxes2D2cmwsuycoQJJ2oW-SjlZGMpA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "706602288178-ul16cracajkpvnib4nc45g9aqlbg18en.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

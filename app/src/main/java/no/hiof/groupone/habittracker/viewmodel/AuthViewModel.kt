@@ -50,6 +50,7 @@ class AuthViewModel : ViewModel() {
                                     val userDocument = FirebaseFirestore.getInstance().collection("users").document(userId)
                                     val userData = hashMapOf(
                                         "displayName" to displayName,
+                                        "Leaderboards" to emptyList<String>(),
                                         "friends" to listOf<String>(),
                                         "habits" to listOf<String>()
                                     )

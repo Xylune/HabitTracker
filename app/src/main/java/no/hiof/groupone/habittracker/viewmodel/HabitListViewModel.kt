@@ -30,49 +30,61 @@ class HabitListViewModel : ViewModel() {
     }
 
     private fun fetchUserHabits() {
-        viewModelScope.launch {
-            _uiState.value = HabitsUiState.Loading
-            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        _uiState.value = HabitsUiState.Loading
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
 
-            if (currentUserId.isNullOrEmpty()) {
-                _uiState.value = HabitsUiState.Error("User not logged in")
-                return@launch
-            }
-
-            try {
-                val firestore = FirebaseFirestore.getInstance()
-
-                val userDoc = firestore.collection("users")
-                    .document(currentUserId)
-                    .get()
-                    .await()
-
-                val habitIdsField = userDoc.get("habits")
-                val validHabitIds = when (habitIdsField) {
-                    is List<*> -> habitIdsField.filterIsInstance<String>()
-                    else -> emptyList() // Return empty list if the type is not List<*>
-                }
-
-                val habits = mutableListOf<Habit>()
-                val batchSize = 10
-                val batches = validHabitIds.chunked(batchSize)
-
-                for (batch in batches) {
-                    val batchHabits = firestore.collection("habits")
-                        .whereIn(FieldPath.documentId(), batch)
-                        .get()
-                        .await()
-                        .documents
-                        .mapNotNull { it.toObject(Habit::class.java)?.copy(id = it.id.toInt()) }
-                    habits.addAll(batchHabits)
-                }
-
-                _uiState.value = HabitsUiState.Success(habits)
-            } catch (e: Exception) {
-                _uiState.value = HabitsUiState.Error(e.message ?: "Unknown error")
-
-            }
-
+        if (currentUserId.isNullOrEmpty()) {
+            _uiState.value = HabitsUiState.Error("User not logged in")
+            return
         }
+
+        val firestore = FirebaseFirestore.getInstance()
+        firestore.collection("users")
+            .document(currentUserId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val habitIds = document.get("habits") as? List<String> ?: emptyList()
+                    val habitObjects = mutableListOf<Habit>()
+
+                    // If you want to update the UI state once all habits are fetched, use a counter or a completion flag.
+                    if (habitIds.isEmpty()) {
+                        _uiState.value = HabitsUiState.Success(habitObjects)
+                        return@addOnSuccessListener
+                    }
+
+                    // Use a counter to track how many habits have been fetched
+                    var fetchedCount = 0
+
+                    for (habitId in habitIds) {
+                        firestore.collection("habits")
+                            .document(habitId)
+                            .get()
+                            .addOnSuccessListener { habitDocument ->
+                                if (habitDocument != null && habitDocument.exists()) {
+                                    val habit = habitDocument.toObject(Habit::class.java)
+                                    if (habit != null) {
+                                        habitObjects.add(habit)
+                                    }
+                                }
+                                fetchedCount++
+
+                                // Once all habits have been fetched, update the UI state
+                                if (fetchedCount == habitIds.size) {
+                                    _uiState.value = HabitsUiState.Success(habitObjects)
+                                }
+                            }
+                            .addOnFailureListener { e ->
+                                // Handle errors for each habit fetch
+                                _uiState.value = HabitsUiState.Error(e.message ?: "Unknown error")
+                            }
+                    }
+                } else {
+                    _uiState.value = HabitsUiState.Error("User document does not exist")
+                }
+            }
+            .addOnFailureListener { e ->
+                _uiState.value = HabitsUiState.Error(e.message ?: "Unknown error")
+            }
     }
 }

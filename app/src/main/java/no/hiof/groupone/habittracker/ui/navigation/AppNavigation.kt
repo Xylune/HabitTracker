@@ -1,19 +1,20 @@
 package no.hiof.groupone.habittracker.ui.navigation
 
+import CalendarScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import no.hiof.groupone.habittracker.screens.Home
+import com.example.habittracker.screens.Home
+import no.hiof.groupone.habittracker.screens.LeaderboardScreen
 import no.hiof.groupone.habittracker.screens.Login
-import no.hiof.groupone.habittracker.screens.Signup
 import no.hiof.groupone.habittracker.ui.screens.CreateHabit
 import no.hiof.groupone.habittracker.ui.screens.ProfileScreen
 import no.hiof.groupone.habittracker.ui.SocialManagement
-import no.hiof.groupone.habittracker.ui.screens.CreateHabit
 import no.hiof.groupone.habittracker.ui.screens.Habits
 import no.hiof.groupone.habittracker.ui.screens.SettingsScreen
+import no.hiof.groupone.habittracker.ui.screens.Signup
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 
 @Composable
@@ -24,7 +25,6 @@ fun AppNavigation(
     isDarkMode: Boolean,
     onDarkModeToggle: (Boolean) -> Unit
 ) {
-
     NavHost(navController = navController, startDestination = "login", builder = {
         composable("login") {
             Login(modifier, navController, authViewModel)
@@ -44,6 +44,9 @@ fun AppNavigation(
         composable("SocialManagement") {
             SocialManagement(modifier, navController, authViewModel)
         }
+        composable("leaderboards") {
+            LeaderboardScreen(modifier, navController, authViewModel)
+        }
         composable("settings") {
             SettingsScreen(
                 modifier = modifier,
@@ -55,6 +58,9 @@ fun AppNavigation(
         }
         composable("profile") {
             ProfileScreen(modifier, navController, authViewModel)
+        }
+        composable("calendar") {
+            CalendarScreen()
         }
     })
 }
