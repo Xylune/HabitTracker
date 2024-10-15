@@ -163,7 +163,7 @@ fun CreateHabit(
 
         var showMenu by remember { mutableStateOf(true) }
         var showInputExample by remember { mutableStateOf(false) }
-        val formatter = remember { SimpleDateFormat("hh:mm a", Locale.getDefault()) }
+        val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
 
         if (showMenu) {
             Button(onClick = {
