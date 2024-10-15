@@ -38,25 +38,6 @@ class HabitViewModel(private val habitListViewModel: HabitListViewModel) : ViewM
     @OptIn(ExperimentalMaterial3Api::class)
     fun updateSelectedTime(time: TimePickerState?) { _selectedTime.value = time }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     fun createHabit(habit: Habit): Boolean {
         return try {
         viewModelScope.launch {
@@ -83,5 +64,4 @@ class HabitViewModel(private val habitListViewModel: HabitListViewModel) : ViewM
             false
         }
     }
-
 }

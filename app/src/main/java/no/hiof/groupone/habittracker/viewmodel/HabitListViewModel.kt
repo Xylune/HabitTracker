@@ -1,15 +1,21 @@
 package no.hiof.groupone.habittracker.viewmodel
 
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import no.hiof.groupone.habittracker.model.Habit
+import no.hiof.groupone.habittracker.ui.screens.HabitItem
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.Date
 
 sealed class HabitsUiState {
     data object Loading : HabitsUiState()
@@ -21,12 +27,38 @@ class HabitListViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<HabitsUiState>(HabitsUiState.Loading)
     val uiState: StateFlow<HabitsUiState> get() = _uiState
 
+    private val _habits = MutableStateFlow<List<Habit>>(emptyList())
+    val habits: StateFlow<List<Habit>> get() = _habits
+
     init {
         fetchUserHabits()
     }
 
     fun refreshHabits() {
         fetchUserHabits()
+    }
+
+    private val _selectedDate = MutableStateFlow<LocalDate?>(null)
+    val selectedDate: StateFlow<LocalDate?> get() = _selectedDate
+
+    fun updateSelectedDate(date: LocalDate) {
+        _selectedDate.value = date
+    }
+
+    fun getHabitsForDate(localDate: LocalDate): List<Habit> {
+        val habits = when (val state = _uiState.value) {
+            is HabitsUiState.Success -> state.habits
+            else -> emptyList()
+        }
+
+        return habits.filter { habit ->
+            val habitDate = habit.startTime?.let {
+                Instant.ofEpochMilli(it)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate()
+            }
+            habitDate == localDate
+        }
     }
 
     private fun fetchUserHabits() {
@@ -86,5 +118,24 @@ class HabitListViewModel : ViewModel() {
             .addOnFailureListener { e ->
                 _uiState.value = HabitsUiState.Error(e.message ?: "Unknown error")
             }
+    }
+}
+
+@Composable
+fun HabitListForDate(selectedDate: Date, habitListViewModel: HabitListViewModel) {
+    // Convert the selected date to LocalDate
+    val localDate = selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+
+    // Observe the habits from the ViewModel
+    val habits by habitListViewModel.habits.collectAsState()
+
+    // Get filtered habits based on the selected date
+    val filteredHabits = habitListViewModel.getHabitsForDate(localDate)
+
+    // Display filtered habits in a LazyColumn
+    LazyColumn {
+        items(filteredHabits) { habit ->
+            HabitItem(habit = habit) // Assuming you have a HabitItem composable
+        }
     }
 }
