@@ -39,7 +39,6 @@ class LeaderboardViewModel(
             leaderboardManager.getLeaderboard(leaderboardId) { leaderboardData ->
                 leaderboardData?.let {
                     val leaderboard = LeaderboardManager.Leaderboard(
-                        id = leaderboardId,
                         name = it["name"] as? String ?: "Unknown",
                         users = (it["users"] as? List<Map<String, Any>>)?.map { userMap ->
                             LeaderboardManager.User(
@@ -75,7 +74,7 @@ class LeaderboardViewModel(
                 addAll(selectedFriends)
             }
 
-            leaderboardManager.createNewLeaderboard(leaderboardName, allPlayers, user.uid) { success, leaderboardId ->
+            leaderboardManager.createNewLeaderboard(leaderboardName, allPlayers) { success, leaderboardId ->
                 if (success && leaderboardId != null) {
                     addPlayersToLeaderboard(leaderboardId, allPlayers)
                     loadUserLeaderboards()

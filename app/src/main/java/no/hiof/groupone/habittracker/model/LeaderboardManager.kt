@@ -11,7 +11,6 @@ class LeaderboardManager {
     private val userCollection = db.collection("users")
 
     data class Leaderboard(
-        val id: String = "",
         val name: String = "",
         val users: List<User> = listOf()
     )
@@ -24,7 +23,6 @@ class LeaderboardManager {
     fun createNewLeaderboard(
         leaderboardName: String,
         allPlayers: List<String>,
-        creatorId: String,
         callback: (Boolean, String?) -> Unit
     ) {
         val leaderboardData = hashMapOf(
@@ -116,7 +114,6 @@ class LeaderboardManager {
                 callback(null)
             }
     }
-
 
     private fun getUserIndex(userName: String): String = userName
 

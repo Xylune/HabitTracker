@@ -215,3 +215,12 @@ fun LeaderboardSelectionDialog(
         }
     )
 }
+
+//@Composable
+//fun LeaderboardAdminPanel(
+//    onDismiss: () -> Unit
+//) {
+//    onDismissRequest = { onDismiss() },
+//    title = { Text(text ="Leaderboard Adminpanel") },
+//
+//}
