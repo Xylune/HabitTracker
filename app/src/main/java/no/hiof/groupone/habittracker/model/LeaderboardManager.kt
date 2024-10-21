@@ -12,7 +12,8 @@ class LeaderboardManager {
 
     data class Leaderboard(
         val name: String = "",
-        val users: List<User> = listOf()
+        val users: List<User> = listOf(),
+        val admin: String = ""
     )
 
     data class User(
@@ -23,11 +24,13 @@ class LeaderboardManager {
     fun createNewLeaderboard(
         leaderboardName: String,
         allPlayers: List<String>,
+        leaderboardAdmin: String,
         callback: (Boolean, String?) -> Unit
     ) {
         val leaderboardData = hashMapOf(
             "name" to leaderboardName,
-            "users" to allPlayers.map { mapOf("name" to it, "points" to 0) }
+            "users" to allPlayers.map { mapOf("name" to it, "points" to 0) },
+            "admin" to leaderboardAdmin
         )
 
         leaderboardCollection.add(leaderboardData)

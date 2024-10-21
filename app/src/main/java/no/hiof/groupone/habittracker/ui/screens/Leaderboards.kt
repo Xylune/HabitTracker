@@ -44,10 +44,12 @@ fun LeaderboardScreen(
     var showCreateDialog by remember { mutableStateOf(false) }
     var selectedLeaderboard by remember { mutableStateOf<LeaderboardManager.Leaderboard?>(null) }
     var showLeaderboardSelection by remember { mutableStateOf(false) }
+    var showAdminPanel by remember { mutableStateOf(false) }
+    var isAdmin by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         leaderboardViewModel.loadFriends()
-        leaderboardViewModel.loadUserLeaderboards()
+//        leaderboardViewModel.loadUserLeaderboards()
     }
 
     Box(
@@ -61,7 +63,10 @@ fun LeaderboardScreen(
             verticalArrangement = Arrangement.Top
         ) {
             Button(
-                onClick = { showLeaderboardSelection = true },
+                onClick = {
+                    leaderboardViewModel.loadUserLeaderboards()
+                    showLeaderboardSelection = true
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
@@ -86,8 +91,24 @@ fun LeaderboardScreen(
                         Spacer(modifier = Modifier.height(4.dp))
                     }
                 }
+
+                LaunchedEffect(selectedLeaderboard) {
+                    isAdmin = leaderboardViewModel.isAdmin(it)
+                }
             } ?: run {
                 Text(text = "No leaderboard selected", style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+
+        if (isAdmin) {
+            Button(
+                onClick = { showAdminPanel = true },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text(text = "Manage Leaderboard")
             }
         }
 
@@ -96,7 +117,7 @@ fun LeaderboardScreen(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(bottom = if (isAdmin) 72.dp else 8.dp)
         ) {
             Text(text = "Create New Leaderboard")
         }
@@ -119,10 +140,70 @@ fun LeaderboardScreen(
             LeaderboardSelectionDialog(
                 onDismiss = { showLeaderboardSelection = false },
                 leaderboards = leaderboardViewModel.leaderboardDetails.value ?: listOf(),
-                onSelect = { selectedLeaderboard = it; showLeaderboardSelection = false }
+                onSelect = {
+                    selectedLeaderboard = it
+                    showLeaderboardSelection = false
+                }
+            )
+        }
+
+        if (showAdminPanel && selectedLeaderboard != null) {
+            LeaderboardAdminPanel(
+                leaderboard = selectedLeaderboard!!,
+                onDismiss = { showAdminPanel = false },
+                leaderboardViewModel = leaderboardViewModel
             )
         }
     }
+}
+
+@Composable
+fun LeaderboardAdminPanel(
+    leaderboard: LeaderboardManager.Leaderboard,
+    onDismiss: () -> Unit,
+    leaderboardViewModel: LeaderboardViewModel
+) {
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        title = { Text(text = "Manage ${leaderboard.name}") },
+        text = {
+            Column {
+                Text(text = "Current Players:")
+                LazyColumn(modifier = Modifier.height(150.dp)) {
+                    items(leaderboard.users) { user ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth().padding(4.dp)
+                        ) {
+                            Text(text = user.name)
+                            Spacer(modifier = Modifier.weight(1f))
+                            Button(onClick = {
+                                leaderboardViewModel.modifyPlayerInLeaderboard(
+                                    leaderboardId = leaderboard.name,  // You can also pass the leaderboard ID if needed
+                                    userName = user.name,
+                                    addPlayer = false // Removing player
+                                )
+                            }) {
+                                Text(text = "Remove")
+                            }
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = { /* Add new player functionality */ },
+                    modifier = Modifier.fillMaxWidth().padding(8.dp)
+                ) {
+                    Text(text = "Add Player")
+                }
+            }
+        },
+        confirmButton = {
+            Button(onClick = { onDismiss() }) {
+                Text(text = "Close")
+            }
+        }
+    )
 }
 
 @Composable
@@ -215,12 +296,3 @@ fun LeaderboardSelectionDialog(
         }
     )
 }
-
-//@Composable
-//fun LeaderboardAdminPanel(
-//    onDismiss: () -> Unit
-//) {
-//    onDismissRequest = { onDismiss() },
-//    title = { Text(text ="Leaderboard Adminpanel") },
-//
-//}

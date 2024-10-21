@@ -21,6 +21,11 @@ class LeaderboardViewModel(
     private val _userLeaderboards = MutableLiveData<List<String>>()
     val userLeaderboards: LiveData<List<String>> = _userLeaderboards
 
+    fun isAdmin(leaderboard: LeaderboardManager.Leaderboard?): Boolean {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        return currentUser?.uid == leaderboard?.admin
+    }
+
     fun loadUserLeaderboards() {
         val currentUser = FirebaseAuth.getInstance().currentUser
         currentUser?.let { user ->
@@ -45,7 +50,8 @@ class LeaderboardViewModel(
                                 name = userMap["name"] as? String ?: "Unknown",
                                 points = userMap["points"] as? Int ?: 0
                             )
-                        } ?: listOf()
+                        } ?: listOf(),
+                        admin = it["admin"] as? String ?: "Unknown"
                     )
                     details.add(leaderboard)
                 }
@@ -74,7 +80,8 @@ class LeaderboardViewModel(
                 addAll(selectedFriends)
             }
 
-            leaderboardManager.createNewLeaderboard(leaderboardName, allPlayers) { success, leaderboardId ->
+
+            leaderboardManager.createNewLeaderboard(leaderboardName, allPlayers, user.uid) { success, leaderboardId ->
                 if (success && leaderboardId != null) {
                     addPlayersToLeaderboard(leaderboardId, allPlayers)
                     loadUserLeaderboards()
