@@ -22,12 +22,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import no.hiof.groupone.habittracker.R
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 import no.hiof.groupone.habittracker.viewmodel.SocialViewModel
 
@@ -50,6 +53,7 @@ fun SocialManagement(
     val snackbarHostState = remember { SnackbarHostState() }
     var showSnackbar by remember { mutableStateOf(false) }
     var snackbarMessage by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         socialViewModel.loadFriends()
@@ -63,7 +67,7 @@ fun SocialManagement(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Manage Friends",
+            text = stringResource(R.string.manage_friends_label),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 16.dp)
@@ -72,7 +76,7 @@ fun SocialManagement(
         TextField(
             value = friendName,
             onValueChange = { socialViewModel.updateFriendName(it) },
-            label = { Text("Friend's Name") },
+            label = { Text(stringResource(R.string.lbl_friends_name)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
@@ -81,7 +85,7 @@ fun SocialManagement(
         Button(
             onClick = {
                 socialViewModel.addFriend()
-                snackbarMessage = "Friend added successfully"
+                snackbarMessage = context.getString(R.string.snackbar_friend_added_success)
                 showSnackbar = true
             },
             shape = RoundedCornerShape(8.dp),
@@ -89,13 +93,13 @@ fun SocialManagement(
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
         ) {
-            Text("Add Friend")
+            Text(stringResource(R.string.btn_add_friend))
         }
 
         Button(
             onClick = {
                 socialViewModel.removeFriend()
-                snackbarMessage = "Friend removed successfully"
+                snackbarMessage = context.getString(R.string.snackbar_friend_removed_success)
                 showSnackbar = true
             },
             shape = RoundedCornerShape(8.dp),
@@ -103,7 +107,7 @@ fun SocialManagement(
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
         ) {
-            Text("Remove Friend")
+            Text(stringResource(R.string.btn_remove_friend))
         }
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -115,13 +119,13 @@ fun SocialManagement(
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
         ) {
-            Text("Friends List")
+            Text(stringResource(R.string.btn_friends_list))
         }
 
         if (showFriendsListDialog) {
             AlertDialog(
                 onDismissRequest = { showFriendsListDialog = false },
-                title = { Text("Friends List") },
+                title = { Text(stringResource(R.string.lbl_friends_list)) },
                 text = {
                     Column {
                         friendsList.forEach { friend ->
@@ -135,7 +139,7 @@ fun SocialManagement(
                 },
                 confirmButton = {
                     Button(onClick = { showFriendsListDialog = false }) {
-                        Text("Close")
+                        Text(stringResource(R.string.btn_close))
                     }
                 }
             )
@@ -149,13 +153,13 @@ fun SocialManagement(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            Text("Select Habit")
+            Text(stringResource(R.string.btn_select_habit))
         }
 
         if (shareHabitDialog) {
             AlertDialog(
                 onDismissRequest = { shareHabitDialog = false },
-                title = { Text("Select Habit to Share") },
+                title = { Text(stringResource(R.string.lbl_select_habit_to_share)) },
                 text = {
                     Column {
                         userHabits.forEach { (habitId, habitName) ->
@@ -176,7 +180,7 @@ fun SocialManagement(
                 },
                 confirmButton = {
                     Button(onClick = { shareHabitDialog = false }) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.btn_cancel))
                     }
                 }
             )
@@ -185,7 +189,7 @@ fun SocialManagement(
         TextField(
             value = selectedHabitName,
             onValueChange = {},
-            label = { Text("Selected Habit") },
+            label = { Text(stringResource(R.string.lbl_selected_habit)) },
             modifier = Modifier
                 .fillMaxWidth(),
             enabled = false
@@ -197,13 +201,13 @@ fun SocialManagement(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            Text("Select Friend")
+            Text(stringResource(R.string.btn_select_friend))
         }
 
         TextField(
             value = selectedFriendName,
             onValueChange = {},
-            label = { Text("Selected Friend") },
+            label = { Text(stringResource(R.string.lbl_selected_friend)) },
             modifier = Modifier
                 .fillMaxWidth(),
             enabled = false
@@ -212,7 +216,7 @@ fun SocialManagement(
         if (showSelectFriendDialog) {
             AlertDialog(
                 onDismissRequest = { showSelectFriendDialog = false },
-                title = { Text("Select a Friend") },
+                title = { Text(stringResource(R.string.lbl_select_a_friend)) },
                 text = {
                     Column {
                         friendsList.forEach { friend ->
@@ -232,7 +236,7 @@ fun SocialManagement(
                 },
                 confirmButton = {
                     Button(onClick = { showSelectFriendDialog = false }) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.btn_cancel))
                     }
                 }
             )
@@ -242,7 +246,7 @@ fun SocialManagement(
             onClick = {
                 if (selectedHabitId.isNotEmpty() && selectedFriendName.isNotEmpty()) {
                     socialViewModel.shareHabit(selectedHabitId, selectedFriendName)
-                    snackbarMessage = "Habit shared successfully"
+                    snackbarMessage = context.getString(R.string.snackbar_habit_shared_success)
                     showSnackbar = true
                     selectedHabitId = ""
                     selectedHabitName = ""
@@ -253,7 +257,7 @@ fun SocialManagement(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            Text("Share")
+            Text(stringResource(R.string.btn_share))
         }
 
         SnackbarHost(

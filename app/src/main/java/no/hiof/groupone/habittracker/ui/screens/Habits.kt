@@ -8,10 +8,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import no.hiof.groupone.habittracker.R
 import no.hiof.groupone.habittracker.viewmodel.HabitListViewModel
 import no.hiof.groupone.habittracker.model.Habit
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
@@ -83,8 +84,11 @@ fun HabitListItem(habit: Habit) {
                 Text(text = it, style = MaterialTheme.typography.bodyMedium)
             }
             // Display formatted start and end times
-            Text(text = "Start Time: ${formatTime(habit.startTime)}", style = MaterialTheme.typography.bodySmall)
-            Text(text = "End Time: ${formatTime(habit.endTime)}", style = MaterialTheme.typography.bodySmall)
+            Text(text = stringResource(R.string.lbl_start_time_with_placeholder, formatTime(habit.startTime)), style = MaterialTheme.typography.bodySmall)
+            Text(text = stringResource(
+                R.string.lbl_end_time_with_placeholder,
+                formatTime(habit.endTime)
+            ), style = MaterialTheme.typography.bodySmall)
         }
     }
 }

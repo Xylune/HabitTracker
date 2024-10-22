@@ -19,9 +19,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import no.hiof.groupone.habittracker.R
 import no.hiof.groupone.habittracker.viewmodel.AuthState
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 
@@ -66,7 +68,7 @@ fun Login(modifier: Modifier = Modifier, navController: NavController, authViewM
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text(text = "Email") }
+            label = { Text(text = stringResource(R.string.lbl_email)) }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -74,7 +76,7 @@ fun Login(modifier: Modifier = Modifier, navController: NavController, authViewM
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text(text = "Password") }
+            label = { Text(text = stringResource(R.string.lbl_password)) }
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -84,7 +86,7 @@ fun Login(modifier: Modifier = Modifier, navController: NavController, authViewM
         },
             enabled = email.isNotBlank() && password.isNotBlank() && authState.value != AuthState.Loading
         ) {
-            Text(text = "Login")
+            Text(text = stringResource(R.string.lbl_login))
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -92,7 +94,7 @@ fun Login(modifier: Modifier = Modifier, navController: NavController, authViewM
         TextButton(onClick = {
             navController.navigate("signup")
         }) {
-            Text(text = "New user? signup here.")
+            Text(text = stringResource(R.string.btn_new_user_signup_here))
         }
     }
 }

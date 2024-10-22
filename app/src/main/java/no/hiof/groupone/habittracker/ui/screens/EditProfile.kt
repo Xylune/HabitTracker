@@ -25,12 +25,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
+import no.hiof.groupone.habittracker.R
 import no.hiof.groupone.habittracker.viewmodel.AuthState
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 import no.hiof.groupone.habittracker.viewmodel.ProfileViewModel
@@ -84,19 +86,22 @@ fun EditProfile(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
-            Text(text = "Edit Profile Screen", modifier = Modifier)
+            Text(text = stringResource(R.string.lbl_edit_profile_screen), modifier = Modifier)
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "User Name: ${if (userName.value.isEmpty()) "No User Name" else userName.value}",
+                    text = stringResource(
+                        R.string.lbl_user_name_with_placeholder,
+                        userName.value.ifEmpty { stringResource(R.string.lbl_no_user_name) }
+                    ),
                     modifier = Modifier.weight(1f)
                 )
 
                 Button(onClick = { profileViewModel.isEditingUserName.value = true }) {
-                    Text(text = "Edit")
+                    Text(text = stringResource(R.string.btn_edit))
                 }
             }
 
@@ -104,7 +109,7 @@ fun EditProfile(
                 OutlinedTextField(
                     value = userName.value,
                     onValueChange = { userName.value = it },
-                    label = { Text(text = "Display Name") }
+                    label = { Text(text = stringResource(R.string.lbl_display_name)) }
                 )
             }
 
@@ -115,14 +120,17 @@ fun EditProfile(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Email: ${if (email.value.isEmpty()) "No Email found" else email.value}",
+                    text = stringResource(
+                        R.string.lbl_email_with_placeholder,
+                        email.value.ifEmpty { stringResource(R.string.lbl_no_email_found) }
+                    ),
                     modifier = Modifier.weight(1f)
                 )
                 Button(onClick = {
                     profileViewModel.isEditingEmail.value = true
                     originalEmail = email.value
                 }) {
-                    Text(text = "Edit")
+                    Text(text = stringResource(R.string.btn_edit))
                 }
             }
 
@@ -130,7 +138,7 @@ fun EditProfile(
                 OutlinedTextField(
                     value = email.value,
                     onValueChange = { email.value = it },
-                    label = { Text(text = "Email") }
+                    label = { Text(text = stringResource(R.string.lbl_email)) }
                 )
             }
 
@@ -142,14 +150,17 @@ fun EditProfile(
                         profileViewModel.updateEmail(user, emailToUpdate,
                             onSuccess = {
                                 Toast.makeText(context,
-                                    "A verification email has been sent to: $emailToUpdate. Please verify it and sign back in.",
+                                    context.getString(
+                                        R.string.toast_email_verified_with_placeholder,
+                                        emailToUpdate
+                                    ),
                                     Toast.LENGTH_LONG).show()
 
                                 profileViewModel.isEditingEmail.value = false
                                 authViewModel.signout()
                             },
                             onFailure = { errorMessage ->
-                                if (errorMessage == "Re authentication required") {
+                                if (errorMessage == context.getString(R.string.error_re_authentication_required)) {
                                     emailToUpdate = email.value
                                     showReAuthDialog = true
                                 } else {
@@ -162,7 +173,8 @@ fun EditProfile(
                     if (profileViewModel.isEditingUserName.value) {
                         profileViewModel.updateDisplayName(user, userName.value,
                             onSuccess = {
-                                Toast.makeText(context, "Display name updated successfully!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context,
+                                    context.getString(R.string.toast_display_name_update_success), Toast.LENGTH_SHORT).show()
                                 profileViewModel.isEditingUserName.value = false
                             },
                             onFailure = { errorMessage ->
@@ -180,7 +192,8 @@ fun EditProfile(
                 user?.reload()?.addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         profileViewModel.fetchUserData(user)
-                        Toast.makeText(context, "Profile refreshed!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context,
+                            context.getString(R.string.toast_profile_refreshed), Toast.LENGTH_SHORT).show()
                     } else {
                         if (task.exception is FirebaseAuthRecentLoginRequiredException) {
                             showReAuthDialog = true
@@ -190,7 +203,7 @@ fun EditProfile(
                     }
                 }
             }) {
-                Text(text = "Refresh Profile")
+                Text(text = stringResource(R.string.btn_refresh_profile))
             }
 
             if (showReAuthDialog) {
@@ -203,7 +216,10 @@ fun EditProfile(
                                 profileViewModel.updateEmail(user, emailToUpdate,
                                     onSuccess = {
                                         Toast.makeText(context,
-                                            "A verification email has been sent to: $emailToUpdate. Please verify it and sign back in.",
+                                            context.getString(
+                                                R.string.toast_email_verified_with_placeholder,
+                                                emailToUpdate
+                                            ),
                                             Toast.LENGTH_LONG).show()
 
                                         showReAuthDialog = false
@@ -215,7 +231,11 @@ fun EditProfile(
                                 )
                             },
                             onFailure = { reAuthError ->
-                                Toast.makeText(context, "Re-authentication failed: $reAuthError", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context,
+                                    context.getString(
+                                        R.string.toast_re_authentication_failed_with_placeholder,
+                                        reAuthError
+                                    ), Toast.LENGTH_SHORT).show()
                             }
                         )
                     },
@@ -242,15 +262,15 @@ fun ReAuthDialog(
     // Dialog to show re-authentication
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(text = "Re-authentication Required") },
+        title = { Text(text = stringResource(R.string.lbl_re_authentication_required)) },
         text = {
             Column {
-                Text(text = "Please enter your password to continue.")
+                Text(text = stringResource(R.string.lbl_please_enter_your_password_to_continue))
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text(text = "Password") },
+                    label = { Text(text = stringResource(R.string.lbl_password)) },
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -263,12 +283,12 @@ fun ReAuthDialog(
                     onDismiss()
                 }
             ) {
-                Text(text = "Confirm")
+                Text(text = stringResource(R.string.lbl_confirm))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(text = "Cancel")
+                Text(text = stringResource(R.string.btn_cancel))
             }
         }
     )

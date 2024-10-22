@@ -19,9 +19,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import no.hiof.groupone.habittracker.R
 import no.hiof.groupone.habittracker.viewmodel.AuthState
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 
@@ -61,14 +63,14 @@ fun Signup(modifier: Modifier = Modifier, navController: NavController, authView
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Create Account", fontSize = 26.sp)
+        Text(text = stringResource(R.string.lbl_create_account), fontSize = 26.sp)
 
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text(text = "Email") }
+            label = { Text(text = stringResource(R.string.lbl_email)) }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -76,7 +78,7 @@ fun Signup(modifier: Modifier = Modifier, navController: NavController, authView
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text(text = "Password") }
+            label = { Text(text = stringResource(R.string.lbl_password)) }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -84,7 +86,7 @@ fun Signup(modifier: Modifier = Modifier, navController: NavController, authView
         OutlinedTextField(
             value = displayName,
             onValueChange = { displayName = it },
-            label = { Text(text = "Display name") }
+            label = { Text(text = stringResource(R.string.lbl_display_name)) }
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -94,7 +96,7 @@ fun Signup(modifier: Modifier = Modifier, navController: NavController, authView
         },
             enabled = email.isNotBlank() && password.isNotBlank() && authState.value != AuthState.Loading
         ) {
-            Text(text = "Create account")
+            Text(text = stringResource(R.string.btn_create_account))
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -102,7 +104,7 @@ fun Signup(modifier: Modifier = Modifier, navController: NavController, authView
         TextButton(onClick = {
             navController.navigate("login")
         }) {
-            Text(text = "Go to Login")
+            Text(text = stringResource(R.string.btn_go_to_login))
         }
     }
 }

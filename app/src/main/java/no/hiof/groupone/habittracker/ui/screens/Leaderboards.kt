@@ -26,10 +26,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import no.hiof.groupone.habittracker.R
 import no.hiof.groupone.habittracker.model.LeaderboardManager
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 import no.hiof.groupone.habittracker.viewmodel.LeaderboardViewModel
@@ -44,6 +47,7 @@ fun LeaderboardScreen(
     var showCreateDialog by remember { mutableStateOf(false) }
     var selectedLeaderboard by remember { mutableStateOf<LeaderboardManager.Leaderboard?>(null) }
     var showLeaderboardSelection by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         leaderboardViewModel.loadFriends()
@@ -66,15 +70,15 @@ fun LeaderboardScreen(
                     .fillMaxWidth()
                     .padding(8.dp)
             ) {
-                Text(text = if (selectedLeaderboard == null) "Select Leaderboard" else selectedLeaderboard!!.name)
+                Text(text = if (selectedLeaderboard == null) stringResource(R.string.lbl_select_leaderboard) else selectedLeaderboard!!.name)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             selectedLeaderboard?.let {
-                Text(text = "Leaderboard: ${it.name}", style = MaterialTheme.typography.headlineMedium)
+                Text(text = stringResource(R.string.lbl_leaderboard_with_placeholder, it.name), style = MaterialTheme.typography.headlineMedium)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "Players:", style = MaterialTheme.typography.titleMedium)
+                Text(text = stringResource(R.string.lbl_players), style = MaterialTheme.typography.titleMedium)
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -82,12 +86,12 @@ fun LeaderboardScreen(
                     contentPadding = PaddingValues(16.dp)
                 ) {
                     items(it.users) { user ->
-                        Text(text = "${user.name}: ${user.points} points")
+                        Text(text = "${user.name}: ${user.points} " + context.getString(R.string.lbl_points_lowercase))
                         Spacer(modifier = Modifier.height(4.dp))
                     }
                 }
             } ?: run {
-                Text(text = "No leaderboard selected", style = MaterialTheme.typography.bodyMedium)
+                Text(text = stringResource(R.string.lbl_no_leaderboard_selected), style = MaterialTheme.typography.bodyMedium)
             }
         }
 
@@ -98,7 +102,7 @@ fun LeaderboardScreen(
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            Text(text = "Create New Leaderboard")
+            Text(text = stringResource(R.string.lbl_create_new_leaderboard))
         }
 
         if (showCreateDialog) {
@@ -136,18 +140,18 @@ fun CreateLeaderboardDialog(
 
     AlertDialog(
         onDismissRequest = { onDismiss() },
-        title = { Text(text = "Create New Leaderboard") },
+        title = { Text(text = stringResource(R.string.lbl_create_new_leaderboard)) },
         text = {
             Column {
                 TextField(
                     value = leaderboardName,
                     onValueChange = { leaderboardName = it },
-                    label = { Text("Leaderboard Name") }
+                    label = { Text(stringResource(R.string.lbl_leaderboard_name)) }
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(text = "Select Friends:")
+                Text(text = stringResource(R.string.lbl_select_friends))
 
                 if (friends.isNotEmpty()) {
                     LazyColumn(modifier = Modifier.height(150.dp)) {
@@ -168,18 +172,18 @@ fun CreateLeaderboardDialog(
                         }
                     }
                 } else {
-                    Text("Loading friends...")
+                    Text(stringResource(R.string.lbl_loading_friends))
                 }
             }
         },
         confirmButton = {
             Button(onClick = { onCreate(leaderboardName, selectedFriends.value.toList()) }) {
-                Text(text = "Create")
+                Text(text = stringResource(R.string.btn_create))
             }
         },
         dismissButton = {
             Button(onClick = { onDismiss() }) {
-                Text(text = "Cancel")
+                Text(text = stringResource(R.string.btn_cancel))
             }
         }
     )
@@ -193,7 +197,7 @@ fun LeaderboardSelectionDialog(
 ) {
     AlertDialog(
         onDismissRequest = { onDismiss() },
-        title = { Text(text = "Select Leaderboard") },
+        title = { Text(text = stringResource(R.string.lbl_select_leaderboard)) },
         text = {
             if (leaderboards.isNotEmpty()) {
                 LazyColumn {
@@ -204,13 +208,13 @@ fun LeaderboardSelectionDialog(
                     }
                 }
             } else {
-                Text("No leaderboards available.")
+                Text(stringResource(R.string.lbl_no_leaderboards_available))
             }
         },
         confirmButton = {},
         dismissButton = {
             Button(onClick = { onDismiss() }) {
-                Text(text = "Cancel")
+                Text(text = stringResource(R.string.btn_cancel))
             }
         }
     )

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HabitTracker</string>
+
+    <!-- navigation bar labels -->
+    <string name="lbl_home">Hjem</string>
+    <string name="lbl_my_habits">Mine Vaner</string>
+    <string name="lbl_add_habit">Legg til Vane</string>
+    <string name="lbl_calendar">Kalender</string>
+    <string name="lbl_profile">Profil</string>
+    <string name="lbl_settings">Innstillinger</string>
+    <string name="lbl_back">Tilbake</string>
+    <string name="open_menu_label">Åpne meny</string>
+
+    <!-- Home Screen labels -->
+    <string name="lbl_welcome">Velkommen %1$s</string>
+    <string name="lbl_display_name_with_placeholder">Visningsnavn: %1$s</string>
+    <string name="lbl_phone_number">Telefonnummer: %1$s</string>
+    <string name="lbl_profile_picture">Profilbilde</string>
+    <string name="lbl_create_habit">Opprett Vane</string>
+    <string name="lbl_view_leaderboards">Vis Ranglister</string>
+    <string name="lbl_sign_out">Logg ut</string>
+
+    <!-- Social Management Screen labels -->
+    <string name="manage_friends_label">Administrer Venner</string>
+    <string name="lbl_friends_name">Vennens Navn</string>
+    <string name="snackbar_friend_added_success">Venn lagt til</string>
+    <string name="snackbar_friend_removed_success">Venn fjernet</string>
+    <string name="btn_add_friend">Legg til Venn</string>
+    <string name="btn_remove_friend">Fjern Venn</string>
+    <string name="btn_friends_list">Venner Liste</string>
+    <string name="btn_close">Lukk</string>
+    <string name="lbl_friends_list">Venner Liste</string>
+    <string name="btn_select_habit">Velg Vane</string>
+    <string name="lbl_select_habit_to_share">Velg Vane å Dele</string>
+    <string name="btn_cancel">Avbryt</string>
+    <string name="lbl_selected_habit">Valgt Vane</string>
+    <string name="btn_select_friend">Velg Venn</string>
+    <string name="lbl_selected_friend">Valgt Venn</string>
+    <string name="lbl_select_a_friend">Velg en Venn</string>
+    <string name="snackbar_habit_shared_success">Vane delt</string>
+    <string name="btn_share">Del</string>
+
+    <!-- Create Habit Screen labels -->
+    <string name="lbl_habit_name">Vane navn</string>
+    <string name="lbl_habit_description">Vane beskrivelse</string>
+    <string name="lbl_one_time">Én gang</string>
+    <string name="lbl_frequency">Frekvens</string>
+    <string name="lbl_select_a_date_and_time">Velg en dato og tid:</string>
+    <string name="btn_pick_a_date">Velg en dato</string>
+    <string name="lbl_selected_date">Valgt dato: %1$s</string>
+    <string name="lbl_no_date_selected">Ingen dato valgt</string>
+    <string name="lbl_pick_a_time">Velg en tid</string>
+    <string name="lbl_selected_time">Valgt tid = %1$s</string>
+    <string name="lbl_no_time_selected">Ingen tid valgt.</string>
+    <string name="btn_create_habit">Opprett vane</string>
+    <string name="snackbar_habit_created_success">Vane opprettet</string>
+    <string name="snackbar_habit_created_failure">Feilet ved opprettelse av vane</string>
+
+    <!-- Edit Profile Screen labels -->
+    <string name="lbl_edit_profile_screen">Rediger Profil Skjerm</string>
+    <string name="lbl_user_name_with_placeholder">Brukernavn: %1$s</string>
+    <string name="lbl_no_user_name">Ingen Brukernavn</string>
+    <string name="btn_edit">Rediger</string>
+    <string name="lbl_display_name">Visningsnavn</string>
+    <string name="lbl_email_with_placeholder">E-post: %1$s</string>
+    <string name="lbl_no_email_found">Ingen E-post funnet</string>
+    <string name="lbl_email">E-post</string>
+    <string name="toast_email_verified_with_placeholder">En bekreftelses-e-post har blitt sendt til: %1$s. Vennligst bekreft den og logg inn igjen.</string>
+    <string name="error_re_authentication_required">Re-autentisering kreves</string>
+    <string name="toast_display_name_update_success">Visningsnavn oppdatert!</string>
+    <string name="toast_profile_refreshed">Profil oppdatert!</string>
+    <string name="btn_refresh_profile">Oppdater Profil</string>
+    <string name="toast_re_authentication_failed_with_placeholder">Re-autentisering feilet: %1$s</string>
+    <string name="lbl_re_authentication_required">Re-autentisering Kreves</string>
+    <string name="lbl_please_enter_your_password_to_continue">Vennligst skriv inn passordet ditt for å fortsette.</string>
+    <string name="lbl_password">Passord</string>
+    <string name="lbl_confirm">Bekreft</string>
+
+    <!-- Habit List Screen labels -->
+    <string name="lbl_start_time_with_placeholder">Starttid: %1$s</string>
+    <string name="lbl_end_time_with_placeholder">Sluttid: %1$s</string>
+
+    <!-- Login Screen labels -->
+    <string name="lbl_login">Logg Inn</string>
+    <string name="btn_new_user_signup_here">Ny bruker? Registrer deg her.</string>
+
+    <!-- Profile Screen labels -->
+    <string name="lbl_total_habits">Totalt Antall Vaner</string>
+    <string name="lbl_current_streak">Nåværende Streak</string>
+    <string name="lbl_points">Poeng</string>
+    <string name="btn_friend_manager">Vennadministrator</string>
+    <string name="btn_edit_profile">Rediger Profil</string>
+    <string name="lbl_your_habits">Dine Vaner</string>
+    <string name="lbl_no_habits_msg">Du har for øyeblikket ingen vaner, opprett en her!</string>
+    <string name="lbl_habit_with_placeholder">Vane: %1$s</string>
+    <string name="lbl_streak_with_placeholder">Streak: %1$s</string>
+    <string name="lbl_frequency_with_placeholder">Frekvens: %1$s</string>
+
+    <!-- Signup Screen labels -->
+    <string name="lbl_create_account">Opprett Konto</string>
+    <string name="btn_create_account">Opprett konto</string>
+    <string name="btn_go_to_login">Gå til Innlogging</string>
+
+    <!-- Calendar Screen labels -->
+    <string name="lbl_selected_date_with_placeholder">Valgt Dato: %1$s</string>
+
+    <!-- Leaderboards Screen labels -->
+    <string name="lbl_select_leaderboard">Velg Rangliste</string>
+    <string name="lbl_leaderboard_with_placeholder">Rangliste: %1$s</string>
+    <string name="lbl_players">Spillere:</string>
+    <string name="lbl_points_lowercase">poeng</string>
+    <string name="lbl_no_leaderboard_selected">Ingen rangliste valgt</string>
+    <string name="lbl_create_new_leaderboard">Opprett Ny Rangliste</string>
+    <string name="lbl_leaderboard_name">Rangliste Navn</string>
+    <string name="lbl_select_friends">Velg Venner:</string>
+    <string name="lbl_loading_friends">Laster venner...</string>
+    <string name="btn_create">Opprett</string>
+    <string name="lbl_no_leaderboards_available">Ingen ranglister tilgjengelig.</string>
+
+</resources>
+

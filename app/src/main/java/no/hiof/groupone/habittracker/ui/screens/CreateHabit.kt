@@ -34,6 +34,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,6 +43,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
+import no.hiof.groupone.habittracker.R
 import no.hiof.groupone.habittracker.model.Frequency
 import no.hiof.groupone.habittracker.model.Habit
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
@@ -78,6 +81,7 @@ fun CreateHabit(
     var showSnackbar by remember { mutableStateOf(false) }
     var snackbarSuccess by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -86,13 +90,13 @@ fun CreateHabit(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Create Habit", fontSize = 26.sp)
+        Text(text = stringResource(R.string.lbl_create_habit), fontSize = 26.sp)
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = habitName,
             onValueChange = { habitViewModel.updateHabitName(it) },
-            label = { Text(text = "Habit name") },
+            label = { Text(text = stringResource(R.string.lbl_habit_name)) },
             singleLine = true
         )
 
@@ -101,7 +105,7 @@ fun CreateHabit(
         OutlinedTextField(
             value = habitDescription,
             onValueChange = { habitViewModel.updateHabitDescription(it) },
-            label = { Text(text = "Habit description") },
+            label = { Text(text = stringResource(R.string.lbl_habit_description)) },
             singleLine = true
         )
 
@@ -112,10 +116,10 @@ fun CreateHabit(
             onExpandedChange = { expanded = !expanded }
         ) {
             TextField(
-                value = frequency ?: "One time",
+                value = frequency ?: stringResource(R.string.lbl_one_time),
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Frequency") },
+                label = { Text(stringResource(R.string.lbl_frequency)) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 modifier = Modifier.menuAnchor()
             )
@@ -126,7 +130,7 @@ fun CreateHabit(
             ) {
                 frequencyOptions.forEach { option ->
                     DropdownMenuItem(
-                        text = { Text(option ?: "One-time") },
+                        text = { Text(option ?: stringResource(R.string.lbl_one_time)) },
                         onClick = {
                             habitViewModel.updateFrequency(option)
                             expanded = false
@@ -139,17 +143,17 @@ fun CreateHabit(
         Spacer(modifier = Modifier.height(12.dp))
 
         var showModal by remember { mutableStateOf(false) }
-        Text("Select a date and time:")
+        Text(stringResource(R.string.lbl_select_a_date_and_time))
         Button(onClick = { showModal = true }) {
-            Text("Pick a date")
+            Text(stringResource(R.string.btn_pick_a_date))
         }
 
         if (selectedDate != null) {
             val date = Date(selectedDate!!)
             val formattedDate = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(date)
-            Text("Selected date: $formattedDate")
+            Text(stringResource(R.string.lbl_selected_date, formattedDate))
         } else {
-            Text("No date selected")
+            Text(stringResource(R.string.lbl_no_date_selected))
         }
 
         if (showModal) {
@@ -170,7 +174,7 @@ fun CreateHabit(
                 showInputExample = true
                 showMenu = false
             }) {
-                Text("Pick a time")
+                Text(stringResource(R.string.lbl_pick_a_time))
             }
 
             if (selectedTime != null) {
@@ -178,9 +182,9 @@ fun CreateHabit(
                 cal.set(Calendar.HOUR_OF_DAY, selectedTime!!.hour)
                 cal.set(Calendar.MINUTE, selectedTime!!.minute)
                 cal.isLenient = false
-                Text("Selected time = ${formatter.format(cal.time)}")
+                Text(stringResource(R.string.lbl_selected_time, formatter.format(cal.time)))
             } else {
-                Text("No time selected.")
+                Text(stringResource(R.string.lbl_no_time_selected))
             }
         }
 
@@ -234,7 +238,7 @@ fun CreateHabit(
                 showSnackbar = true
             }
         }) {
-            Text(text = "Create habit")
+            Text(text = stringResource(R.string.btn_create_habit))
         }
 
         SnackbarHost(
@@ -246,14 +250,14 @@ fun CreateHabit(
             if (showSnackbar) {
                 if (snackbarSuccess) {
                     snackbarHostState.showSnackbar(
-                        message = "Habit created successfully",
+                        message = context.getString(R.string.snackbar_habit_created_success),
                         actionLabel = "Dismiss",
                         duration = SnackbarDuration.Short
                     )
                     navController.navigate("home")
                 } else {
                     snackbarHostState.showSnackbar(
-                        message = "Failed to create habit",
+                        message = context.getString(R.string.snackbar_habit_created_failure),
                         duration = SnackbarDuration.Short
                     )
                 }
