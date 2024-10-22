@@ -32,12 +32,11 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val isDarkMode = remember { mutableStateOf(false) }
+            val navController = rememberNavController()
+            val openDialog = remember { mutableStateOf(false) }
+            var screenTitle by remember { mutableStateOf("Habit Tracker") }
 
             HabitTrackerTheme(darkTheme = isDarkMode.value) {
-                val navController = rememberNavController()
-                val openDialog = remember { mutableStateOf(false) }
-                var screenTitle by remember { mutableStateOf("Habit Tracker") }
-
                 LaunchedEffect(navController) {
                     navController.addOnDestinationChangedListener { _, destination, _ ->
                         screenTitle = when (destination.route) {
@@ -58,7 +57,13 @@ class MainActivity : ComponentActivity() {
                     AuthState.Authenticated -> {
                         Scaffold(
                             modifier = Modifier.fillMaxSize(),
-                            topBar = { TopNavBar(navController = navController, screenTitle = screenTitle) },
+                            topBar = {
+                                TopNavBar(
+                                    navController = navController,
+                                    screenTitle = screenTitle,
+                                    showBackButton = navController.previousBackStackEntry != null
+                                )
+                            },
                             bottomBar = { BottomNavBar(navController) }
                         ) { innerPadding ->
                             AppNavigation(

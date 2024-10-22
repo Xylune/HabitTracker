@@ -1,16 +1,11 @@
 
 import android.widget.CalendarView
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,29 +30,24 @@ fun CalendarScreen(habitListViewModel: HabitListViewModel = viewModel()) {
     var selectedDate by remember { mutableStateOf(Date()) }
     val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
-    Scaffold(
-        topBar = { TopNavBar() },
-        bottomBar = { BottomNavBar() }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            AndroidCalendarView { date ->
-                selectedDate = date
-            }
-
-            Text(
-                text = "Selected Date: ${dateFormat.format(selectedDate)}",
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(top = 16.dp)
-            )
-
-            HabitListForDate(selectedDate, habitListViewModel)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 70.dp)
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        AndroidCalendarView { date ->
+            selectedDate = date
         }
+
+        Text(
+            text = "Selected Date: ${dateFormat.format(selectedDate)}",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(top = 16.dp)
+        )
+
+        HabitListForDate(selectedDate, habitListViewModel)
     }
 }
 
@@ -75,25 +65,6 @@ fun AndroidCalendarView(onDateSelected: (Date) -> Unit) {
             }
         }}
     )
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TopNavBar() {
-    TopAppBar(
-        title = { Text(text = "Calendar") },
-        modifier = Modifier.background(MaterialTheme.colorScheme.primary)
-    )
-}
-
-@Composable
-fun BottomNavBar() {
-    BottomAppBar(
-        modifier = Modifier.background(MaterialTheme.colorScheme.primary)
-    ) {
-        Text(text = "Bottom Nav Bar", modifier = Modifier.padding(16.dp))
-    }
 }
 
 @Preview(showBackground = true)

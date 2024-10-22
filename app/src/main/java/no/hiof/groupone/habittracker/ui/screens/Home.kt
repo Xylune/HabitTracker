@@ -1,4 +1,4 @@
-package com.example.habittracker.screens
+package no.hiof.groupone.habittracker.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -58,7 +58,6 @@ fun Home(modifier: Modifier = Modifier, navController: NavController, authViewMo
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Display photo if available
             it.photoUrl?.let { photoUrl ->
                 AsyncImage(
                     model = photoUrl,

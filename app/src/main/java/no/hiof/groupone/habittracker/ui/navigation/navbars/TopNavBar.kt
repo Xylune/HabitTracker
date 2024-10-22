@@ -24,7 +24,7 @@ import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopNavBar(navController: NavHostController, screenTitle: String) {
+fun TopNavBar(navController: NavHostController, screenTitle: String, showBackButton: Boolean = true) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val isMenuExpanded = remember { mutableStateOf(false) }
 
@@ -41,13 +41,15 @@ fun TopNavBar(navController: NavHostController, screenTitle: String) {
             )
         },
         navigationIcon = {
-            IconButton(onClick = {
-                navController.popBackStack()
-            }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back"
-                )
+            if (showBackButton) {  // Show back button based on the parameter
+                IconButton(onClick = {
+                    navController.popBackStack()
+                }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back"
+                    )
+                }
             }
         },
         actions = {
