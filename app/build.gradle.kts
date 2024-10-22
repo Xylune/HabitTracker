@@ -88,6 +88,10 @@ dependencies {
 
     implementation("com.jakewharton.threetenabp:threetenabp:1.4.6")
 
+    // Notification dependancy
+    implementation("com.google.accompanist:accompanist-permissions:0.31.1-alpha")
+
+
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
 

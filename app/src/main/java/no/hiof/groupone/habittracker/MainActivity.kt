@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import no.hiof.groupone.habittracker.ui.navigation.AppNavigation
 import no.hiof.groupone.habittracker.ui.navigation.navbars.BottomNavBar
 import no.hiof.groupone.habittracker.ui.navigation.navbars.PopupScrollContent
@@ -25,6 +26,7 @@ import no.hiof.groupone.habittracker.viewmodel.AuthState
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalPermissionsApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
