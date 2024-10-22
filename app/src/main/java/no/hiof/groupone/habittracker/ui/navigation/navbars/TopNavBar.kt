@@ -24,10 +24,8 @@ import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopNavBar(navController: NavHostController) {
+fun TopNavBar(navController: NavHostController, screenTitle: String) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-
-    // Remember the state of the menu (open or closed)
     val isMenuExpanded = remember { mutableStateOf(false) }
 
     CenterAlignedTopAppBar(
@@ -37,14 +35,14 @@ fun TopNavBar(navController: NavHostController) {
         ),
         title = {
             Text(
-                "Habit Tracker",
+                screenTitle,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         },
         navigationIcon = {
             IconButton(onClick = {
-                navController.popBackStack() // Navigate back one screen
+                navController.popBackStack()
             }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -64,16 +62,16 @@ fun TopNavBar(navController: NavHostController) {
             // Dropdown Menu
             DropdownMenu(
                 expanded = isMenuExpanded.value,
-                onDismissRequest = { isMenuExpanded.value = false }, // Close the menu when clicking outside
+                onDismissRequest = { isMenuExpanded.value = false },
                 modifier = Modifier
-                    .wrapContentSize(Alignment.TopEnd) // Align to the top-right corner
+                    .wrapContentSize(Alignment.TopEnd)
             ) {
                 // Profile menu item
                 DropdownMenuItem(
                     text = { Text("Profile") },
                     onClick = {
                         navController.navigate("profile")
-                        isMenuExpanded.value = false // Close the menu after click
+                        isMenuExpanded.value = false
                     }
                 )
 
@@ -82,7 +80,7 @@ fun TopNavBar(navController: NavHostController) {
                     text = { Text("Settings") },
                     onClick = {
                         navController.navigate("settings")
-                        isMenuExpanded.value = false // Close the menu after click
+                        isMenuExpanded.value = false
                     }
                 )
             }

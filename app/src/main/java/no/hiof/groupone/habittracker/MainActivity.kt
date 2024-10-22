@@ -8,9 +8,12 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import no.hiof.groupone.habittracker.ui.navigation.AppNavigation
@@ -28,21 +31,34 @@ class MainActivity : ComponentActivity() {
         val authViewModel: AuthViewModel by viewModels()
 
         setContent {
-            // Dark mode state to control the theme
             val isDarkMode = remember { mutableStateOf(false) }
 
-            // Apply the theme based on dark mode state
             HabitTrackerTheme(darkTheme = isDarkMode.value) {
                 val navController = rememberNavController()
                 val openDialog = remember { mutableStateOf(false) }
+                var screenTitle by remember { mutableStateOf("Habit Tracker") }
 
-                // Observe authentication state changes
+                LaunchedEffect(navController) {
+                    navController.addOnDestinationChangedListener { _, destination, _ ->
+                        screenTitle = when (destination.route) {
+                            "home" -> "Habit Tracker"
+                            "habits" -> "My Habits"
+                            "createHabit" -> "Add Habit"
+                            "calendar" -> "Calendar"
+                            "profile" -> "Profile"
+                            "settings" -> "Settings"
+                            else -> "Habit Tracker"
+                        }
+                    }
+                }
+
                 val authState = authViewModel.authState.observeAsState()
+
                 when (authState.value) {
                     AuthState.Authenticated -> {
                         Scaffold(
                             modifier = Modifier.fillMaxSize(),
-                            topBar = { TopNavBar(navController = navController) },
+                            topBar = { TopNavBar(navController = navController, screenTitle = screenTitle) },
                             bottomBar = { BottomNavBar(navController) }
                         ) { innerPadding ->
                             AppNavigation(
@@ -73,5 +89,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-

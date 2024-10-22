@@ -43,7 +43,7 @@ fun CalendarScreen(habitListViewModel: HabitListViewModel = viewModel()) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
+                .padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AndroidCalendarView { date ->
@@ -56,7 +56,6 @@ fun CalendarScreen(habitListViewModel: HabitListViewModel = viewModel()) {
                 modifier = Modifier.padding(top = 16.dp)
             )
 
-            // Display habits for the selected date
             HabitListForDate(selectedDate, habitListViewModel)
         }
     }
@@ -74,15 +73,16 @@ fun AndroidCalendarView(onDateSelected: (Date) -> Unit) {
                 calendar.set(year, month, dayOfMonth)
                 onDateSelected(calendar.time)
             }
-        } }
+        }}
     )
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopNavBar() {
     TopAppBar(
-        title = { Text(text = "Habit Tracker") },
+        title = { Text(text = "Calendar") },
         modifier = Modifier.background(MaterialTheme.colorScheme.primary)
     )
 }

@@ -9,9 +9,8 @@ import androidx.navigation.compose.composable
 import com.example.habittracker.screens.Home
 import no.hiof.groupone.habittracker.screens.LeaderboardScreen
 import no.hiof.groupone.habittracker.screens.Login
-import no.hiof.groupone.habittracker.ui.screens.CreateHabit
-import no.hiof.groupone.habittracker.ui.screens.ProfileScreen
 import no.hiof.groupone.habittracker.ui.SocialManagement
+import no.hiof.groupone.habittracker.ui.screens.CreateHabit
 import no.hiof.groupone.habittracker.ui.screens.EditProfile
 import no.hiof.groupone.habittracker.ui.screens.Habits
 import no.hiof.groupone.habittracker.ui.screens.ProfileScreen
@@ -52,8 +51,6 @@ fun AppNavigation(
         composable("settings") {
             SettingsScreen(
                 modifier = modifier,
-                navController = navController,
-                authViewModel = authViewModel,
                 isDarkMode = isDarkMode,
                 onDarkModeToggle = onDarkModeToggle
             )
