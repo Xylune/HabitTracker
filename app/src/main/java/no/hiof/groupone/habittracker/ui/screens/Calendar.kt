@@ -34,6 +34,7 @@ fun CalendarScreen(habitListViewModel: HabitListViewModel = viewModel()) {
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 70.dp)
+            .padding(bottom = 95.dp)
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -44,7 +45,7 @@ fun CalendarScreen(habitListViewModel: HabitListViewModel = viewModel()) {
         Text(
             text = "Selected Date: ${dateFormat.format(selectedDate)}",
             style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(top = 16.dp)
+            modifier = Modifier.padding(bottom = 8.dp)
         )
 
         HabitListForDate(selectedDate, habitListViewModel)
