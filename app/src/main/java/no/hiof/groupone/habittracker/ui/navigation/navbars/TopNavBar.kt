@@ -19,8 +19,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavHostController
+import no.hiof.groupone.habittracker.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,7 +50,7 @@ fun TopNavBar(navController: NavHostController) {
             }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = stringResource(R.string.lbl_back)
                 )
             }
         },
@@ -57,7 +59,7 @@ fun TopNavBar(navController: NavHostController) {
             IconButton(onClick = { isMenuExpanded.value = true }) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
-                    contentDescription = "Open menu"
+                    contentDescription = stringResource(R.string.open_menu_label)
                 )
             }
 
@@ -70,7 +72,7 @@ fun TopNavBar(navController: NavHostController) {
             ) {
                 // Profile menu item
                 DropdownMenuItem(
-                    text = { Text("Profile") },
+                    text = { Text(stringResource(R.string.lbl_profile)) },
                     onClick = {
                         navController.navigate("profile")
                         isMenuExpanded.value = false // Close the menu after click
@@ -79,7 +81,7 @@ fun TopNavBar(navController: NavHostController) {
 
                 // Settings menu item
                 DropdownMenuItem(
-                    text = { Text("Settings") },
+                    text = { Text(stringResource(R.string.lbl_settings)) },
                     onClick = {
                         navController.navigate("settings")
                         isMenuExpanded.value = false // Close the menu after click

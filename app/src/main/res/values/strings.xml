@@ -1,3 +1,123 @@
 <resources>
     <string name="app_name">HabitTracker</string>
+
+    <!-- navigation bar labels -->
+    <string name="lbl_home">Home</string>
+    <string name="lbl_my_habits">My Habits</string>
+    <string name="lbl_add_habit">Add Habit</string>
+    <string name="lbl_calendar">Calendar</string>
+    <string name="lbl_profile">Profile</string>
+    <string name="lbl_settings">Settings</string>
+    <string name="lbl_back">Back</string>
+    <string name="open_menu_label">Open menu</string>
+
+    <!-- Home Screen labels -->
+    <string name="lbl_welcome">Welcome %1$s</string>
+    <string name="lbl_display_name_with_placeholder">Display Name: %1$s</string>
+    <string name="lbl_phone_number">Phone Number: %1$s</string>
+    <string name="lbl_profile_picture">Profile Picture</string>
+    <string name="lbl_create_habit">Create Habit</string>
+    <string name="lbl_view_leaderboards">View Leaderboards</string>
+    <string name="lbl_sign_out">Sign out</string>
+
+    <!-- Social Management Screen labels -->
+    <string name="manage_friends_label">Manage Friends</string>
+    <string name="lbl_friends_name">Friend\'s Name</string>
+    <string name="snackbar_friend_added_success">Friend added successfully</string>
+    <string name="snackbar_friend_removed_success">Friend removed successfully</string>
+    <string name="btn_add_friend">Add Friend</string>
+    <string name="btn_remove_friend">Remove Friend</string>
+    <string name="btn_friends_list">Friends List</string>
+    <string name="btn_close">Close</string>
+    <string name="lbl_friends_list">Friends List</string>
+    <string name="btn_select_habit">Select Habit</string>
+    <string name="lbl_select_habit_to_share">Select Habit to Share</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="lbl_selected_habit">Selected Habit</string>
+    <string name="btn_select_friend">Select Friend</string>
+    <string name="lbl_selected_friend">Selected Friend</string>
+    <string name="lbl_select_a_friend">Select a Friend</string>
+    <string name="snackbar_habit_shared_success">Habit shared successfully</string>
+    <string name="btn_share">Share</string>
+
+
+    <!-- Create Habit Screen labels -->
+    <string name="lbl_habit_name">Habit name</string>
+    <string name="lbl_habit_description">Habit description</string>
+    <string name="lbl_one_time">One time</string>
+    <string name="lbl_frequency">Frequency</string>
+    <string name="lbl_select_a_date_and_time">Select a date and time:</string>
+    <string name="btn_pick_a_date">Pick a date</string>
+    <string name="lbl_selected_date">Selected date: %1$s</string>
+    <string name="lbl_no_date_selected">No date selected</string>
+    <string name="lbl_pick_a_time">Pick a time</string>
+    <string name="lbl_selected_time">Selected time = %1$s</string>
+    <string name="lbl_no_time_selected">No time selected.</string>
+    <string name="btn_create_habit">Create habit</string>
+    <string name="snackbar_habit_created_success">Habit created successfully</string>
+    <string name="snackbar_habit_created_failure">Failed to create habit</string>
+
+
+    <!-- Edit Profile Screen labels -->
+    <string name="lbl_edit_profile_screen">Edit Profile Screen</string>
+    <string name="lbl_user_name_with_placeholder">User Name: %1$s</string>
+    <string name="lbl_no_user_name">No User Name</string>
+    <string name="btn_edit">Edit</string>
+    <string name="lbl_display_name">Display Name</string>
+    <string name="lbl_email_with_placeholder">Email: %1$s</string>
+    <string name="lbl_no_email_found">No Email found</string>
+    <string name="lbl_email">Email</string>
+    <string name="toast_email_verified_with_placeholder">A verification email has been sent to: %1$s. Please verify it and sign back in.</string>
+    <string name="error_re_authentication_required">Re authentication required</string>
+    <string name="toast_display_name_update_success">Display name updated successfully!</string>
+    <string name="toast_profile_refreshed">Profile refreshed!</string>
+    <string name="btn_refresh_profile">Refresh Profile</string>
+    <string name="toast_re_authentication_failed_with_placeholder">Re-authentication failed: %1$s</string>
+    <string name="lbl_re_authentication_required">Re-authentication Required</string>
+    <string name="lbl_please_enter_your_password_to_continue">Please enter your password to continue.</string>
+    <string name="lbl_password">Password</string>
+    <string name="lbl_confirm">Confirm</string>
+
+    <!-- Habit List Screen labels -->
+    <string name="lbl_start_time_with_placeholder">Start Time: %1$s</string>
+    <string name="lbl_end_time_with_placeholder">End Time: %1$s</string>
+
+    <!-- Login Screen labels -->
+    <string name="lbl_login">Login</string>
+    <string name="btn_new_user_signup_here">New user? signup here.</string>
+
+    <!-- Profile Screen labels -->
+    <string name="lbl_total_habits">Total Habits</string>
+    <string name="lbl_current_streak">Current Streak</string>
+    <string name="lbl_points">Points</string>
+    <string name="btn_friend_manager">Friend Manager</string>
+    <string name="btn_edit_profile">Edit Profile</string>
+    <string name="lbl_your_habits">Your Habits</string>
+    <string name="lbl_no_habits_msg">You currently don\'t have any habits, Create one here!</string>
+    <string name="lbl_habit_with_placeholder">Habit: %1$s</string>
+    <string name="lbl_streak_with_placeholder">Streak: %1$s</string>
+    <string name="lbl_frequency_with_placeholder">Frequency: %1$s</string>
+
+    <!-- Signup Screen labels -->
+    <string name="lbl_create_account">Create Account</string>
+    <string name="btn_create_account">Create account</string>
+    <string name="btn_go_to_login">Go to Login</string>
+
+    <!-- Calendar Screen labels -->
+    <string name="lbl_selected_date_with_placeholder">Selected Date: %1$s</string>
+
+    <!-- Leaderboards Screen labels -->
+    <string name="lbl_select_leaderboard">Select Leaderboard</string>
+    <string name="lbl_leaderboard_with_placeholder">Leaderboard: %1$s</string>
+    <string name="lbl_players">Players:</string>
+    <string name="lbl_points_lowercase">points</string>
+    <string name="lbl_no_leaderboard_selected">No leaderboard selected</string>
+    <string name="lbl_create_new_leaderboard">Create New Leaderboard</string>
+    <string name="lbl_leaderboard_name">Leaderboard Name</string>
+    <string name="lbl_select_friends">Select Friends:</string>
+    <string name="lbl_loading_friends">Loading friends...</string>
+    <string name="btn_create">Create</string>
+    <string name="lbl_no_leaderboards_available">No leaderboards available.</string>
+
+
 </resources>

@@ -13,12 +13,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import no.hiof.groupone.habittracker.R
 import no.hiof.groupone.habittracker.viewmodel.AuthState
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 
@@ -46,15 +48,15 @@ fun Home(modifier: Modifier = Modifier, navController: NavController, authViewMo
         Text(text = "Home", fontSize = 26.sp)
 
         user?.let {
-            Text(text = "Welcome ${user.email}", fontSize = 22.sp)
+            Text(text = stringResource(R.string.lbl_welcome, user.email ?: "N/A"), fontSize = 22.sp)
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text("Display Name: ${it.displayName ?: "N/A"}")
+            Text(stringResource(R.string.lbl_display_name_with_placeholder, it.displayName ?: "N/A"))
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text("Phone Number: ${it.phoneNumber ?: "N/A"}")
+            Text(stringResource(R.string.lbl_phone_number, it.phoneNumber ?: "N/A"))
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -62,7 +64,7 @@ fun Home(modifier: Modifier = Modifier, navController: NavController, authViewMo
             it.photoUrl?.let { photoUrl ->
                 AsyncImage(
                     model = photoUrl,
-                    contentDescription = "Profile Picture",
+                    contentDescription = stringResource(R.string.lbl_profile_picture),
                     modifier = Modifier.size(100.dp)
                 )
             }
@@ -71,17 +73,17 @@ fun Home(modifier: Modifier = Modifier, navController: NavController, authViewMo
         Spacer(modifier = Modifier.height(16.dp))
 
         TextButton(onClick = { navController.navigate("createHabit") }) {
-            Text(text = "Create Habit")
+            Text(text = stringResource(R.string.lbl_create_habit))
         }
 
         TextButton(onClick = { navController.navigate("leaderboards") }) {
-            Text(text = "View Leaderboards")
+            Text(text = stringResource(R.string.lbl_view_leaderboards))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         TextButton(onClick = { authViewModel.signout() }) {
-            Text(text = "Sign out")
+            Text(text = stringResource(R.string.lbl_sign_out))
         }
     }
 }

@@ -30,11 +30,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import no.hiof.groupone.habittracker.R
 import no.hiof.groupone.habittracker.model.Habit
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 import no.hiof.groupone.habittracker.viewmodel.ProfileViewModel
@@ -93,7 +95,7 @@ fun ProfileScreen(
             ) {
                 Image(
                     imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Profile Picture",
+                    contentDescription = stringResource(R.string.lbl_profile_picture),
                     modifier = Modifier
                         .size(120.dp)
                         .clip(CircleShape)
@@ -120,9 +122,9 @@ fun ProfileScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                ProfileStat("Total Habits", totalHabits.value)
-                ProfileStat("Current Streak", currentStreak.value)
-                ProfileStat("Points", points.value)
+                ProfileStat(stringResource(R.string.lbl_total_habits), totalHabits.value)
+                ProfileStat(stringResource(R.string.lbl_current_streak), currentStreak.value)
+                ProfileStat(stringResource(R.string.lbl_points), points.value)
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -138,33 +140,33 @@ fun ProfileScreen(
                 Button(
                     onClick = { navController.navigate("SocialManagement") }
                 ) {
-                    Text(text = "Friend Manager")
+                    Text(text = stringResource(R.string.btn_friend_manager))
                 }
 
                 // Edit Profile button
                 Button(
                     onClick = { navController.navigate("editProfile") }
                 ) {
-                    Text("Edit Profile")
+                    Text(stringResource(R.string.btn_edit_profile))
                 }
             }
 
 
             // Habit List
             Text(
-                text = "Your Habits",
+                text = stringResource(R.string.lbl_your_habits),
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
 
             if (habitList.value.isEmpty()) {
-                Text("You currently don't have any habits, Create one here!")
+                Text(stringResource(R.string.lbl_no_habits_msg))
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
                     onClick = { navController.navigate("createHabit") },
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
-                    Text("Create Habit")
+                    Text(stringResource(R.string.lbl_create_habit))
                 }
             } else {
                 LazyColumn(
@@ -200,7 +202,7 @@ fun HabitItem(habit: Habit) {
 
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
         Text(
-            text = "Habit: ${habit.id}",
+            text = stringResource(R.string.lbl_habit_with_placeholder, habit.id),
             style = MaterialTheme.typography.titleMedium
         )
         Text(
@@ -208,15 +210,19 @@ fun HabitItem(habit: Habit) {
             style = MaterialTheme.typography.titleMedium
         )
         Text(
-            text = "Streak: ${habit.currentStreak}",
+            text = stringResource(R.string.lbl_streak_with_placeholder, habit.currentStreak),
             style = MaterialTheme.typography.bodyMedium
         )
         Text(
-            text = "Frequency: ${habit.frequency ?: "One time"}",
+            text = stringResource(
+                R.string.lbl_frequency_with_placeholder,
+                habit.frequency ?: stringResource(R.string.lbl_one_time)
+            ),
             style = MaterialTheme.typography.bodyMedium
         )
         Text(
-            text = "Start Time: $date",
+
+            text = stringResource(R.string.lbl_start_time_with_placeholder, date),
             style = MaterialTheme.typography.bodyMedium
         )
     }

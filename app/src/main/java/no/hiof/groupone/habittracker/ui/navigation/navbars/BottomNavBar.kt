@@ -16,11 +16,20 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
+import no.hiof.groupone.habittracker.R
+import androidx.compose.ui.res.stringResource
 
 @Composable
 fun BottomNavBar(navController: NavHostController) {
+
     var selectedItem by remember { mutableIntStateOf(0) }
-    val items = listOf("Home", "My Habits", "Add Habit", "Calendar", "Profile")
+    val items = listOf(
+        stringResource(R.string.lbl_home),
+        stringResource(R.string.lbl_my_habits),
+        stringResource(R.string.lbl_add_habit),
+        stringResource(R.string.lbl_calendar),
+        stringResource(R.string.lbl_profile)
+    )
 
     NavigationBar {
         items.forEachIndexed { index, item ->

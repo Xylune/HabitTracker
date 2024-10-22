@@ -19,10 +19,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
+import no.hiof.groupone.habittracker.R
 import no.hiof.groupone.habittracker.viewmodel.HabitListForDate
 import no.hiof.groupone.habittracker.viewmodel.HabitListViewModel
 import java.text.SimpleDateFormat
@@ -51,7 +53,10 @@ fun CalendarScreen(habitListViewModel: HabitListViewModel = viewModel()) {
             }
 
             Text(
-                text = "Selected Date: ${dateFormat.format(selectedDate)}",
+                text = stringResource(
+                    R.string.lbl_selected_date_with_placeholder,
+                    dateFormat.format(selectedDate)
+                ),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(top = 16.dp)
             )
