@@ -10,6 +10,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -44,6 +45,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import no.hiof.groupone.habittracker.R
+import no.hiof.groupone.habittracker.ScheduleNotification
 import no.hiof.groupone.habittracker.model.Frequency
 import no.hiof.groupone.habittracker.model.Habit
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
@@ -149,16 +151,26 @@ fun CreateHabit(
         }
 
         if (selectedDate != null) {
-            val date = Date(selectedDate!!)
-            val formattedDate = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(date)
-            Text(stringResource(R.string.lbl_selected_date, formattedDate))
+            // Access the selectedDateMillis from DatePickerState directly
+            val dateMillis = selectedDate!!.selectedDateMillis
+            if (dateMillis != null) {
+                val date = Date(dateMillis) // Convert to Date object
+                val formattedDate = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(date)
+                Text(stringResource(R.string.lbl_selected_date, formattedDate))
+            } else {
+                Text(stringResource(R.string.lbl_no_date_selected))
+            }
         } else {
             Text(stringResource(R.string.lbl_no_date_selected))
         }
 
+        // Modal for Date Picker
         if (showModal) {
             DatePickerModal(
-                onDateSelected = { habitViewModel.updateSelectedDate(it) },
+                onDateSelected = { datePickerState ->
+                    habitViewModel.updateSelectedDate(datePickerState) // Pass DatePickerState
+                    showModal = false // Close the modal
+                },
                 onDismiss = { showModal = false }
             )
         }
@@ -205,6 +217,8 @@ fun CreateHabit(
         Spacer(modifier = Modifier.height(12.dp))
 
         Button(onClick = {
+            ScheduleNotification().scheduleNotification(context, selectedTime!!, selectedDate!!, habitName)
+
             val habitFrequency = when (frequency) {
                 "Daily" -> Frequency.DAILY
                 "Weekly" -> Frequency.WEEKLY
@@ -213,9 +227,11 @@ fun CreateHabit(
             }
 
             val calendar = Calendar.getInstance()
-            if (selectedDate != null) {
-                calendar.timeInMillis = selectedDate!!
+
+            selectedDate?.selectedDateMillis?.let { dateMillis ->
+                calendar.timeInMillis = dateMillis
             }
+
             if (selectedTime != null) {
                 calendar.set(Calendar.HOUR_OF_DAY, selectedTime!!.hour)
                 calendar.set(Calendar.MINUTE, selectedTime!!.minute)
@@ -230,7 +246,6 @@ fun CreateHabit(
                 basePoints = 0,
                 currentStreak = 0
             )
-
 
             coroutineScope.launch {
                 val success = habitViewModel.createHabit(habit)
@@ -277,7 +292,7 @@ fun CreateHabitPreview() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerModal(
-    onDateSelected: (Long?) -> Unit,
+    onDateSelected: (DatePickerState) -> Unit,
     onDismiss: () -> Unit
 ) {
     val datePickerState = rememberDatePickerState()
@@ -286,7 +301,7 @@ fun DatePickerModal(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
-                onDateSelected(datePickerState.selectedDateMillis)
+                onDateSelected(datePickerState)
                 onDismiss()
             }) {
                 Text("OK")

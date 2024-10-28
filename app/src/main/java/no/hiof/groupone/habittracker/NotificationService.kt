@@ -13,9 +13,9 @@ class NotificationService(
 ) {
     private val notificationManager = context.getSystemService(NotificationManager::class.java)
 
-    fun showNotification() {
+    fun showNotification(title: String?) {
         val notification = NotificationCompat.Builder(context, "notification_channel_id")
-            .setContentTitle("Reminder")
+            .setContentTitle(title)
             .setContentText("Do something")
             .setSmallIcon(R.drawable.notification)
             .setPriority(NotificationManager.IMPORTANCE_HIGH)

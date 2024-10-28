@@ -1,5 +1,6 @@
 package no.hiof.groupone.habittracker.viewmodel
 
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.State
@@ -27,16 +28,19 @@ class HabitViewModel(private val habitListViewModel: HabitListViewModel) : ViewM
     val frequency: State<String?> = _frequency
     fun updateFrequency(frequency: String?) { _frequency.value = frequency }
 
-    private val _selectedDate = mutableStateOf<Long?>(null)
-    val selectedDate: State<Long?> = _selectedDate
-    fun updateSelectedDate(date: Long?) { _selectedDate.value = date }
+    @OptIn(ExperimentalMaterial3Api::class)
+    private val _selectedDate = mutableStateOf<DatePickerState?>(null)
+    @OptIn(ExperimentalMaterial3Api::class)
+    val selectedDate: State<DatePickerState?> = _selectedDate
+    @OptIn(ExperimentalMaterial3Api::class)
+    fun updateSelectedDate(datePickerState: DatePickerState) { _selectedDate.value = datePickerState }
 
     @OptIn(ExperimentalMaterial3Api::class)
     private val _selectedTime = mutableStateOf<TimePickerState?>(null)
     @OptIn(ExperimentalMaterial3Api::class)
     val selectedTime: State<TimePickerState?> = _selectedTime
     @OptIn(ExperimentalMaterial3Api::class)
-    fun updateSelectedTime(time: TimePickerState?) { _selectedTime.value = time }
+    fun updateSelectedTime(timePickerState: TimePickerState) { _selectedTime.value = timePickerState }
 
     fun createHabit(habit: Habit): Boolean {
         return try {

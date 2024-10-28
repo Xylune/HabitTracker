@@ -63,7 +63,7 @@ fun Home(modifier: Modifier = Modifier, navController: NavController, authViewMo
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(onClick = {NotificationService.showNotification()}) {
+        Button(onClick = {NotificationService.showNotification("Test Notification")}) {
             Text(text = "Show Notification")
         }
         Button(onClick = {NotificationService.showExpandableNotification()}) {
