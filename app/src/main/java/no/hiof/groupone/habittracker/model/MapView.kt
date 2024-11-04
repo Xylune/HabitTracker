@@ -1,40 +1,30 @@
 package no.hiof.groupone.habittracker.model
 
-import android.annotation.SuppressLint
 import android.content.Context
-import no.hiof.groupone.habittracker.R
 import org.osmdroid.config.Configuration
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
-@SuppressLint("UseCompatLoadingForDrawables")
 class MyMapView(context: Context) : MapView(context) {
 
     private val myLocationOverlay: MyLocationNewOverlay
-    private val locationMarker: Marker
+    private var locationMarker: Marker
 
     init {
         val sharedPreferences = context.getSharedPreferences("osmdroid_prefs", Context.MODE_PRIVATE)
         Configuration.getInstance().load(context, sharedPreferences)
 
-        setTileSource(TileSourceFactory.MAPNIK)
-
         setMultiTouchControls(true)
 
         myLocationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(context), this).apply {
             enableMyLocation()
-            enableFollowLocation()
+            //enableFollowLocation()
         }
-        overlays.add(myLocationOverlay)
 
-        locationMarker = Marker(this).apply {
-            icon = context.getDrawable(R.drawable.home_pin_24dp)
-            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-        }
+        locationMarker = Marker(this).apply { }
         overlays.add(locationMarker)
 
         controller.setZoom(15.0)
@@ -54,6 +44,16 @@ class MyMapView(context: Context) : MapView(context) {
         locationMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
 
         controller.setCenter(locationMarker.position)
+    }
+
+    // Function to add a custom marker at a specific location
+    fun addMarkerAtLocation(latitude: Double, longitude: Double) {
+        val customMarker = Marker(this).apply {
+            position = GeoPoint(latitude, longitude)
+            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            title = "Custom Location"
+        }
+        overlays.add(customMarker)
     }
 
     override fun onDetach() {
