@@ -8,105 +8,55 @@ class SocialManager {
 
     private val db = FirebaseFirestore.getInstance()
 
-    fun addFriend(userId: String, friendDisplayName: String, onComplete: (Boolean) -> Unit) {
+    fun sendFriendRequest(senderId: String, senderDisplayName: String, recipientDisplayName: String, onComplete: (Boolean) -> Unit) {
         val usersRef = db.collection("users")
 
-        usersRef.whereEqualTo("displayName", friendDisplayName).get()
+        usersRef.whereEqualTo("displayName", recipientDisplayName).get()
             .addOnSuccessListener { documents ->
                 if (documents.isEmpty) {
                     onComplete(false)
                     return@addOnSuccessListener
                 }
-                val friendDoc = documents.first()
-                val friendId = friendDoc.id
+                val recipientDoc = documents.first()
+                val recipientId = recipientDoc.id
 
-                val userRef = usersRef.document(userId)
-                userRef.update("friends", FieldValue.arrayUnion(friendId))
+                val friendRequest = mapOf(
+                    "senderId" to senderId,
+                    "senderDisplayName" to senderDisplayName,
+                    "status" to "pending"
+                )
+
+                usersRef.document(recipientId).update("friendRequests", FieldValue.arrayUnion(friendRequest))
                     .addOnSuccessListener {
                         onComplete(true)
                     }
-                    .addOnFailureListener { e ->
+                    .addOnFailureListener {
                         onComplete(false)
                     }
             }
-            .addOnFailureListener { e ->
+            .addOnFailureListener {
                 onComplete(false)
             }
     }
 
-    fun removeFriend(userId: String, friendDisplayName: String, onComplete: (Boolean) -> Unit) {
+    fun respondToFriendRequest(userId: String, senderId: String, accept: Boolean, onComplete: (Boolean) -> Unit) {
         val usersRef = db.collection("users")
-
-        usersRef.whereEqualTo("displayName", friendDisplayName).get()
-            .addOnSuccessListener { documents ->
-                if (documents.isEmpty) {
-                    onComplete(false)
-                    return@addOnSuccessListener
-                }
-                val friendDoc = documents.first()
-                val friendId = friendDoc.id
-
-                val userRef = usersRef.document(userId)
-                userRef.update("friends", FieldValue.arrayRemove(friendId))
-                    .addOnSuccessListener {
-                        onComplete(true)
-                    }
-                    .addOnFailureListener { e ->
-                        onComplete(false)
-                    }
-            }
-            .addOnFailureListener { e ->
-                onComplete(false)
-            }
-    }
-
-    fun getFriends(userId: String, onFriendsRetrieved: (List<String>) -> Unit) {
-        val userRef = db.collection("users").document(userId)
+        val userRef = usersRef.document(userId)
 
         userRef.get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
-                    val friendsList = document.get("friends") as? List<String> ?: emptyList()
+                    val friendRequests = document.get("friendRequests") as? List<Map<String, Any>> ?: emptyList()
+                    val updatedRequests = friendRequests.filterNot { it["senderId"] == senderId }
 
-                    if (friendsList.isEmpty()) {
-                        onFriendsRetrieved(emptyList())
-                    } else {
-                        val displayNames = mutableListOf<String>()
-                        val tasks = friendsList.map { friendId ->
-                            db.collection("users").document(friendId).get()
-                                .addOnSuccessListener { friendDoc ->
-                                    if (friendDoc != null && friendDoc.exists()) {
-                                        val displayName = friendDoc.getString("displayName") ?: "Unknown"
-                                        displayNames.add(displayName)
-                                    }
-                                }
-                        }
-
-                        Tasks.whenAll(tasks).addOnCompleteListener {
-                            onFriendsRetrieved(displayNames)
-                        }
-                    }
-                } else {
-                    onFriendsRetrieved(emptyList())
-                }
-            }
-            .addOnFailureListener { e ->
-                onFriendsRetrieved(emptyList())
-            }
-    }
-
-    fun shareHabit(habitId: String, displayName: String, onComplete: (Boolean) -> Unit) {
-        val usersRef = db.collection("users")
-
-        usersRef.whereEqualTo("displayName", displayName).get()
-            .addOnSuccessListener { querySnapshot ->
-                if (!querySnapshot.isEmpty) {
-                    val friendDoc = querySnapshot.documents.first()
-                    val friendId = friendDoc.id
-
-                    usersRef.document(friendId).update("habits", FieldValue.arrayUnion(habitId))
+                    userRef.update("friendRequests", updatedRequests)
                         .addOnSuccessListener {
-                            onComplete(true)
+                            if (accept) {
+
+                                addFriendRelationship(userId, senderId, onComplete)
+                            } else {
+                                onComplete(true)
+                            }
                         }
                         .addOnFailureListener {
                             onComplete(false)
@@ -119,6 +69,92 @@ class SocialManager {
                 onComplete(false)
             }
     }
+
+    private fun addFriendRelationship(userId: String, friendId: String, onComplete: (Boolean) -> Unit) {
+        val usersRef = db.collection("users")
+
+        val userUpdate = usersRef.document(userId).update("friends", FieldValue.arrayUnion(friendId))
+        val friendUpdate = usersRef.document(friendId).update("friends", FieldValue.arrayUnion(userId))
+
+        Tasks.whenAll(userUpdate, friendUpdate)
+            .addOnSuccessListener { onComplete(true) }
+            .addOnFailureListener { onComplete(false) }
+    }
+
+    fun removeFriend(userId: String, friendId: String, onComplete: (Boolean) -> Unit) {
+        val usersRef = db.collection("users")
+
+        val userUpdate = usersRef.document(userId).update("friends", FieldValue.arrayRemove(friendId))
+        val friendUpdate = usersRef.document(friendId).update("friends", FieldValue.arrayRemove(userId))
+
+        Tasks.whenAll(userUpdate, friendUpdate)
+            .addOnSuccessListener {
+                onComplete(true)
+            }
+            .addOnFailureListener {
+                onComplete(false)
+            }
+    }
+
+    fun getFriendRequests(userId: String, callback: (List<Map<String, Any>>) -> Unit) {
+        db.collection("users").document(userId).get()
+            .addOnSuccessListener { document ->
+                val requests = document.get("friendRequests") as? List<Map<String, Any>> ?: emptyList()
+                callback(requests)
+            }
+            .addOnFailureListener {
+                callback(emptyList())
+            }
+    }
+
+    fun getFriends(userId: String, onFriendsRetrieved: (List<Pair<String, String>>) -> Unit) {
+        val userRef = db.collection("users").document(userId)
+
+        userRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val friendsList = document.get("friends") as? List<String> ?: emptyList()
+
+                    if (friendsList.isEmpty()) {
+                        onFriendsRetrieved(emptyList())
+                    } else {
+                        val friendPairs = mutableListOf<Pair<String, String>>()
+                        val tasks = friendsList.map { friendId ->
+                            db.collection("users").document(friendId).get()
+                                .addOnSuccessListener { friendDoc ->
+                                    if (friendDoc != null && friendDoc.exists()) {
+                                        val displayName = friendDoc.getString("displayName") ?: "Unknown"
+                                        friendPairs.add(Pair(friendId, displayName))
+                                    }
+                                }
+                        }
+
+                        Tasks.whenAll(tasks).addOnCompleteListener {
+                            onFriendsRetrieved(friendPairs)
+                        }
+                    }
+                } else {
+                    onFriendsRetrieved(emptyList())
+                }
+            }
+            .addOnFailureListener {
+                onFriendsRetrieved(emptyList())
+            }
+    }
+
+    fun shareHabit(habitId: String, friendId: String, onComplete: (Boolean) -> Unit) {
+        val usersRef = db.collection("users")
+
+        usersRef.document(friendId).update("habits", FieldValue.arrayUnion(habitId))
+            .addOnSuccessListener {
+                onComplete(true)
+            }
+            .addOnFailureListener {
+                onComplete(false)
+            }
+    }
+
+
     fun getUserHabits(userId: String, onComplete: (List<Pair<String, String>>) -> Unit) {
         val userRef = db.collection("users").document(userId)
 

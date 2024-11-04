@@ -64,7 +64,7 @@ class LeaderboardViewModel(
         currentUser?.let { user ->
             socialManager.getFriends(user.uid) { friendList ->
                 friends.clear()
-                friends.addAll(friendList)
+                friends.addAll(friendList.map { it.second })
             }
         }
     }
@@ -79,7 +79,7 @@ class LeaderboardViewModel(
             leaderboardManager.createNewLeaderboard(leaderboardName, allPlayers, user.uid) { success, leaderboardId ->
                 if (success && leaderboardId != null) {
                     addPlayersToLeaderboard(leaderboardId, allPlayers)
-                    loadUserLeaderboards()  // Refresh the user's leaderboards after creation
+                    loadUserLeaderboards()
                 } else {
                     println("Failed to create leaderboard.")
                 }
@@ -92,7 +92,6 @@ class LeaderboardViewModel(
     private fun addPlayersToLeaderboard(leaderboardId: String, players: List<String>) {
         players.forEach { playerName ->
             leaderboardManager.addPlayer(leaderboardId, playerName)
-            // Also add leaderboard to users' documents (if players are friends)
             leaderboardManager.getUserByDisplayName(playerName) { userId ->
                 userId?.let {
                     leaderboardManager.addLeaderboardToUser(leaderboardId, it)

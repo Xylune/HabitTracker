@@ -40,6 +40,18 @@
     <string name="snackbar_habit_shared_success">Habit shared successfully</string>
     <string name="btn_share">Share</string>
 
+    <string name="snackbar_friend_request_sent">Friend request sent!</string>
+    <string name="snackbar_friend_request_accepted">Friend request accepted!</string>
+    <string name="snackbar_friend_request_denied">Friend request denied!</string>
+    <string name="btn_send_friend_request">Add Friend</string>
+    <string name="btn_view_friend_requests">View Friend Requests</string>
+    <string name="lbl_friend_requests">Friend Requests</string>
+    <string name="no_friend_requests">No friend requests available.</string>
+    <string name="btn_accept">Accept</string>
+    <string name="btn_deny">Deny</string>
+    <string name="no_friends">No friends</string>
+    <string name="snackbar_friend_removed">Friend removed</string>
+
 
     <!-- Create Habit Screen labels -->
     <string name="lbl_habit_name">Habit name</string>

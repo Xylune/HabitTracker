@@ -1,11 +1,14 @@
 package no.hiof.groupone.habittracker.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -44,10 +47,14 @@ fun SocialManagement(
     val friendName by socialViewModel.friendName
     val friendsList by socialViewModel.friendsList
     val userHabits by socialViewModel.userHabits
+    val friendRequests by socialViewModel.friendRequests
+    var showFriendRequestsDialog by remember { mutableStateOf(false) }
+
     var shareHabitDialog by remember { mutableStateOf(false) }
     var selectedHabitId by remember { mutableStateOf("") }
     var selectedHabitName by remember { mutableStateOf("") }
     var selectedFriendName by remember { mutableStateOf("") }
+    var selectedFriendId by remember { mutableStateOf("") }
     var showFriendsListDialog by remember { mutableStateOf(false) }
     var showSelectFriendDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -58,6 +65,7 @@ fun SocialManagement(
     LaunchedEffect(Unit) {
         socialViewModel.loadFriends()
         socialViewModel.loadUserHabits()
+        socialViewModel.loadFriendRequests()
     }
 
     Column(
@@ -73,42 +81,97 @@ fun SocialManagement(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        TextField(
-            value = friendName,
-            onValueChange = { socialViewModel.updateFriendName(it) },
-            label = { Text(stringResource(R.string.lbl_friends_name)) },
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextField(
+                value = friendName,
+                onValueChange = { socialViewModel.updateFriendName(it) },
+                label = { Text(stringResource(R.string.lbl_friends_name)) },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp)
+            )
+
+            Button(
+                onClick = {
+                    socialViewModel.sendFriendRequest()
+                    snackbarMessage = context.getString(R.string.snackbar_friend_request_sent)
+                    showSnackbar = true
+                },
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier
+                    .padding(vertical = 4.dp)
+            ) {
+                Text(stringResource(R.string.btn_send_friend_request))
+            }
+        }
+
+        Button(
+            onClick = { showFriendRequestsDialog = true },
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
                 .padding(vertical = 8.dp)
-        )
-
-        Button(
-            onClick = {
-                socialViewModel.addFriend()
-                snackbarMessage = context.getString(R.string.snackbar_friend_added_success)
-                showSnackbar = true
-            },
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp)
         ) {
-            Text(stringResource(R.string.btn_add_friend))
+            Text(stringResource(R.string.btn_view_friend_requests))
         }
 
-        Button(
-            onClick = {
-                socialViewModel.removeFriend()
-                snackbarMessage = context.getString(R.string.snackbar_friend_removed_success)
-                showSnackbar = true
-            },
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp)
-        ) {
-            Text(stringResource(R.string.btn_remove_friend))
+        if (showFriendRequestsDialog) {
+            AlertDialog(
+                onDismissRequest = { showFriendRequestsDialog = false },
+                title = { Text(stringResource(R.string.lbl_friend_requests)) },
+                text = {
+                    Column {
+                        if (friendRequests.isEmpty()) {
+                            Text(text = stringResource(R.string.no_friend_requests))
+                        } else {
+                            friendRequests.forEach { (senderId, senderName) ->
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp)
+                                ) {
+                                    Text(text = senderName)
+                                    Row(
+                                        horizontalArrangement = Arrangement.End,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Button(
+                                            onClick = {
+                                                socialViewModel.respondToFriendRequest(senderId, true)
+                                                snackbarMessage = context.getString(R.string.snackbar_friend_request_accepted)
+                                                showSnackbar = true
+                                            }
+                                        ) {
+                                            Text(stringResource(R.string.btn_accept))
+                                        }
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Button(
+                                            onClick = {
+                                                socialViewModel.respondToFriendRequest(senderId, false)
+                                                snackbarMessage = context.getString(R.string.snackbar_friend_request_denied)
+                                                showSnackbar = true
+                                            }
+                                        ) {
+                                            Text(stringResource(R.string.btn_deny))
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { showFriendRequestsDialog = false }) {
+                        Text(stringResource(R.string.btn_close))
+                    }
+                }
+            )
         }
+
 
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -116,7 +179,6 @@ fun SocialManagement(
             onClick = { showFriendsListDialog = true },
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(vertical = 8.dp)
         ) {
             Text(stringResource(R.string.btn_friends_list))
@@ -128,12 +190,29 @@ fun SocialManagement(
                 title = { Text(stringResource(R.string.lbl_friends_list)) },
                 text = {
                     Column {
-                        friendsList.forEach { friend ->
-                            Text(
-                                text = friend,
-                                modifier = Modifier
-                                    .padding(vertical = 4.dp)
-                            )
+                        if (friendsList.isEmpty()) {
+                            Text(text = stringResource(R.string.no_friends))
+                        } else {
+                            friendsList.forEach { (friendId, friendName) ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(text = friendName)
+
+                                    Button(
+                                        onClick = {
+                                            socialViewModel.removeFriend(friendId)
+                                            snackbarMessage = context.getString(R.string.snackbar_friend_removed)
+                                            showSnackbar = true
+                                        }
+                                    ) {
+                                        Text(stringResource(R.string.btn_remove_friend))
+                                    }
+                                }
+                            }
                         }
                     }
                 },
@@ -151,7 +230,6 @@ fun SocialManagement(
             onClick = { shareHabitDialog = true },
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
-                .fillMaxWidth()
         ) {
             Text(stringResource(R.string.btn_select_habit))
         }
@@ -171,7 +249,6 @@ fun SocialManagement(
                                 },
                                 shape = RoundedCornerShape(8.dp),
                                 modifier = Modifier
-                                    .fillMaxWidth()
                             ) {
                                 Text(habitName)
                             }
@@ -199,7 +276,6 @@ fun SocialManagement(
             onClick = { showSelectFriendDialog = true },
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
-                .fillMaxWidth()
         ) {
             Text(stringResource(R.string.btn_select_friend))
         }
@@ -219,17 +295,19 @@ fun SocialManagement(
                 title = { Text(stringResource(R.string.lbl_select_a_friend)) },
                 text = {
                     Column {
-                        friendsList.forEach { friend ->
+                        friendsList.forEach { (friendId, friendName) ->
                             Button(
                                 onClick = {
-                                    selectedFriendName = friend
+                                    selectedFriendName = friendName
+                                    selectedFriendId = friendId
                                     showSelectFriendDialog = false
                                 },
                                 shape = RoundedCornerShape(8.dp),
                                 modifier = Modifier
                                     .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
                             ) {
-                                Text(friend)
+                                Text(friendName)
                             }
                         }
                     }
@@ -244,18 +322,18 @@ fun SocialManagement(
 
         Button(
             onClick = {
-                if (selectedHabitId.isNotEmpty() && selectedFriendName.isNotEmpty()) {
-                    socialViewModel.shareHabit(selectedHabitId, selectedFriendName)
+                if (selectedHabitId.isNotEmpty() && selectedFriendId.isNotEmpty()) {
+                    socialViewModel.shareHabit(selectedHabitId, selectedFriendId)
                     snackbarMessage = context.getString(R.string.snackbar_habit_shared_success)
                     showSnackbar = true
                     selectedHabitId = ""
                     selectedHabitName = ""
+                    selectedFriendId = ""
                     selectedFriendName = ""
                 }
             },
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
-                .fillMaxWidth()
         ) {
             Text(stringResource(R.string.btn_share))
         }

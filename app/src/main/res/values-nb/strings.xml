@@ -26,7 +26,7 @@
     <string name="lbl_friends_name">Vennens Navn</string>
     <string name="snackbar_friend_added_success">Venn lagt til</string>
     <string name="snackbar_friend_removed_success">Venn fjernet</string>
-    <string name="btn_add_friend">Legg til Venn</string>
+    <string name="btn_add_friend">Legg til</string>
     <string name="btn_remove_friend">Fjern Venn</string>
     <string name="btn_friends_list">Venner Liste</string>
     <string name="btn_close">Lukk</string>
@@ -117,6 +117,17 @@
     <string name="lbl_loading_friends">Laster venner...</string>
     <string name="btn_create">Opprett</string>
     <string name="lbl_no_leaderboards_available">Ingen ranglister tilgjengelig.</string>
+    <string name="snackbar_friend_request_accepted">Venne forespørsel akseptert</string>
+    <string name="snackbar_friend_request_denied">Venne forespørsel avslått</string>
+    <string name="btn_send_friend_request">Send forespørsel</string>
+    <string name="btn_view_friend_requests">Se venne forespørsler</string>
+    <string name="lbl_friend_requests">Venne forespørsler</string>
+    <string name="no_friend_requests">Ingen forespørsler</string>
+    <string name="btn_accept">Godta</string>
+    <string name="btn_deny">Avlså</string>
+    <string name="snackbar_friend_request_sent">Venne forespørsler sendt!</string>
+    <string name="no_friends">Ingen venner</string>
+    <string name="snackbar_friend_removed">Venn fjernet</string>
 
 </resources>
 
