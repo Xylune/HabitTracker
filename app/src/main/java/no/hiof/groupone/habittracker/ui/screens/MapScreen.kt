@@ -1,3 +1,4 @@
+package no.hiof.groupone.habittracker.ui.screens
 
 import android.content.Context
 import androidx.compose.foundation.layout.Box

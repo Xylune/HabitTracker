@@ -46,6 +46,16 @@ class MyMapView(context: Context) : MapView(context) {
         controller.setCenter(locationMarker.position)
     }
 
+    // Function to add a custom marker at a specific location
+    fun addMarkerAtLocation(latitude: Double, longitude: Double) {
+        val customMarker = Marker(this).apply {
+            position = GeoPoint(latitude, longitude)
+            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            title = "Custom Location"
+        }
+        overlays.add(customMarker)
+    }
+
     override fun onDetach() {
         super.onDetach()
         myLocationOverlay.disableMyLocation()
