@@ -21,7 +21,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
 import no.hiof.groupone.habittracker.ui.navigation.AppNavigation
@@ -72,16 +74,18 @@ class MainActivity : ComponentActivity() {
             val openDialog = remember { mutableStateOf(false) }
             var screenTitle by remember { mutableStateOf("Habit Tracker") }
 
+            val context = LocalContext.current
+
             HabitTrackerTheme(darkTheme = isDarkMode.value) {
                 LaunchedEffect(navController) {
                     navController.addOnDestinationChangedListener { _, destination, _ ->
                         screenTitle = when (destination.route) {
                             "home" -> "Habit Tracker"
-                            "habits" -> "My Habits"
-                            "createHabit" -> "Add Habit"
-                            "calendar" -> "Calendar"
-                            "profile" -> "Profile"
-                            "settings" -> "Settings"
+                            "habits" -> context.getString(R.string.lbl_my_habits)
+                            "createHabit" -> context.getString(R.string.lbl_add_habit)
+                            "calendar" -> context.getString(R.string.lbl_calendar)
+                            "profile" -> context.getString(R.string.lbl_profile)
+                            "settings" -> context.getString(R.string.lbl_settings)
                             else -> "Habit Tracker"
                         }
                     }

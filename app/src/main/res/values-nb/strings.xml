@@ -5,7 +5,7 @@
     <!-- navigation bar labels -->
     <string name="lbl_home">Hjem</string>
     <string name="lbl_my_habits">Mine Vaner</string>
-    <string name="lbl_add_habit">Legg til Vane</string>
+    <string name="lbl_add_habit">Lag Vane</string>
     <string name="lbl_calendar">Kalender</string>
     <string name="lbl_profile">Profil</string>
     <string name="lbl_settings">Innstillinger</string>
