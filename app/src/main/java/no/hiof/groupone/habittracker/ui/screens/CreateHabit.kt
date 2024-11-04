@@ -48,7 +48,6 @@ import no.hiof.groupone.habittracker.R
 import no.hiof.groupone.habittracker.ScheduleNotification
 import no.hiof.groupone.habittracker.model.Frequency
 import no.hiof.groupone.habittracker.model.Habit
-import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 import no.hiof.groupone.habittracker.viewmodel.HabitListViewModel
 import no.hiof.groupone.habittracker.viewmodel.HabitViewModel
 import no.hiof.groupone.habittracker.viewmodel.HabitViewModelFactory
@@ -63,7 +62,6 @@ import java.util.Locale
 fun CreateHabit(
     modifier: Modifier = Modifier,
     navController: NavController = rememberNavController(),
-    authViewModel: AuthViewModel = viewModel(),
     habitListViewModel: HabitListViewModel = viewModel(),
 ) {
     val habitViewModel: HabitViewModel = viewModel(
@@ -123,7 +121,7 @@ fun CreateHabit(
                 readOnly = true,
                 label = { Text(stringResource(R.string.lbl_frequency)) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.menuAnchor()
+                modifier = Modifier
             )
 
             ExposedDropdownMenu(
@@ -151,7 +149,6 @@ fun CreateHabit(
         }
 
         if (selectedDate != null) {
-            // Access the selectedDateMillis from DatePickerState directly
             val dateMillis = selectedDate!!.selectedDateMillis
             if (dateMillis != null) {
                 val date = Date(dateMillis) // Convert to Date object
@@ -164,12 +161,11 @@ fun CreateHabit(
             Text(stringResource(R.string.lbl_no_date_selected))
         }
 
-        // Modal for Date Picker
         if (showModal) {
             DatePickerModal(
                 onDateSelected = { datePickerState ->
-                    habitViewModel.updateSelectedDate(datePickerState) // Pass DatePickerState
-                    showModal = false // Close the modal
+                    habitViewModel.updateSelectedDate(datePickerState)
+                    showModal = false
                 },
                 onDismiss = { showModal = false }
             )

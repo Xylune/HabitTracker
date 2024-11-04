@@ -1,6 +1,8 @@
 package no.hiof.groupone.habittracker.ui.screens
 
 import android.Manifest
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,6 +32,7 @@ import no.hiof.groupone.habittracker.R
 import no.hiof.groupone.habittracker.viewmodel.AuthState
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun Home(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
@@ -47,14 +50,14 @@ fun Home(modifier: Modifier = Modifier, navController: NavController, authViewMo
 
     val user = Firebase.auth.currentUser
 
-    val postNoticationPermission =
+    val postNotificationPermission =
         rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
 
-    val NotificationService = NotificationService(navController.context)
+    val notificationService = NotificationService(navController.context)
 
     LaunchedEffect(key1 = true) {
-        if (!postNoticationPermission.status.isGranted) {
-            postNoticationPermission.launchPermissionRequest()
+        if (!postNotificationPermission.status.isGranted) {
+            postNotificationPermission.launchPermissionRequest()
         }
     }
 
@@ -63,19 +66,19 @@ fun Home(modifier: Modifier = Modifier, navController: NavController, authViewMo
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(onClick = {NotificationService.showNotification("Test Notification")}) {
+        Button(onClick = {notificationService.showNotification("Test Notification")}) {
             Text(text = "Show Notification")
         }
-        Button(onClick = {NotificationService.showExpandableNotification()}) {
+        Button(onClick = {notificationService.showExpandableNotification()}) {
             Text(text = "Show Expandable Notification With Image")
         }
-        Button(onClick = {NotificationService.showExpandableNotificationWithText()}) {
+        Button(onClick = {notificationService.showExpandableNotificationWithText()}) {
             Text(text = "Show Expandable With Text Notification")
         }
-        Button(onClick = {NotificationService.showInboxStyleNotification()}) {
+        Button(onClick = {notificationService.showInboxStyleNotification()}) {
             Text(text = "Show Inbox Style Notification")
         }
-        Button(onClick = {NotificationService.showNotificationGroup()}) {
+        Button(onClick = {notificationService.showNotificationGroup()}) {
             Text(text = "Show Notification Group Notification")
         }
 
@@ -114,6 +117,10 @@ fun Home(modifier: Modifier = Modifier, navController: NavController, authViewMo
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+
+        TextButton(onClick = { navController.navigate("map") }) {
+            Text(text = "Open Map")
+        }
 
         TextButton(onClick = { authViewModel.signout() }) {
             Text(text = stringResource(R.string.lbl_sign_out))

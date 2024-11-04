@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavHostController
@@ -26,11 +27,15 @@ import no.hiof.groupone.habittracker.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopNavBar(navController: NavHostController, screenTitle: String, showBackButton: Boolean = true) {
+fun TopNavBar(navController: NavHostController, screenTitle: String, showBackButton: Boolean = true, onHeightChange: (Int) -> Unit) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val isMenuExpanded = remember { mutableStateOf(false) }
 
+
     CenterAlignedTopAppBar(
+        modifier = Modifier.onGloballyPositioned { coordinates ->
+            onHeightChange(coordinates.size.height)
+        },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             titleContentColor = MaterialTheme.colorScheme.primary,
@@ -43,19 +48,18 @@ fun TopNavBar(navController: NavHostController, screenTitle: String, showBackBut
             )
         },
         navigationIcon = {
-            if (showBackButton) {  // Show back button based on the parameter
-            IconButton(onClick = {
-                navController.popBackStack() // Navigate back one screen
-            }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.lbl_back)
-                )
+            if (showBackButton) {
+                IconButton(onClick = {
+                    navController.popBackStack()
+                }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back"
+                    )
                 }
             }
         },
         actions = {
-            // Menu Icon Button
             IconButton(onClick = { isMenuExpanded.value = true }) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
@@ -63,14 +67,12 @@ fun TopNavBar(navController: NavHostController, screenTitle: String, showBackBut
                 )
             }
 
-            // Dropdown Menu
             DropdownMenu(
                 expanded = isMenuExpanded.value,
                 onDismissRequest = { isMenuExpanded.value = false },
                 modifier = Modifier
                     .wrapContentSize(Alignment.TopEnd)
             ) {
-                // Profile menu item
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.lbl_profile)) },
                     onClick = {
@@ -79,7 +81,6 @@ fun TopNavBar(navController: NavHostController, screenTitle: String, showBackBut
                     }
                 )
 
-                // Settings menu item
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.lbl_settings)) },
                     onClick = {

@@ -11,7 +11,7 @@ plugins {
 
 android {
     namespace = "no.hiof.groupone.habittracker"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "no.hiof.groupone.habittracker"
@@ -58,7 +58,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -70,6 +69,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.threetenabp)
+    implementation(libs.androidx.appcompat)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -78,34 +78,35 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.github.composecalendar)
+    implementation(libs.material)
+    implementation(libs.accompanist.pager)
+    implementation(libs.osmdroid.android)
+    implementation(libs.datetime)
+    implementation(libs.threetenabp.v146)
 
-    implementation("androidx.navigation:navigation-compose:2.8.1") // Navigation dependency
-    implementation("androidx.compose.ui:ui:1.3.3")            // Jetpack Compose UI
-    implementation("androidx.compose.material:material:1.3.1")    // Material Design
-    implementation("androidx.compose.ui:ui-tooling-preview:1.3.3") // Preview
-    implementation("com.google.accompanist:accompanist-pager:0.28.0")
-    implementation("io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc")
-
-    implementation("com.jakewharton.threetenabp:threetenabp:1.4.6")
+    implementation(libs.androidx.navigation.compose.v283) // Navigation dependency
+    implementation(libs.ui)            // Jetpack Compose UI
+    implementation(libs.androidx.material)    // Material Design
+    implementation(libs.ui.tooling.preview) // Preview
 
     // Notification dependancy
-    implementation("com.google.accompanist:accompanist-permissions:0.31.1-alpha")
+    implementation(libs.accompanist.permissions)
 
 
     // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
+    implementation(platform(libs.firebase.bom))
 
     // When using the BoM, you don't specify versions in Firebase library dependencies
 
     // Add the dependency for the Firebase SDK for Google Analytics
-    implementation("com.google.firebase:firebase-analytics")
+    implementation(libs.firebase.analytics)
 
     // TODO: Add the dependencies for any other Firebase products you want to use
     // See https://firebase.google.com/docs/android/setup#available-libraries
     // For example, add the dependencies for Firebase Authentication and Cloud Firestore
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-firestore")
-    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation(libs.google.firebase.auth)
+    implementation(libs.firebase.firestore)
+    implementation(libs.coil.compose)
 
     coreLibraryDesugaring(libs.desugar)
 }

@@ -1,6 +1,9 @@
 package no.hiof.groupone.habittracker.ui.navigation
 
 import CalendarScreen
+import MapScreen
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -18,13 +21,15 @@ import no.hiof.groupone.habittracker.ui.screens.SettingsScreen
 import no.hiof.groupone.habittracker.ui.screens.Signup
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun AppNavigation(
     modifier: Modifier = Modifier,
     authViewModel: AuthViewModel,
     navController: NavHostController,
     isDarkMode: Boolean,
-    onDarkModeToggle: (Boolean) -> Unit
+    onDarkModeToggle: (Boolean) -> Unit,
+    topNavBarHeight: Int
 ) {
     NavHost(navController = navController, startDestination = "login", builder = {
         composable("login") {
@@ -40,7 +45,7 @@ fun AppNavigation(
             Home(modifier, navController, authViewModel)
         }
         composable("createHabit") {
-            CreateHabit(modifier, navController, authViewModel)
+            CreateHabit(modifier, navController)
         }
         composable("SocialManagement") {
             SocialManagement(modifier, navController, authViewModel)
@@ -64,5 +69,9 @@ fun AppNavigation(
         composable("editProfile") {
             EditProfile(modifier, navController, authViewModel)
         }
+        composable("map") {
+            MapScreen(topNavBarHeight = topNavBarHeight)
+        }
+
     })
 }
