@@ -42,6 +42,7 @@
     <string name="btn_share">Del</string>
 
     <!-- Create Habit Screen labels -->
+    <string name="btn_view_habit_requests">Se vane forespørsler</string>
     <string name="lbl_habit_name">Vane navn</string>
     <string name="lbl_habit_description">Vane beskrivelse</string>
     <string name="lbl_one_time">Én gang</string>
@@ -128,6 +129,13 @@
     <string name="snackbar_friend_request_sent">Venne forespørsler sendt!</string>
     <string name="no_friends">Ingen venner</string>
     <string name="snackbar_friend_removed">Venn fjernet</string>
+    <string name="lbl_habit_requests">Vane forespørsler</string>
+    <string name="no_habit_requests">Ingen vane forespørsler</string>
+    <string name="btn_accept_habit">Godta vane</string>
+    <string name="btn_deny_habit">Avslå vane</string>
+    <string name="snackbar_habit_request_accepted">Vane godtatt</string>
+    <string name="snackbar_habit_request_denied">Vane avslått</string>
+    <string name="share_habit_label">Del vaner</string>
 
 </resources>
 

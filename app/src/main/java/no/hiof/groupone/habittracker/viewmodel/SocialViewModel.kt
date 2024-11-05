@@ -2,6 +2,8 @@ package no.hiof.groupone.habittracker.viewmodel
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
@@ -19,6 +21,9 @@ class SocialViewModel : ViewModel() {
 
     private val _userHabits = mutableStateOf<List<Pair<String, String>>>(emptyList())
     val userHabits: State<List<Pair<String, String>>> = _userHabits
+
+    private val _habitRequests = MutableLiveData<List<Map<String, Any>>>()
+    val habitRequests: LiveData<List<Map<String, Any>>> = _habitRequests
 
     private val _friendRequests = mutableStateOf<List<Pair<String, String>>>(emptyList())
     val friendRequests: State<List<Pair<String, String>>> = _friendRequests
@@ -45,9 +50,29 @@ class SocialViewModel : ViewModel() {
         }
     }
 
-    fun shareHabit(habitId: String, friendId: String) {
-        viewModelScope.launch {
-            socialManager.shareHabit(habitId, friendId) { success ->
+    fun loadHabitRequests() {
+        val currentUser = FirebaseAuth.getInstance().currentUser ?: return
+        socialManager.getHabitRequests(currentUser.uid) { requests ->
+            _habitRequests.value = requests
+        }
+    }
+
+    fun sendHabitRequest(habitId: String, habitName: String, recipientId: String) {
+        val currentUser = FirebaseAuth.getInstance().currentUser ?: return
+
+        socialManager.sendHabitRequest(habitId, habitName, recipientId, currentUser.uid, currentUser.displayName ?: "") { success ->
+            if (success) {
+                // Evt legge til return
+            }
+        }
+    }
+
+    fun respondToHabitRequest(habitId: String, senderId: String, accept: Boolean) {
+        val currentUser = FirebaseAuth.getInstance().currentUser ?: return
+
+        socialManager.respondToHabitRequest(currentUser.uid, habitId, senderId, accept) { success ->
+            if (success) {
+                loadHabitRequests()
             }
         }
     }
@@ -84,9 +109,8 @@ class SocialViewModel : ViewModel() {
         viewModelScope.launch {
             socialManager.respondToFriendRequest(currentUser.uid, senderId, accept) { success ->
                 if (success) {
-                    // Remove the request from local state if it was handled successfully
                     _friendRequests.value = _friendRequests.value.filter { it.first != senderId }
-                    if (accept) loadFriends() // Refresh friend list if accepted
+                    if (accept) loadFriends()
                 }
             }
         }

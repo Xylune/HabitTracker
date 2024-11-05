@@ -142,16 +142,59 @@ class SocialManager {
             }
     }
 
-    fun shareHabit(habitId: String, friendId: String, onComplete: (Boolean) -> Unit) {
-        val usersRef = db.collection("users")
+    fun getHabitRequests(userId: String, onRequestsRetrieved: (List<Map<String, Any>>) -> Unit) {
+        val userRef = db.collection("users").document(userId)
 
-        usersRef.document(friendId).update("habits", FieldValue.arrayUnion(habitId))
-            .addOnSuccessListener {
-                onComplete(true)
+        userRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val requestsList = document.get("habitRequests") as? List<Map<String, Any>> ?: emptyList()
+                    onRequestsRetrieved(requestsList)
+                } else {
+                    onRequestsRetrieved(emptyList())
+                }
             }
             .addOnFailureListener {
-                onComplete(false)
+                onRequestsRetrieved(emptyList())
             }
+    }
+
+    fun sendHabitRequest(habitId: String, habitName: String, recipientId: String, senderId: String, senderName: String, onResult: (Boolean) -> Unit) {
+        val request = mapOf(
+            "habitId" to habitId,
+            "habitName" to habitName,
+            "senderId" to senderId,
+            "senderName" to senderName
+        )
+        val recipientRef = db.collection("users").document(recipientId)
+
+        recipientRef.update("habitRequests", FieldValue.arrayUnion(request))
+            .addOnSuccessListener { onResult(true) }
+            .addOnFailureListener { onResult(false) }
+    }
+
+    fun respondToHabitRequest(userId: String, habitId: String, senderId: String, accept: Boolean, onResult: (Boolean) -> Unit) {
+        val userRef = db.collection("users").document(userId)
+
+        userRef.get().addOnSuccessListener { document ->
+            val requests =
+                document.get("habitRequests") as? MutableList<Map<String, Any>> ?: mutableListOf()
+
+            val updatedRequests =
+                requests.filterNot { it["habitId"] == habitId && it["senderId"] == senderId }
+
+            userRef.update("habitRequests", updatedRequests).addOnCompleteListener { task ->
+                if (task.isSuccessful && accept) {
+                    userRef.update("habits", FieldValue.arrayUnion(habitId))
+                        .addOnCompleteListener { addHabitTask ->
+                            onResult(addHabitTask.isSuccessful)
+                        }
+                    onResult(task.isSuccessful)
+                }
+            }.addOnFailureListener {
+                onResult(false)
+            }
+        }
     }
 
 

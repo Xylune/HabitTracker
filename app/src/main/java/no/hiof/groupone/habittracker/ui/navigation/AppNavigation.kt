@@ -10,7 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import no.hiof.groupone.habittracker.screens.LeaderboardScreen
 import no.hiof.groupone.habittracker.screens.Login
-import no.hiof.groupone.habittracker.ui.SocialManagement
+import no.hiof.groupone.habittracker.ui.screens.SocialManagement
 import no.hiof.groupone.habittracker.ui.screens.CreateHabit
 import no.hiof.groupone.habittracker.ui.screens.EditProfile
 import no.hiof.groupone.habittracker.ui.screens.Habits

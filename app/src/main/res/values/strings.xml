@@ -52,6 +52,16 @@
     <string name="no_friends">No friends</string>
     <string name="snackbar_friend_removed">Friend removed</string>
 
+    <string name="btn_view_habit_requests">View Habit Requests</string>
+    <string name="lbl_habit_requests">Habit Requests</string>
+    <string name="no_habit_requests">No habit requests available.</string>
+    <string name="btn_accept_habit">Accept</string>
+    <string name="btn_deny_habit">Deny</string>
+    <string name="snackbar_habit_request_accepted">Habit accepted</string>
+    <string name="snackbar_habit_request_denied">Habit denied</string>
+    <string name="share_habit_label">Share habits</string>
+
+
 
     <!-- Create Habit Screen labels -->
     <string name="lbl_habit_name">Habit name</string>

@@ -1,4 +1,4 @@
-package no.hiof.groupone.habittracker.ui
+package no.hiof.groupone.habittracker.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,6 +20,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,6 +50,8 @@ fun SocialManagement(
     val userHabits by socialViewModel.userHabits
     val friendRequests by socialViewModel.friendRequests
     var showFriendRequestsDialog by remember { mutableStateOf(false) }
+    var showHabitRequestsDialog by remember { mutableStateOf(false) }
+    val habitRequests by socialViewModel.habitRequests.observeAsState(emptyList())
 
     var shareHabitDialog by remember { mutableStateOf(false) }
     var selectedHabitId by remember { mutableStateOf("") }
@@ -66,7 +69,9 @@ fun SocialManagement(
         socialViewModel.loadFriends()
         socialViewModel.loadUserHabits()
         socialViewModel.loadFriendRequests()
+        socialViewModel.loadHabitRequests()
     }
+
 
     Column(
         modifier = modifier
@@ -225,6 +230,12 @@ fun SocialManagement(
         }
 
         Spacer(modifier = Modifier.height(20.dp))
+        Text(
+            text = stringResource(R.string.share_habit_label),
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
         Button(
             onClick = { shareHabitDialog = true },
@@ -323,7 +334,7 @@ fun SocialManagement(
         Button(
             onClick = {
                 if (selectedHabitId.isNotEmpty() && selectedFriendId.isNotEmpty()) {
-                    socialViewModel.shareHabit(selectedHabitId, selectedFriendId)
+                    socialViewModel.sendHabitRequest(selectedHabitId, selectedHabitName, selectedFriendId)
                     snackbarMessage = context.getString(R.string.snackbar_habit_shared_success)
                     showSnackbar = true
                     selectedHabitId = ""
@@ -342,6 +353,78 @@ fun SocialManagement(
             hostState = snackbarHostState,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
+
+        Button(
+            onClick = { showHabitRequestsDialog = true },
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.padding(vertical = 8.dp)
+        ) {
+            Text(stringResource(R.string.btn_view_habit_requests))
+        }
+
+        if (showHabitRequestsDialog) {
+            AlertDialog(
+                onDismissRequest = { showHabitRequestsDialog = false },
+                title = { Text(stringResource(R.string.lbl_habit_requests)) },
+                text = {
+                    Column {
+                        if (habitRequests.isEmpty()) {
+                            Text(text = stringResource(R.string.no_habit_requests))
+                        } else {
+                            habitRequests.forEach { request ->
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp)
+                                ) {
+                                    Text(
+                                        text = "${request["senderName"]} requests to share habit: ${request["habitName"]}",
+                                        modifier = Modifier.padding(bottom = 8.dp)
+                                    )
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Button(
+                                            onClick = {
+                                                socialViewModel.respondToHabitRequest(
+                                                    request["habitId"] as String,
+                                                    request["senderId"] as String,
+                                                    true
+                                                )
+                                                snackbarMessage = context.getString(R.string.snackbar_habit_request_accepted)
+                                                showSnackbar = true
+                                            }
+                                        ) {
+                                            Text(stringResource(R.string.btn_accept))
+                                        }
+
+                                        Button(
+                                            onClick = {
+                                                socialViewModel.respondToHabitRequest(
+                                                    request["habitId"] as String,
+                                                    request["senderId"] as String,
+                                                    false
+                                                )
+                                                snackbarMessage = context.getString(R.string.snackbar_habit_request_denied)
+                                                showSnackbar = true
+                                            }
+                                        ) {
+                                            Text(stringResource(R.string.btn_deny))
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { showHabitRequestsDialog = false }) {
+                        Text(stringResource(R.string.btn_close))
+                    }
+                }
+            )
+        }
 
         LaunchedEffect(key1 = showSnackbar) {
             if (showSnackbar) {
