@@ -1,7 +1,6 @@
 package no.hiof.groupone.habittracker.ui.navigation
 
 import CalendarScreen
-import MapScreen
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
@@ -16,6 +15,7 @@ import no.hiof.groupone.habittracker.ui.screens.CreateHabit
 import no.hiof.groupone.habittracker.ui.screens.EditProfile
 import no.hiof.groupone.habittracker.ui.screens.Habits
 import no.hiof.groupone.habittracker.ui.screens.Home
+import no.hiof.groupone.habittracker.ui.screens.MapScreen
 import no.hiof.groupone.habittracker.ui.screens.ProfileScreen
 import no.hiof.groupone.habittracker.ui.screens.SettingsScreen
 import no.hiof.groupone.habittracker.ui.screens.Signup

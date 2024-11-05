@@ -1,8 +1,8 @@
 package no.hiof.groupone.habittracker
 
-import MapScreen
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,6 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -23,13 +24,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
 import no.hiof.groupone.habittracker.ui.navigation.AppNavigation
 import no.hiof.groupone.habittracker.ui.navigation.navbars.BottomNavBar
 import no.hiof.groupone.habittracker.ui.navigation.navbars.PopupScrollContent
 import no.hiof.groupone.habittracker.ui.navigation.navbars.TopNavBar
+import no.hiof.groupone.habittracker.ui.screens.MapScreen
 import no.hiof.groupone.habittracker.ui.theme.HabitTrackerTheme
 import no.hiof.groupone.habittracker.viewmodel.AuthState
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
@@ -37,6 +38,7 @@ import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 class MainActivity : ComponentActivity() {
     private lateinit var requestPermissionsLauncher: ActivityResultLauncher<Array<String>>
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
