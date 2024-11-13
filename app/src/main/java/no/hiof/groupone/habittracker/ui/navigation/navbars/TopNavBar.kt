@@ -1,9 +1,17 @@
 package no.hiof.groupone.habittracker.ui.navigation.navbars
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -22,15 +30,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import no.hiof.groupone.habittracker.R
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopNavBar(navController: NavHostController, screenTitle: String, showBackButton: Boolean = true, onHeightChange: (Int) -> Unit) {
+fun TopNavBar(
+    navController: NavHostController,
+    screenTitle: String,
+    showBackButton: Boolean = true,
+    notificationCount: Int = 0,
+    onNotificationClick: () -> Unit = {},
+    onHeightChange: (Int) -> Unit
+) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val isMenuExpanded = remember { mutableStateOf(false) }
-
 
     CenterAlignedTopAppBar(
         modifier = Modifier.onGloballyPositioned { coordinates ->
@@ -60,6 +77,35 @@ fun TopNavBar(navController: NavHostController, screenTitle: String, showBackBut
             }
         },
         actions = {
+            Box(
+                modifier = Modifier.padding(end = 8.dp)
+            ) {
+                IconButton(onClick = onNotificationClick) {
+                    Icon(
+                        imageVector = Icons.Outlined.Notifications,
+                        contentDescription = "Notifications"
+                    )
+                }
+
+                if (notificationCount > 0) {
+                    Box(
+                        modifier = Modifier
+                            .offset(x = 16.dp, y = (-8).dp)
+                            .size(16.dp)
+                            .background(MaterialTheme.colorScheme.error, CircleShape)
+                            .border(1.dp, MaterialTheme.colorScheme.surface, CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = if (notificationCount > 99) "99+" else notificationCount.toString(),
+                            color = MaterialTheme.colorScheme.onError,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontSize = 10.sp
+                        )
+                    }
+                }
+            }
+
             IconButton(onClick = { isMenuExpanded.value = true }) {
                 Icon(
                     imageVector = Icons.Filled.Menu,

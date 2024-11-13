@@ -1,43 +1,80 @@
 package no.hiof.groupone.habittracker.ui.screens
 
-import android.Manifest
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import no.hiof.groupone.habittracker.NotificationService
-import no.hiof.groupone.habittracker.R
 import no.hiof.groupone.habittracker.viewmodel.AuthState
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
+import no.hiof.groupone.habittracker.viewmodel.HabitListViewModel
+import no.hiof.groupone.habittracker.viewmodel.HabitsUiState
+import no.hiof.groupone.habittracker.viewmodel.LeaderboardViewModel
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun Home(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
-
+fun Home(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    authViewModel: AuthViewModel,
+    habitListViewModel: HabitListViewModel = viewModel(),
+    leaderboardViewModel: LeaderboardViewModel = viewModel()
+) {
     val authState = authViewModel.authState.observeAsState()
+    val currentDate = remember { mutableStateOf(LocalDate.now()) }
+    val habitsUiState by habitListViewModel.uiState.collectAsState()
+    val leaderboardDetails by leaderboardViewModel.leaderboardDetails.observeAsState(emptyList())
+
+    LaunchedEffect(Unit) {
+        leaderboardViewModel.loadUserLeaderboards()
+    }
+
+    LaunchedEffect(currentDate.value) {
+        habitListViewModel.updateSelectedDate(currentDate.value)
+    }
 
     LaunchedEffect(authState.value) {
         when (authState.value) {
@@ -48,82 +85,195 @@ fun Home(modifier: Modifier = Modifier, navController: NavController, authViewMo
         }
     }
 
-    val user = Firebase.auth.currentUser
-
-    val postNotificationPermission =
-        rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
-
-    val notificationService = NotificationService(navController.context)
-
-    LaunchedEffect(key1 = true) {
-        if (!postNotificationPermission.status.isGranted) {
-            postNotificationPermission.launchPermissionRequest()
-        }
-    }
-
     Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(onClick = {notificationService.showNotification("Test Notification")}) {
-            Text(text = "Show Notification")
-        }
-        Button(onClick = {notificationService.showExpandableNotification()}) {
-            Text(text = "Show Expandable Notification With Image")
-        }
-        Button(onClick = {notificationService.showExpandableNotificationWithText()}) {
-            Text(text = "Show Expandable With Text Notification")
-        }
-        Button(onClick = {notificationService.showInboxStyleNotification()}) {
-            Text(text = "Show Inbox Style Notification")
-        }
-        Button(onClick = {notificationService.showNotificationGroup()}) {
-            Text(text = "Show Notification Group Notification")
-        }
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = {
+                        currentDate.value = currentDate.value.minusDays(1)
+                    }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Previous Day")
+                    }
 
-        Text(text = "Home", fontSize = 26.sp)
+                    Text(
+                        text = currentDate.value.format(DateTimeFormatter.ofPattern("MMMM d, yyyy")),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Medium
+                    )
 
-        user?.let {
-            Text(text = stringResource(R.string.lbl_welcome, user.email ?: "N/A"), fontSize = 22.sp)
+                    IconButton(onClick = {
+                        currentDate.value = currentDate.value.plusDays(1)
+                    }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowForward, "Next Day")
+                    }
+                }
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Text(stringResource(R.string.lbl_display_name_with_placeholder, it.displayName ?: "N/A"))
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(stringResource(R.string.lbl_phone_number, it.phoneNumber ?: "N/A"))
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            it.photoUrl?.let { photoUrl ->
-                AsyncImage(
-                    model = photoUrl,
-                    contentDescription = stringResource(R.string.lbl_profile_picture),
-                    modifier = Modifier.size(100.dp)
-                )
+                when (habitsUiState) {
+                    is HabitsUiState.Loading -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                    is HabitsUiState.Success -> {
+                        val habits = habitListViewModel.getHabitsForDate(currentDate.value)
+                        if (habits.isEmpty()) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 32.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "No habits scheduled for this day",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        } else {
+                            LazyColumn(
+                                modifier = Modifier.heightIn(max = 300.dp)
+                            ) {
+                                items(habits) { habit ->
+                                    ListItem(
+                                        headlineContent = { Text(habit.name) },
+                                        supportingContent = habit.description?.let { { Text(it) } },
+                                        leadingContent = {
+                                            Checkbox(
+                                                checked = false,
+                                                onCheckedChange = { }
+                                            )
+                                        }
+                                    )
+                                    HorizontalDivider()
+                                }
+                            }
+                        }
+                    }
+                    is HabitsUiState.Error -> {
+                        Text(
+                            text = (habitsUiState as HabitsUiState.Error).exception,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = "Leaderboard",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
 
-        TextButton(onClick = { navController.navigate("createHabit") }) {
-            Text(text = stringResource(R.string.lbl_create_habit))
+                if (leaderboardDetails.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "No leaderboards available",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                } else {
+                    val topUsers = leaderboardDetails.firstOrNull()?.users
+                        ?.sortedByDescending { it.points }
+                        ?.take(5) ?: emptyList()
+
+                    Column {
+                        Text(
+                            text = leaderboardDetails.firstOrNull()?.name ?: "Leaderboard",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+
+                        LazyColumn(
+                            modifier = Modifier.heightIn(max = 250.dp)
+                        ) {
+                            items(topUsers) { user ->
+                                ListItem(
+                                    headlineContent = { Text(user.name) },
+                                    supportingContent = { Text("${user.points} points") },
+                                    leadingContent = {
+                                        val index = topUsers.indexOf(user)
+                                        Text(
+                                            text = "#${index + 1}",
+                                            fontWeight = FontWeight.Bold,
+                                            color = when (index) {
+                                                0 -> Color(0xFFFFD700) // Gold
+                                                1 -> Color(0xFFC0C0C0) // Silver
+                                                2 -> Color(0xFFCD7F32) // Bronze
+                                                else -> MaterialTheme.colorScheme.onSurface
+                                            }
+                                        )
+                                    }
+                                )
+                                if (topUsers.indexOf(user) < topUsers.size - 1) {
+                                    HorizontalDivider()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            TextButton(
+                onClick = { navController.navigate("createHabit") }
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Add Habit")
+                Spacer(Modifier.width(4.dp))
+                Text("New Habit")
+            }
 
-        TextButton(onClick = { navController.navigate("leaderboards") }) {
-            Text(text = stringResource(R.string.lbl_view_leaderboards))
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextButton(onClick = { navController.navigate("map") }) {
-            Text(text = "Open Map")
-        }
-
-        TextButton(onClick = { authViewModel.signout() }) {
-            Text(text = stringResource(R.string.lbl_sign_out))
+            TextButton(
+                onClick = { navController.navigate("leaderboards") }
+            ) {
+                Icon(Icons.AutoMirrored.Filled.List, contentDescription = "View Leaderboards")
+                Spacer(Modifier.width(4.dp))
+                Text("All Leaderboards")
+            }
         }
     }
 }
