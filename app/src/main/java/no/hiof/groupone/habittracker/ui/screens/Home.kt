@@ -24,6 +24,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -81,199 +82,222 @@ fun Home(
             is AuthState.Unauthenticated -> {
                 navController.navigate("login")
             }
+
             else -> Unit
         }
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Card(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                .fillMaxSize()
+                .padding(bottom = 120.dp),
+            contentAlignment = Alignment.BottomEnd
         ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
+            FloatingActionButton(
+                onClick = { navController.navigate("createHabit") },
+                modifier = Modifier.padding(end = 16.dp)
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Create Habit"
+                )
+            }
+        }
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
                 ) {
-                    IconButton(onClick = {
-                        currentDate.value = currentDate.value.minusDays(1)
-                    }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Previous Day")
-                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = {
+                            currentDate.value = currentDate.value.minusDays(1)
+                        }) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, "Previous Day")
+                        }
 
-                    Text(
-                        text = currentDate.value.format(DateTimeFormatter.ofPattern("MMMM d, yyyy")),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Medium
-                    )
+                        Text(
+                            text = currentDate.value.format(DateTimeFormatter.ofPattern("MMMM d, yyyy")),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Medium
+                        )
 
-                    IconButton(onClick = {
-                        currentDate.value = currentDate.value.plusDays(1)
-                    }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowForward, "Next Day")
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                when (habitsUiState) {
-                    is HabitsUiState.Loading -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
+                        IconButton(onClick = {
+                            currentDate.value = currentDate.value.plusDays(1)
+                        }) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowForward, "Next Day")
                         }
                     }
-                    is HabitsUiState.Success -> {
-                        val habits = habitListViewModel.getHabitsForDate(currentDate.value)
-                        if (habits.isEmpty()) {
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    when (habitsUiState) {
+                        is HabitsUiState.Loading -> {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 32.dp),
+                                    .height(200.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(
-                                    text = "No habits scheduled for this day",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
+                                CircularProgressIndicator()
                             }
-                        } else {
+                        }
+
+                        is HabitsUiState.Success -> {
+                            val habits = habitListViewModel.getHabitsForDate(currentDate.value)
+                            if (habits.isEmpty()) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 32.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "No habits scheduled for this day",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            } else {
+                                LazyColumn(
+                                    modifier = Modifier.heightIn(max = 300.dp)
+                                ) {
+                                    items(habits) { habit ->
+                                        ListItem(
+                                            headlineContent = { Text(habit.name) },
+                                            supportingContent = habit.description?.let {
+                                                {
+                                                    Text(
+                                                        it
+                                                    )
+                                                }
+                                            },
+                                            leadingContent = {
+                                                Checkbox(
+                                                    checked = false,
+                                                    onCheckedChange = { }
+                                                )
+                                            }
+                                        )
+                                        HorizontalDivider()
+                                    }
+                                }
+                            }
+                        }
+
+                        is HabitsUiState.Error -> {
+                            Text(
+                                text = (habitsUiState as HabitsUiState.Error).exception,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
+                }
+            }
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(
+                        text = "Leaderboard",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+
+                    if (leaderboardDetails.isEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "No leaderboards available",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    } else {
+                        val topUsers = leaderboardDetails.firstOrNull()?.users
+                            ?.sortedByDescending { it.points }
+                            ?.take(5) ?: emptyList()
+
+                        Column {
+                            Text(
+                                text = leaderboardDetails.firstOrNull()?.name ?: "Leaderboard",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+
                             LazyColumn(
-                                modifier = Modifier.heightIn(max = 300.dp)
+                                modifier = Modifier.heightIn(max = 250.dp)
                             ) {
-                                items(habits) { habit ->
+                                items(topUsers) { user ->
                                     ListItem(
-                                        headlineContent = { Text(habit.name) },
-                                        supportingContent = habit.description?.let { { Text(it) } },
+                                        headlineContent = { Text(user.name) },
+                                        supportingContent = { Text("${user.points} points") },
                                         leadingContent = {
-                                            Checkbox(
-                                                checked = false,
-                                                onCheckedChange = { }
+                                            val index = topUsers.indexOf(user)
+                                            Text(
+                                                text = "#${index + 1}",
+                                                fontWeight = FontWeight.Bold,
+                                                color = when (index) {
+                                                    0 -> Color(0xFFFFD700) // Gold
+                                                    1 -> Color(0xFFC0C0C0) // Silver
+                                                    2 -> Color(0xFFCD7F32) // Bronze
+                                                    else -> MaterialTheme.colorScheme.onSurface
+                                                }
                                             )
                                         }
                                     )
-                                    HorizontalDivider()
-                                }
-                            }
-                        }
-                    }
-                    is HabitsUiState.Error -> {
-                        Text(
-                            text = (habitsUiState as HabitsUiState.Error).exception,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                }
-            }
-        }
-
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text(
-                    text = "Leaderboard",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-
-                if (leaderboardDetails.isEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 32.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "No leaderboards available",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                } else {
-                    val topUsers = leaderboardDetails.firstOrNull()?.users
-                        ?.sortedByDescending { it.points }
-                        ?.take(5) ?: emptyList()
-
-                    Column {
-                        Text(
-                            text = leaderboardDetails.firstOrNull()?.name ?: "Leaderboard",
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-
-                        LazyColumn(
-                            modifier = Modifier.heightIn(max = 250.dp)
-                        ) {
-                            items(topUsers) { user ->
-                                ListItem(
-                                    headlineContent = { Text(user.name) },
-                                    supportingContent = { Text("${user.points} points") },
-                                    leadingContent = {
-                                        val index = topUsers.indexOf(user)
-                                        Text(
-                                            text = "#${index + 1}",
-                                            fontWeight = FontWeight.Bold,
-                                            color = when (index) {
-                                                0 -> Color(0xFFFFD700) // Gold
-                                                1 -> Color(0xFFC0C0C0) // Silver
-                                                2 -> Color(0xFFCD7F32) // Bronze
-                                                else -> MaterialTheme.colorScheme.onSurface
-                                            }
-                                        )
+                                    if (topUsers.indexOf(user) < topUsers.size - 1) {
+                                        HorizontalDivider()
                                     }
-                                )
-                                if (topUsers.indexOf(user) < topUsers.size - 1) {
-                                    HorizontalDivider()
                                 }
                             }
                         }
                     }
                 }
             }
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            TextButton(
-                onClick = { navController.navigate("createHabit") }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Add Habit")
-                Spacer(Modifier.width(4.dp))
-                Text("New Habit")
+                TextButton(
+                    onClick = { navController.navigate("leaderboards") }
+                ) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.List,
+                        contentDescription = "View Leaderboards"
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text("All Leaderboards")
+                }
             }
 
-            TextButton(
-                onClick = { navController.navigate("leaderboards") }
-            ) {
-                Icon(Icons.AutoMirrored.Filled.List, contentDescription = "View Leaderboards")
-                Spacer(Modifier.width(4.dp))
-                Text("All Leaderboards")
-            }
         }
     }
 }
