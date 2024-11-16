@@ -45,20 +45,22 @@ class HabitViewModel(private val habitListViewModel: HabitListViewModel) : ViewM
     fun createHabit(habit: Habit): Boolean {
         return try {
         viewModelScope.launch {
-            // adding habit to habits collection
-            val habitId = FirebaseFirestore.getInstance()
+            val newHabit = habit.copy(id = "")
+
+            val habitRef = FirebaseFirestore.getInstance()
                 .collection("habits")
-                .add(habit)
+                .add(newHabit)
                 .await()
-                .id
+
+            val habitWithId = newHabit.copy(id = habitRef.id)
+            habitRef.set(habitWithId).await()
 
             val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
-            // adding habit tu users habits
             FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(currentUserId)
-                .update("habits", FieldValue.arrayUnion(habitId))
+                .update("habits", FieldValue.arrayUnion(habitRef.id))
                 .await()
             }
             habitListViewModel.refreshHabits()

@@ -10,7 +10,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import no.hiof.groupone.habittracker.screens.LeaderboardScreen
 import no.hiof.groupone.habittracker.screens.Login
-import no.hiof.groupone.habittracker.ui.screens.SocialManagement
 import no.hiof.groupone.habittracker.ui.screens.CreateHabit
 import no.hiof.groupone.habittracker.ui.screens.EditProfile
 import no.hiof.groupone.habittracker.ui.screens.Habits
@@ -19,6 +18,7 @@ import no.hiof.groupone.habittracker.ui.screens.MapScreen
 import no.hiof.groupone.habittracker.ui.screens.ProfileScreen
 import no.hiof.groupone.habittracker.ui.screens.SettingsScreen
 import no.hiof.groupone.habittracker.ui.screens.Signup
+import no.hiof.groupone.habittracker.ui.screens.SocialManagement
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -39,7 +39,7 @@ fun AppNavigation(
             Signup(modifier, navController, authViewModel)
         }
         composable("habits") {
-            Habits(modifier, navController, authViewModel)
+            Habits(modifier)
         }
         composable("home") {
             Home(modifier, navController, authViewModel)

@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -178,20 +179,53 @@ fun Home(
                                 ) {
                                     items(habits) { habit ->
                                         ListItem(
-                                            headlineContent = { Text(habit.name) },
+                                            headlineContent = {
+                                                Text(
+                                                    text = habit.name,
+                                                    style = if (habit.isCompleted) {
+                                                        MaterialTheme.typography.bodyLarge.copy(
+                                                            textDecoration = TextDecoration.LineThrough,
+                                                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                                        )
+                                                    } else {
+                                                        MaterialTheme.typography.bodyLarge
+                                                    }
+                                                )
+                                            },
                                             supportingContent = habit.description?.let {
                                                 {
                                                     Text(
-                                                        it
+                                                        text = it,
+                                                        style = if (habit.isCompleted) {
+                                                            MaterialTheme.typography.bodyMedium.copy(
+                                                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                                            )
+                                                        } else {
+                                                            MaterialTheme.typography.bodyMedium
+                                                        }
                                                     )
                                                 }
                                             },
                                             leadingContent = {
                                                 Checkbox(
-                                                    checked = false,
-                                                    onCheckedChange = { }
+                                                    checked = habit.isCompleted,
+                                                    onCheckedChange = { isChecked ->
+                                                        if (isChecked) {
+                                                            habitListViewModel.markHabitAsComplete(habit)
+                                                        }
+                                                    },
+                                                    enabled = !habit.isCompleted
                                                 )
-                                            }
+                                            },
+                                            trailingContent = if (habit.isCompleted) {
+                                                {
+                                                    Text(
+                                                        text = "✓ Done",
+                                                        style = MaterialTheme.typography.bodySmall,
+                                                        color = MaterialTheme.colorScheme.primary
+                                                    )
+                                                }
+                                            } else null
                                         )
                                         HorizontalDivider()
                                     }

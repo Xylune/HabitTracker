@@ -1,31 +1,42 @@
 package no.hiof.groupone.habittracker.ui.screens
 
-import android.util.Log
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import no.hiof.groupone.habittracker.R
-import no.hiof.groupone.habittracker.viewmodel.HabitListViewModel
+import no.hiof.groupone.habittracker.formatTime
 import no.hiof.groupone.habittracker.model.Habit
-import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
+import no.hiof.groupone.habittracker.viewmodel.HabitListViewModel
 import no.hiof.groupone.habittracker.viewmodel.HabitsUiState
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Habits(modifier: Modifier = Modifier,
-           navController: NavController,
-           authViewModel: AuthViewModel,
            habitListViewModel: HabitListViewModel = viewModel()) {
 
     val uiState by habitListViewModel.uiState.collectAsState()
@@ -35,7 +46,7 @@ fun Habits(modifier: Modifier = Modifier,
         }
         is HabitsUiState.Success -> {
             val habits = (uiState as HabitsUiState.Success).habits
-            HabitList(habits, modifier)
+            HabitList(habits, habitListViewModel, modifier)
         }
         is HabitsUiState.Error -> {
             val errorMessage = (uiState as HabitsUiState.Error).exception
@@ -45,7 +56,11 @@ fun Habits(modifier: Modifier = Modifier,
 }
 
 @Composable
-fun HabitList(habits: List<Habit>, modifier: Modifier = Modifier) {
+fun HabitList(
+    habits: List<Habit>,
+    viewModel: HabitListViewModel,
+    modifier: Modifier = Modifier
+) {
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -55,21 +70,21 @@ fun HabitList(habits: List<Habit>, modifier: Modifier = Modifier) {
         contentPadding = PaddingValues(16.dp)
     ) {
         items(habits) { habit ->
-            HabitListItem(habit)
+            HabitListItem(
+                habit = habit,
+                onMarkComplete = { viewModel.markHabitAsComplete(it) },
+                onDelete = { viewModel.deleteHabit(it) }
+            )
         }
     }
 }
 
 @Composable
-fun HabitListItem(habit: Habit) {
-    Log.d("HabitListItem", "Habit: $habit")
-
-    // Function to format Unix timestamps (nullable Long)
-    fun formatTime(timestamp: Long?): String {
-        val sdf = SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault())
-        return timestamp?.let { sdf.format(Date(it)) } ?: "N/A" // Return "N/A" if timestamp is null
-    }
-
+fun HabitListItem(
+    habit: Habit,
+    onMarkComplete: (Habit) -> Unit,
+    onDelete: (Habit) -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -79,16 +94,63 @@ fun HabitListItem(habit: Habit) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            Text(text = habit.name, style = MaterialTheme.typography.titleMedium)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = habit.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.weight(1f)
+                )
+
+                if (habit.isCompleted) {
+                    Icon(
+                        imageVector = Icons.Filled.CheckCircle,
+                        contentDescription = "Completed",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+
             habit.description?.let {
                 Text(text = it, style = MaterialTheme.typography.bodyMedium)
             }
-            // Display formatted start and end times
-            Text(text = stringResource(R.string.lbl_start_time_with_placeholder, formatTime(habit.startTime)), style = MaterialTheme.typography.bodySmall)
-            Text(text = stringResource(
-                R.string.lbl_end_time_with_placeholder,
-                formatTime(habit.endTime)
-            ), style = MaterialTheme.typography.bodySmall)
+
+            Text(
+                text = "Start: ${formatTime(habit.startTime)}",
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text(
+                text = "End: ${formatTime(habit.endTime)}",
+                style = MaterialTheme.typography.bodySmall
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(
+                    onClick = { onMarkComplete(habit) },
+                    enabled = !habit.isCompleted,
+                    modifier = Modifier.weight(1f).padding(end = 8.dp)
+                ) {
+                    Text(if (habit.isCompleted) "Completed" else "Mark Complete")
+                }
+
+                IconButton(
+                    onClick = { onDelete(habit) }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = "Delete habit",
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
         }
     }
 }
