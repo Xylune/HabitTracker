@@ -39,7 +39,7 @@ fun AppNavigation(
             Signup(modifier, navController, authViewModel)
         }
         composable("habits") {
-            Habits(modifier)
+            Habits(modifier, navController)
         }
         composable("home") {
             Home(modifier, navController, authViewModel)

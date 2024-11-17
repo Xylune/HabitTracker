@@ -13,12 +13,14 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,7 +31,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import no.hiof.groupone.habittracker.formatTime
 import no.hiof.groupone.habittracker.model.Habit
 import no.hiof.groupone.habittracker.viewmodel.HabitListViewModel
@@ -37,7 +41,27 @@ import no.hiof.groupone.habittracker.viewmodel.HabitsUiState
 
 @Composable
 fun Habits(modifier: Modifier = Modifier,
-           habitListViewModel: HabitListViewModel = viewModel()) {
+           navController: NavController,
+           habitListViewModel: HabitListViewModel = viewModel()
+) {
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 120.dp)
+            .zIndex(10F),
+        contentAlignment = Alignment.BottomEnd
+    ) {
+        FloatingActionButton(
+            onClick = { navController.navigate("createHabit") },
+            modifier = Modifier.padding(end = 16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Create Habit"
+            )
+        }
+    }
 
     val uiState by habitListViewModel.uiState.collectAsState()
     when (uiState) {

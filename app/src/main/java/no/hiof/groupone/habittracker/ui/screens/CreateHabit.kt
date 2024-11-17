@@ -121,7 +121,7 @@ fun CreateHabit(
                 readOnly = true,
                 label = { Text(stringResource(R.string.lbl_frequency)) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier
+                modifier = Modifier.menuAnchor()
             )
 
             ExposedDropdownMenu(
