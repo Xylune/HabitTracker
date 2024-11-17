@@ -117,14 +117,13 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Habit summary
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                ProfileStat(stringResource(R.string.lbl_total_habits), totalHabits.value)
-                ProfileStat(stringResource(R.string.lbl_current_streak), currentStreak.value)
-                ProfileStat(stringResource(R.string.lbl_points), points.value)
+                ProfileStat(stringResource(R.string.lbl_total_habits), totalHabits.intValue)
+                ProfileStat(stringResource(R.string.lbl_current_streak), currentStreak.intValue)
+                ProfileStat(stringResource(R.string.lbl_points), points.intValue)
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -150,7 +149,6 @@ fun ProfileScreen(
                     Text(stringResource(R.string.btn_edit_profile))
                 }
             }
-
 
             // Habit List
             Text(
@@ -180,9 +178,6 @@ fun ProfileScreen(
                     }
                 }
             }
-
-
-
         }
     }
 }
@@ -201,10 +196,6 @@ fun HabitItem(habit: Habit) {
         .getDefault()).format(Date(habit.startTime ?: 0))
 
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
-        Text(
-            text = stringResource(R.string.lbl_habit_with_placeholder, habit.id),
-            style = MaterialTheme.typography.titleMedium
-        )
         Text(
             text = habit.name,
             style = MaterialTheme.typography.titleMedium
@@ -233,6 +224,6 @@ fun HabitItem(habit: Habit) {
 @Composable
 fun ProfileScreenPreview() {
     ProfileScreen(
-        onEditProfile = { /* Handle edit profile action */ }
+        onEditProfile = {  }
     )
 }

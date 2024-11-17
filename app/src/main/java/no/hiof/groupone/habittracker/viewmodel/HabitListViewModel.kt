@@ -71,7 +71,7 @@ class HabitListViewModel : ViewModel() {
         val habitRef = firestore.collection("habits").document(habit.id)
 
         val updatedCompletedDates = habit.completedDates + System.currentTimeMillis()
-        val updates = hashMapOf<String, Any>(
+        val updates = hashMapOf(
             "isCompleted" to true,
             "completedDates" to updatedCompletedDates,
             "currentStreak" to (habit.currentStreak + 1)
