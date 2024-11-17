@@ -191,6 +191,7 @@ class HabitListViewModel : ViewModel() {
                                 fetchedCount++
 
                                 if (fetchedCount == habitIdList.size) {
+                                    habitObjects.sortBy { it.startTime }
                                     _uiState.value = HabitsUiState.Success(habitObjects)
                                 }
                             }
@@ -205,6 +206,8 @@ class HabitListViewModel : ViewModel() {
                                 }
                             }
                     }
+
+
                 } else {
                     _uiState.value = HabitsUiState.Error("User document does not exist")
                 }
