@@ -74,10 +74,56 @@ class HabitViewModel(private val habitListViewModel: HabitListViewModel) : ViewM
                     .document(currentUserId)
                     .update("habits", FieldValue.arrayUnion(habitRef.id))
             }
+            habitListViewModel.refreshHabits()
             true
         } catch (e: Exception) {
             e.printStackTrace()
             false
         }
     }
+
+
+    suspend fun getHabitById(habitId: String): Habit? {
+        val db = FirebaseFirestore.getInstance()
+        return try {
+            val documentSnapshot = db.collection("habits")
+                .document(habitId)
+                .get()
+                .await()
+
+            if (documentSnapshot.exists()) {
+                documentSnapshot.toObject(Habit::class.java)
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+
+    fun updateHabit(updatedHabit: Habit) {
+        viewModelScope.launch {
+            try {
+                FirebaseFirestore.getInstance()
+                    .collection("habits")
+                    .document(updatedHabit.id)
+                    .set(updatedHabit)
+                    .await()
+
+                val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+                FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(currentUserId)
+                    .update("habits", FieldValue.arrayUnion(updatedHabit.id))
+                    .await()
+
+                habitListViewModel.refreshHabits()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
 }

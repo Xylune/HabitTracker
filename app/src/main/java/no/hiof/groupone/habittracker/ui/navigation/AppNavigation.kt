@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import no.hiof.groupone.habittracker.screens.LeaderboardScreen
 import no.hiof.groupone.habittracker.screens.Login
 import no.hiof.groupone.habittracker.ui.screens.CreateHabit
+import no.hiof.groupone.habittracker.ui.screens.EditHabitScreen
 import no.hiof.groupone.habittracker.ui.screens.EditProfile
 import no.hiof.groupone.habittracker.ui.screens.Habits
 import no.hiof.groupone.habittracker.ui.screens.Home
@@ -46,6 +47,20 @@ fun AppNavigation(
         }
         composable("createHabit") {
             CreateHabit(modifier, navController)
+        }
+        composable("editHabit/{habitId}") { backStackEntry ->
+            val habitId = backStackEntry.arguments?.getString("habitId") ?: ""
+            EditHabitScreen(
+                modifier,
+                navController,
+                habitId = habitId,
+                onSave = { updatedHabit ->
+                    navController.popBackStack()
+                },
+                onCancel = {
+                    navController.popBackStack()
+                }
+            )
         }
         composable("SocialManagement") {
             SocialManagement(modifier, navController, authViewModel)

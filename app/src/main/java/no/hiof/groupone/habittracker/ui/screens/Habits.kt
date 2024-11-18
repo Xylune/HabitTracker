@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -88,7 +89,7 @@ fun Habits(modifier: Modifier = Modifier,
         }
         is HabitsUiState.Success -> {
             val habits = (uiState as HabitsUiState.Success).habits
-            HabitList(habits, habitListViewModel, modifier)
+            HabitList(habits, habitListViewModel, modifier, navController)
         }
         is HabitsUiState.Error -> {
             val errorMessage = (uiState as HabitsUiState.Error).exception
@@ -101,7 +102,8 @@ fun Habits(modifier: Modifier = Modifier,
 fun HabitList(
     habits: List<Habit>,
     viewModel: HabitListViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: NavController
 ) {
     LazyColumn(
         modifier = modifier
@@ -115,7 +117,8 @@ fun HabitList(
             HabitListItem(
                 habit = habit,
                 onMarkComplete = { viewModel.markHabitAsComplete(it) },
-                onDelete = { viewModel.deleteHabit(it) }
+                onDelete = { viewModel.deleteHabit(it) },
+                navController
             )
         }
     }
@@ -125,7 +128,8 @@ fun HabitList(
 fun HabitListItem(
     habit: Habit,
     onMarkComplete: (Habit) -> Unit,
-    onDelete: (Habit) -> Unit
+    onDelete: (Habit) -> Unit,
+    navController: NavController
 ) {
     Card(
         modifier = Modifier
@@ -181,6 +185,19 @@ fun HabitListItem(
                     modifier = Modifier.weight(1f).padding(end = 8.dp)
                 ) {
                     Text(if (habit.isCompleted) "Completed" else "Mark Complete")
+                }
+
+                // Edit IconButton
+                IconButton(
+                    onClick = {
+                        navController.navigate("editHabit/${habit.id}")
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        contentDescription = "Edit habit",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
                 }
 
                 IconButton(
