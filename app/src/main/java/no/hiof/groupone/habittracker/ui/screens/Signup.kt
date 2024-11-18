@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -79,7 +80,8 @@ fun Signup(modifier: Modifier = Modifier, navController: NavController, authView
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text(text = stringResource(R.string.lbl_password)) }
+                label = { Text(text = stringResource(R.string.lbl_password)) },
+                visualTransformation = PasswordVisualTransformation()
             )
 
             Spacer(modifier = Modifier.height(8.dp))
