@@ -1,15 +1,12 @@
 package no.hiof.groupone.habittracker.ui.navigation.navbars
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
+import androidx.compose.ui.res.painterResource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -25,9 +22,9 @@ fun BottomNavBar(navController: NavHostController) {
     var selectedItem by remember { mutableIntStateOf(0) }
     val items = listOf(
         stringResource(R.string.lbl_home),
-        stringResource(R.string.lbl_my_habits),
-        stringResource(R.string.lbl_add_habit),
         stringResource(R.string.lbl_calendar),
+        stringResource(R.string.lbl_my_habits),
+        stringResource(R.string.lbl_map),
         stringResource(R.string.lbl_profile)
     )
 
@@ -36,13 +33,13 @@ fun BottomNavBar(navController: NavHostController) {
             NavigationBarItem(
                 icon = {
                     Icon(
-                        imageVector = when (index) {
-                            0 -> Icons.Outlined.Home
-                            1 -> Icons.Outlined.Menu
-                            2 -> Icons.Outlined.Add
-                            3 -> Icons.Outlined.DateRange
-                            4 -> Icons.Outlined.AccountCircle
-                            else -> Icons.Outlined.Home
+                        painter = when (index) {
+                            0 -> painterResource(R.drawable.outline_home_24)
+                            1 -> painterResource(R.drawable.outline_calendar_month_24)
+                            2 -> painterResource(R.drawable.outline_menu_24)
+                            3 -> painterResource(R.drawable.outline_map_24)
+                            4 -> painterResource(R.drawable.outline_account_circle_24)
+                            else -> painterResource(R.drawable.outline_home_24)
                         },
                         contentDescription = item
                     )
@@ -53,9 +50,9 @@ fun BottomNavBar(navController: NavHostController) {
                     selectedItem = index
                     when (index) {
                         0 -> navController.navigate("home")
-                        1 -> navController.navigate("habits")
-                        2 -> navController.navigate("createHabit")
-                        3 -> navController.navigate("calendar")
+                        1 -> navController.navigate("calendar")
+                        2 -> navController.navigate("habits")
+                        3 -> navController.navigate("map")
                         4 -> navController.navigate("profile")
                     }
                 }
@@ -63,3 +60,4 @@ fun BottomNavBar(navController: NavHostController) {
         }
     }
 }
+
