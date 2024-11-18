@@ -58,53 +58,55 @@ fun Signup(modifier: Modifier = Modifier, navController: NavController, authView
     }
 
 
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = stringResource(R.string.lbl_create_account), fontSize = 26.sp)
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text(text = stringResource(R.string.lbl_email)) }
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text(text = stringResource(R.string.lbl_password)) }
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = displayName,
-            onValueChange = { displayName = it },
-            label = { Text(text = stringResource(R.string.lbl_display_name)) }
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Button( onClick = {
-            authViewModel.signup(email, password, displayName)
-        },
-            enabled = email.isNotBlank() && password.isNotBlank() && authState.value != AuthState.Loading
+        Column(
+            modifier = modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = stringResource(R.string.btn_create_account))
-        }
+            Text(text = stringResource(R.string.lbl_create_account), fontSize = 26.sp)
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        TextButton(onClick = {
-            navController.navigate("login")
-        }) {
-            Text(text = stringResource(R.string.btn_go_to_login))
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text(text = stringResource(R.string.lbl_email)) }
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text(text = stringResource(R.string.lbl_password)) }
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = displayName,
+                onValueChange = { displayName = it },
+                label = { Text(text = stringResource(R.string.lbl_display_name)) }
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                onClick = {
+                    authViewModel.signup(email, password, displayName)
+                },
+                enabled = email.isNotBlank() && password.isNotBlank() && authState.value != AuthState.Loading
+            ) {
+                Text(text = stringResource(R.string.btn_create_account))
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextButton(onClick = {
+                navController.navigate("login")
+            }) {
+                Text(text = stringResource(R.string.btn_go_to_login))
+            }
         }
     }
-}

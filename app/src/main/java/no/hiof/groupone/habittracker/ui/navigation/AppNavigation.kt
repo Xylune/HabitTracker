@@ -9,11 +9,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import no.hiof.groupone.habittracker.screens.LeaderboardScreen
-import no.hiof.groupone.habittracker.screens.Login
 import no.hiof.groupone.habittracker.ui.screens.CreateHabit
 import no.hiof.groupone.habittracker.ui.screens.EditProfile
 import no.hiof.groupone.habittracker.ui.screens.Habits
 import no.hiof.groupone.habittracker.ui.screens.Home
+import no.hiof.groupone.habittracker.ui.screens.Login
 import no.hiof.groupone.habittracker.ui.screens.MapScreen
 import no.hiof.groupone.habittracker.ui.screens.ProfileScreen
 import no.hiof.groupone.habittracker.ui.screens.SettingsScreen
@@ -70,7 +70,7 @@ fun AppNavigation(
             EditProfile(modifier, navController, authViewModel)
         }
         composable("map") {
-            MapScreen(topNavBarHeight = topNavBarHeight)
+            MapScreen()
         }
 
     })

@@ -9,7 +9,6 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
 class MyMapView(context: Context) : MapView(context) {
-
     private val myLocationOverlay: MyLocationNewOverlay
     private var locationMarker: Marker
 

@@ -30,7 +30,6 @@ import no.hiof.groupone.habittracker.ui.navigation.AppNavigation
 import no.hiof.groupone.habittracker.ui.navigation.navbars.BottomNavBar
 import no.hiof.groupone.habittracker.ui.navigation.navbars.PopupScrollContent
 import no.hiof.groupone.habittracker.ui.navigation.navbars.TopNavBar
-import no.hiof.groupone.habittracker.ui.screens.MapScreen
 import no.hiof.groupone.habittracker.ui.theme.HabitTrackerTheme
 import no.hiof.groupone.habittracker.viewmodel.AuthState
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
@@ -64,18 +63,10 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            if (hasPermissions) {
-                MapScreen(topNavBarHeight = topNavBarHeight.intValue)
-            } else {
-                // If permissions not granted, handle accordingly
-            }
-
-
             val isDarkMode = remember { mutableStateOf(false) }
             val navController = rememberNavController()
             val openDialog = remember { mutableStateOf(false) }
             var screenTitle by remember { mutableStateOf("Habit Tracker") }
-
             val context = LocalContext.current
 
             HabitTrackerTheme(darkTheme = isDarkMode.value) {
