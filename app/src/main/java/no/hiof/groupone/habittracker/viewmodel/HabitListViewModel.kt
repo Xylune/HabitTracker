@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Source
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import no.hiof.groupone.habittracker.model.Frequency
@@ -30,15 +31,27 @@ class HabitListViewModel : ViewModel() {
     private val _habits = MutableStateFlow<List<Habit>>(emptyList())
     val habits: StateFlow<List<Habit>> get() = _habits
 
+    private val _selectedDate = MutableStateFlow<LocalDate?>(null)
+
+    private val _isOnline = MutableStateFlow(true)
+    val isOnline: StateFlow<Boolean> = _isOnline
+
     init {
+        setupConnectivityMonitoring()
         fetchUserHabits()
+    }
+
+    private fun setupConnectivityMonitoring() {
+        FirebaseFirestore.getInstance()
+            .waitForPendingWrites()
+            .addOnCompleteListener {
+                _isOnline.value = !it.isSuccessful
+            }
     }
 
     fun refreshHabits() {
         fetchUserHabits()
     }
-
-    private val _selectedDate = MutableStateFlow<LocalDate?>(null)
 
     fun updateSelectedDate(date: LocalDate) {
         _selectedDate.value = date
@@ -94,7 +107,7 @@ class HabitListViewModel : ViewModel() {
             return
         }
 
-        if (habit.id.isNullOrEmpty()) {
+        if (habit.id.isEmpty()) {
             _uiState.value = HabitsUiState.Error("Invalid habit ID")
             return
         }
@@ -122,9 +135,9 @@ class HabitListViewModel : ViewModel() {
         }
     }
 
+    private fun fetchUserHabits(fromCache: Boolean = false) {
+        val source = if (fromCache) Source.CACHE else Source.DEFAULT
 
-
-    private fun fetchUserHabits() {
         _uiState.value = HabitsUiState.Loading
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
 
@@ -136,7 +149,7 @@ class HabitListViewModel : ViewModel() {
         val firestore = FirebaseFirestore.getInstance()
         firestore.collection("users")
             .document(currentUserId)
-            .get()
+            .get(source)
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
                     val habitIdList = when (val habitIds = document.get("habits")) {

@@ -83,7 +83,6 @@ fun Home(
             is AuthState.Unauthenticated -> {
                 navController.navigate("login")
             }
-
             else -> Unit
         }
     }
@@ -332,7 +331,6 @@ fun Home(
                 }
             }
 
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -347,8 +345,6 @@ fun Home(
                     Text("Sign Out")
                 }
             }
-
-
         }
     }
 }

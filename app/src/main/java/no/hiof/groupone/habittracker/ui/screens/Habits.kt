@@ -24,6 +24,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -44,6 +45,23 @@ fun Habits(modifier: Modifier = Modifier,
            navController: NavController,
            habitListViewModel: HabitListViewModel = viewModel()
 ) {
+    val isOnline by habitListViewModel.isOnline.collectAsState()
+
+    Column {
+        if (!isOnline) {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.error.copy(alpha = 0.1f)
+            ) {
+                Text(
+                    text = "Offline mode - Changes will sync when online",
+                    modifier = Modifier.padding(8.dp),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+        }
+    }
 
     Box(
         modifier = Modifier
