@@ -141,7 +141,7 @@
     <string name="lbl_loading_friends">Loading friends...</string>
     <string name="btn_create">Create</string>
     <string name="lbl_no_leaderboards_available">No leaderboards available.</string>
-    <string name="lbl_map">map</string>
+    <string name="lbl_map">Map</string>
 
 
 </resources>
