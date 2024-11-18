@@ -1,4 +1,4 @@
-package no.hiof.groupone.habittracker.screens
+package no.hiof.groupone.habittracker.ui.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
