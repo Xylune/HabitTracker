@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import no.hiof.groupone.habittracker.model.Habit
 
@@ -74,40 +75,47 @@ class HabitViewModel(private val habitListViewModel: HabitListViewModel) : ViewM
     }
 
 
+    suspend fun getHabitById(habitId: String): Habit? {
+        val db = FirebaseFirestore.getInstance()
+        return try {
+            val documentSnapshot = db.collection("habits")
+                .document(habitId)
+                .get()
+                .await()
 
-
-
-
-
-    fun deleteHabit(habitId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        val userId = currentUser?.uid ?: return
-
-        val userDocRef = FirebaseFirestore.getInstance().collection("users").document(userId)
-
-        userDocRef.get()
-            .addOnSuccessListener { documentSnapshot ->
-                if (documentSnapshot.exists()) {
-                    // Get the current habits list (an array of habitIds)
-                    val habits = documentSnapshot.get("habits") as? MutableList<String> ?: mutableListOf()
-
-                    // Remove the habitId from the list
-                    habits.remove(habitId)
-
-                    // Update the user's habits array
-                    userDocRef.update("habits", habits)
-                        .addOnSuccessListener {
-                            onSuccess()
-                        }
-                        .addOnFailureListener { exception ->
-                            onFailure(exception)
-                        }
-                } else {
-                    onFailure(Exception("User document does not exist"))
-                }
+            if (documentSnapshot.exists()) {
+                documentSnapshot.toObject(Habit::class.java)
+            } else {
+                null
             }
-            .addOnFailureListener { exception ->
-                onFailure(exception)
-            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
+
+
+    fun updateHabit(updatedHabit: Habit) {
+        viewModelScope.launch {
+            try {
+                FirebaseFirestore.getInstance()
+                    .collection("habits")
+                    .document(updatedHabit.id)
+                    .set(updatedHabit)
+                    .await()
+
+                val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+                FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(currentUserId)
+                    .update("habits", FieldValue.arrayUnion(updatedHabit.id))
+                    .await()
+
+                habitListViewModel.refreshHabits()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
 }
