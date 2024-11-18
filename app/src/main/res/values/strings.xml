@@ -78,6 +78,7 @@
     <string name="btn_create_habit">Create habit</string>
     <string name="snackbar_habit_created_success">Habit created successfully</string>
     <string name="snackbar_habit_created_failure">Failed to create habit</string>
+    <string name="error_date_time_required">Date and time required</string>
 
 
     <!-- Edit Profile Screen labels -->

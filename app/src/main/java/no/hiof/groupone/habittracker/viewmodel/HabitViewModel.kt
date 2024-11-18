@@ -42,7 +42,7 @@ class HabitViewModel(private val habitListViewModel: HabitListViewModel) : ViewM
     @OptIn(ExperimentalMaterial3Api::class)
     fun updateSelectedTime(timePickerState: TimePickerState) { _selectedTime.value = timePickerState }
 
-    fun createHabit(habit: Habit): Boolean {
+    fun createHabit(habit: Habit, onHabitCreated: (Habit) -> Unit): Boolean {
         return try {
         viewModelScope.launch {
             val newHabit = habit.copy(id = "")
@@ -62,6 +62,8 @@ class HabitViewModel(private val habitListViewModel: HabitListViewModel) : ViewM
                 .document(currentUserId)
                 .update("habits", FieldValue.arrayUnion(habitRef.id))
                 .await()
+
+            onHabitCreated(habitWithId)
             }
             habitListViewModel.refreshHabits()
             true
@@ -69,5 +71,43 @@ class HabitViewModel(private val habitListViewModel: HabitListViewModel) : ViewM
             e.printStackTrace()
             false
         }
+    }
+
+
+
+
+
+
+
+    fun deleteHabit(habitId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val userId = currentUser?.uid ?: return
+
+        val userDocRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+
+        userDocRef.get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    // Get the current habits list (an array of habitIds)
+                    val habits = documentSnapshot.get("habits") as? MutableList<String> ?: mutableListOf()
+
+                    // Remove the habitId from the list
+                    habits.remove(habitId)
+
+                    // Update the user's habits array
+                    userDocRef.update("habits", habits)
+                        .addOnSuccessListener {
+                            onSuccess()
+                        }
+                        .addOnFailureListener { exception ->
+                            onFailure(exception)
+                        }
+                } else {
+                    onFailure(Exception("User document does not exist"))
+                }
+            }
+            .addOnFailureListener { exception ->
+                onFailure(exception)
+            }
     }
 }

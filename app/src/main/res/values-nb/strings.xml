@@ -59,6 +59,7 @@
     <string name="snackbar_habit_created_failure">Feilet ved opprettelse av vane</string>
 
     <!-- Edit Profile Screen labels -->
+    <string name="error_date_time_required">Dato og tid påkrevd</string>
     <string name="lbl_edit_profile_screen">Rediger Profil Skjerm</string>
     <string name="lbl_user_name_with_placeholder">Brukernavn: %1$s</string>
     <string name="lbl_no_user_name">Ingen Brukernavn</string>

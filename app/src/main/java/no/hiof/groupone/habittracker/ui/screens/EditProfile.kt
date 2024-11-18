@@ -157,7 +157,7 @@ fun EditProfile(
                                     Toast.LENGTH_LONG).show()
 
                                 profileViewModel.isEditingEmail.value = false
-                                authViewModel.signout()
+                                authViewModel.signOut()
                             },
                             onFailure = { errorMessage ->
                                 if (errorMessage == context.getString(R.string.error_re_authentication_required)) {
@@ -223,7 +223,7 @@ fun EditProfile(
                                             Toast.LENGTH_LONG).show()
 
                                         showReAuthDialog = false
-                                        authViewModel.signout()
+                                        authViewModel.signOut()
                                     },
                                     onFailure = { retryErrorMessage ->
                                         Toast.makeText(context, "Error: $retryErrorMessage", Toast.LENGTH_SHORT).show()

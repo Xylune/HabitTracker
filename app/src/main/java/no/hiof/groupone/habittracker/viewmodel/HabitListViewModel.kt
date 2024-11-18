@@ -94,9 +94,14 @@ class HabitListViewModel : ViewModel() {
             return
         }
 
-        val firestore = FirebaseFirestore.getInstance()
+        if (habit.id.isNullOrEmpty()) {
+            _uiState.value = HabitsUiState.Error("Invalid habit ID")
+            return
+        }
 
+        val firestore = FirebaseFirestore.getInstance()
         val userRef = firestore.collection("users").document(currentUserId)
+
         firestore.runTransaction { transaction ->
             val userDoc = transaction.get(userRef)
             val habitIds = userDoc.get("habits") as? List<String> ?: emptyList()
@@ -116,6 +121,7 @@ class HabitListViewModel : ViewModel() {
             _uiState.value = HabitsUiState.Error(e.message ?: "Failed to update user habits")
         }
     }
+
 
 
     private fun fetchUserHabits() {

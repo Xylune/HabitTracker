@@ -332,6 +332,23 @@ fun Home(
                 }
             }
 
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(
+                    onClick = {
+                        authViewModel.signOut()
+                    }
+                ) {
+                    Text("Sign Out")
+                }
+            }
+
+
         }
     }
 }

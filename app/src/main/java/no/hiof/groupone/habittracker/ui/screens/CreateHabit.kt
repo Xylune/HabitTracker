@@ -7,32 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DatePickerState
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TimeInput
-import androidx.compose.material3.TimePickerState
-import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.material3.rememberTimePickerState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -45,7 +21,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import no.hiof.groupone.habittracker.R
-import no.hiof.groupone.habittracker.ScheduleNotification
 import no.hiof.groupone.habittracker.model.Frequency
 import no.hiof.groupone.habittracker.model.Habit
 import no.hiof.groupone.habittracker.viewmodel.HabitListViewModel
@@ -55,7 +30,6 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -82,6 +56,8 @@ fun CreateHabit(
     var snackbarSuccess by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    var recentlyCreatedHabit by remember { mutableStateOf<Habit?>(null) }
 
     Column(
         modifier = modifier
@@ -142,148 +118,155 @@ fun CreateHabit(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        var showModal by remember { mutableStateOf(false) }
-        Text(stringResource(R.string.lbl_select_a_date_and_time))
-        Button(onClick = { showModal = true }) {
-            Text(stringResource(R.string.btn_pick_a_date))
-        }
-
-        if (selectedDate != null) {
-            val dateMillis = selectedDate!!.selectedDateMillis
-            if (dateMillis != null) {
-                val date = Date(dateMillis) // Convert to Date object
-                val formattedDate = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(date)
-                Text(stringResource(R.string.lbl_selected_date, formattedDate))
-            } else {
-                Text(stringResource(R.string.lbl_no_date_selected))
-            }
-        } else {
-            Text(stringResource(R.string.lbl_no_date_selected))
-        }
-
-        if (showModal) {
-            DatePickerModal(
-                onDateSelected = { datePickerState ->
-                    habitViewModel.updateSelectedDate(datePickerState)
-                    showModal = false
-                },
-                onDismiss = { showModal = false }
-            )
-        }
+        DatePickerSection(
+            selectedDate = selectedDate,
+            onDateSelected = { habitViewModel.updateSelectedDate(it) }
+        )
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        var showMenu by remember { mutableStateOf(true) }
-        var showInputExample by remember { mutableStateOf(false) }
-        val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
-
-        if (showMenu) {
-            Button(onClick = {
-                showInputExample = true
-                showMenu = false
-            }) {
-                Text(stringResource(R.string.lbl_pick_a_time))
-            }
-
-            if (selectedTime != null) {
-                val cal = Calendar.getInstance()
-                cal.set(Calendar.HOUR_OF_DAY, selectedTime!!.hour)
-                cal.set(Calendar.MINUTE, selectedTime!!.minute)
-                cal.isLenient = false
-                Text(stringResource(R.string.lbl_selected_time, formatter.format(cal.time)))
-            } else {
-                Text(stringResource(R.string.lbl_no_time_selected))
-            }
-        }
-
-        when {
-            showInputExample -> InputUseStateExample(
-                onDismiss = {
-                    showInputExample = false
-                    showMenu = true
-                },
-                onConfirm = { time ->
-                    habitViewModel.updateSelectedTime(time)
-                    showInputExample = false
-                    showMenu = true
-                }
-            )
-        }
+        TimePickerSection(
+            selectedTime = selectedTime,
+            onTimeSelected = { habitViewModel.updateSelectedTime(it) }
+        )
 
         Spacer(modifier = Modifier.height(12.dp))
 
         Button(onClick = {
-            ScheduleNotification().scheduleNotification(context, selectedTime!!, selectedDate!!, habitName)
+            try {
+                if (selectedDate == null || selectedTime == null) {
+                    throw IllegalStateException(context.getString(R.string.error_date_time_required))
+                }
 
-            val habitFrequency = when (frequency) {
-                "Daily" -> Frequency.DAILY
-                "Weekly" -> Frequency.WEEKLY
-                "Monthly" -> Frequency.MONTHLY
-                else -> null
-            }
+                val habitFrequency = when (frequency) {
+                    "Daily" -> Frequency.DAILY
+                    "Weekly" -> Frequency.WEEKLY
+                    "Monthly" -> Frequency.MONTHLY
+                    else -> null
+                }
 
-            val calendar = Calendar.getInstance()
-
-            selectedDate?.selectedDateMillis?.let { dateMillis ->
-                calendar.timeInMillis = dateMillis
-            }
-
-            if (selectedTime != null) {
+                val calendar = Calendar.getInstance()
+                selectedDate?.selectedDateMillis?.let { dateMillis ->
+                    calendar.timeInMillis = dateMillis
+                }
                 calendar.set(Calendar.HOUR_OF_DAY, selectedTime!!.hour)
                 calendar.set(Calendar.MINUTE, selectedTime!!.minute)
-            }
 
-            val habit = Habit(
-                name = habitName,
-                description = habitDescription,
-                frequency = habitFrequency,
-                startTime = calendar.timeInMillis,
-                endTime = null,
-                basePoints = 0,
-                currentStreak = 0
-            )
+                val habit = Habit(
+                    name = habitName,
+                    description = habitDescription,
+                    frequency = habitFrequency,
+                    startTime = calendar.timeInMillis,
+                    endTime = null,
+                    basePoints = 0,
+                    currentStreak = 0
+                )
 
-            coroutineScope.launch {
-                val success = habitViewModel.createHabit(habit)
-                snackbarSuccess = success
-                showSnackbar = true
+                coroutineScope.launch {
+                    val success = habitViewModel.createHabit(habit) { createdHabit ->
+                        recentlyCreatedHabit = createdHabit
+                    }
+
+                    val result = snackbarHostState.showSnackbar(
+                        message = if (success) context.getString(R.string.snackbar_habit_created_success) else context.getString(R.string.snackbar_habit_created_failure),
+                        actionLabel = "Undo"
+                    )
+
+                    if (result == SnackbarResult.ActionPerformed && recentlyCreatedHabit != null) {
+                        habitListViewModel.deleteHabit(recentlyCreatedHabit!!)
+                        recentlyCreatedHabit = null
+                    }
+                }
+            } catch (e: IllegalStateException) {
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = e.message ?: context.getString(R.string.snackbar_habit_created_failure),
+                        duration = SnackbarDuration.Short
+                    )
+                }
             }
         }) {
             Text(text = stringResource(R.string.btn_create_habit))
         }
 
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier
-        )
-
-        LaunchedEffect(key1 = showSnackbar) {
-            if (showSnackbar) {
-                if (snackbarSuccess) {
-                    snackbarHostState.showSnackbar(
-                        message = context.getString(R.string.snackbar_habit_created_success),
-                        actionLabel = "Dismiss",
-                        duration = SnackbarDuration.Short
-                    )
-                    navController.navigate("home")
-                } else {
-                    snackbarHostState.showSnackbar(
-                        message = context.getString(R.string.snackbar_habit_created_failure),
-                        duration = SnackbarDuration.Short
-                    )
-                }
-                showSnackbar = false
-            }
-        }
+        SnackbarHost(hostState = snackbarHostState)
     }
 }
 
-@Preview(showBackground = true)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateHabitPreview() {
-    CreateHabit()
+fun DatePickerSection(
+    selectedDate: DatePickerState?,
+    onDateSelected: (DatePickerState) -> Unit
+) {
+    var showModal by remember { mutableStateOf(false) }
+
+    Text(stringResource(R.string.lbl_select_a_date_and_time))
+    Button(onClick = { showModal = true }) {
+        Text(stringResource(R.string.btn_pick_a_date))
+    }
+
+    if (showModal) {
+        DatePickerModal(
+            onDateSelected = {
+                onDateSelected(it)
+                showModal = false
+            },
+            onDismiss = { showModal = false }
+        )
+    }
+
+    if (selectedDate != null && selectedDate.selectedDateMillis != null) {
+        val date = Date(selectedDate.selectedDateMillis!!)
+        val formattedDate = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(date)
+        Text(stringResource(R.string.lbl_selected_date, formattedDate))
+    } else {
+        Text(stringResource(R.string.lbl_no_date_selected))
+    }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimePickerSection(
+    selectedTime: TimePickerState?,
+    onTimeSelected: (TimePickerState) -> Unit
+) {
+    var showMenu by remember { mutableStateOf(true) }
+    var showInputExample by remember { mutableStateOf(false) }
+    val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+    if (showMenu) {
+        Button(onClick = {
+            showInputExample = true
+            showMenu = false
+        }) {
+            Text(stringResource(R.string.lbl_pick_a_time))
+        }
+
+        if (selectedTime != null) {
+            val cal = Calendar.getInstance()
+            cal.set(Calendar.HOUR_OF_DAY, selectedTime.hour)
+            cal.set(Calendar.MINUTE, selectedTime.minute)
+            Text(stringResource(R.string.lbl_selected_time, formatter.format(cal.time)))
+        } else {
+            Text(stringResource(R.string.lbl_no_time_selected))
+        }
+    }
+
+    if (showInputExample) {
+        InputUseStateExample(
+            onDismiss = {
+                showInputExample = false
+                showMenu = true
+            },
+            onConfirm = {
+                onTimeSelected(it)
+                showInputExample = false
+                showMenu = true
+            }
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -312,8 +295,6 @@ fun DatePickerModal(
         DatePicker(state = datePickerState)
     }
 }
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
