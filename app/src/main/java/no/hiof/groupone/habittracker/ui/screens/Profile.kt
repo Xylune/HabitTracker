@@ -150,34 +150,6 @@ fun ProfileScreen(
                 }
             }
 
-            // Habit List
-            Text(
-                text = stringResource(R.string.lbl_your_habits),
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
-
-            if (habitList.value.isEmpty()) {
-                Text(stringResource(R.string.lbl_no_habits_msg))
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = { navController.navigate("createHabit") },
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                ) {
-                    Text(stringResource(R.string.lbl_create_habit))
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(1f)
-                ) {
-                    items(habitList.value) { habit ->
-                        HabitItem(habit)
-                        HorizontalDivider()
-                    }
-                }
-            }
         }
     }
 }
