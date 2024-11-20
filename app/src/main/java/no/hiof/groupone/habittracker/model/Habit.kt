@@ -11,7 +11,8 @@ data class Habit(
     val basePoints: Int = 0,
     val currentStreak: Int = 0,
     val isCompleted: Boolean = false,
-    val completedDates: List<Long> = emptyList()
+    val completedDates: List<Long> = emptyList(),
+    val category: HabitCategory? = null
 ) {
 
     constructor() : this(
@@ -24,7 +25,8 @@ data class Habit(
         basePoints = 0,
         currentStreak = 0,
         isCompleted = false,
-        completedDates = emptyList()
+        completedDates = emptyList(),
+        category = null
     )
 }
 
@@ -32,4 +34,16 @@ enum class Frequency {
     DAILY,
     WEEKLY,
     MONTHLY
+}
+
+enum class HabitCategory(val displayName: String) {
+    HEALTH("Health"),
+    FITNESS("Fitness"),
+    WORK("Work"),
+    STUDY("Study"),
+    PERSONAL_DEVELOPMENT("Personal Development"),
+    HOBBY("Hobby"),
+    OTHER("Other");
+
+    override fun toString(): String = displayName
 }

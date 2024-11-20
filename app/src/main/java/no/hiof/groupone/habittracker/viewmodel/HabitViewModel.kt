@@ -1,5 +1,6 @@
 package no.hiof.groupone.habittracker.viewmodel
 
+import android.util.Log
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TimePickerState
@@ -13,6 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import no.hiof.groupone.habittracker.model.Habit
+import no.hiof.groupone.habittracker.model.HabitCategory
 
 
 class HabitViewModel(private val habitListViewModel: HabitListViewModel) : ViewModel() {
@@ -26,6 +28,12 @@ class HabitViewModel(private val habitListViewModel: HabitListViewModel) : ViewM
     val habitDescription: State<String> = _habitDescription
     fun updateHabitDescription(description: String) {
         _habitDescription.value = description
+    }
+
+    private val _selectedCategory = mutableStateOf<HabitCategory?>(null)
+    val selectedCategory: State<HabitCategory?> = _selectedCategory
+    fun updateCategory(category: HabitCategory?) {
+        _selectedCategory.value = category
     }
 
     private val _frequency = mutableStateOf<String?>(null)
@@ -57,6 +65,7 @@ class HabitViewModel(private val habitListViewModel: HabitListViewModel) : ViewM
     }
 
     fun createHabit(habit: Habit, onHabitCreated: (Habit) -> Unit): Boolean {
+        Log.d("HabitDebug", "Creating Habit: $habit")
         return try {
             viewModelScope.launch {
                 val habitRef = FirebaseFirestore.getInstance()
@@ -68,6 +77,12 @@ class HabitViewModel(private val habitListViewModel: HabitListViewModel) : ViewM
                 onHabitCreated(habitWithId)
 
                 habitRef.set(habitWithId)
+                    .addOnSuccessListener {
+                        Log.d("HabitDebug", "Habit successfully written to Firestore: $habitWithId")
+                    }
+                    .addOnFailureListener{ e ->
+                        Log.e("HabitDebug", "Error writing habit to Firestore: ${e.message}")
+                    }
 
                 val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
                 FirebaseFirestore.getInstance()

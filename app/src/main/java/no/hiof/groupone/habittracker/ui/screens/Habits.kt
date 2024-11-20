@@ -1,5 +1,6 @@
 package no.hiof.groupone.habittracker.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
@@ -21,15 +24,23 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -38,17 +49,26 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import no.hiof.groupone.habittracker.formatTime
 import no.hiof.groupone.habittracker.model.Habit
+import no.hiof.groupone.habittracker.model.HabitCategory
 import no.hiof.groupone.habittracker.viewmodel.HabitListViewModel
 import no.hiof.groupone.habittracker.viewmodel.HabitsUiState
 
 @Composable
-fun Habits(modifier: Modifier = Modifier,
-           navController: NavController,
-           habitListViewModel: HabitListViewModel = viewModel()
+fun Habits(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    habitListViewModel: HabitListViewModel = viewModel()
 ) {
     val isOnline by habitListViewModel.isOnline.collectAsState()
+    val selectedCategory by habitListViewModel.selectedCategory.collectAsState()
+    val uiState by habitListViewModel.uiState.collectAsState()
 
-    Column {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .navigationBarsPadding()
+    ) {
         if (!isOnline) {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
@@ -60,6 +80,34 @@ fun Habits(modifier: Modifier = Modifier,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error
                 )
+            }
+        }
+
+        CategoryDropdown(
+            selectedCategory = selectedCategory,
+            onCategorySelected = { category ->
+                habitListViewModel.updateSelectedCategory(category)
+            },
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+
+        when (uiState) {
+            is HabitsUiState.Loading -> {
+                LoadingIndicator()
+            }
+            is HabitsUiState.Success -> {
+                val habits = (uiState as HabitsUiState.Success).habits
+                val filteredHabits = if (selectedCategory == null) {
+                    habits
+                } else {
+                    habits.filter { it.category == selectedCategory }
+                }
+
+                HabitList(filteredHabits, habitListViewModel, navController)
+            }
+            is HabitsUiState.Error -> {
+                val errorMessage = (uiState as HabitsUiState.Error).exception
+                ErrorMessage(errorMessage)
             }
         }
     }
@@ -82,18 +130,49 @@ fun Habits(modifier: Modifier = Modifier,
         }
     }
 
-    val uiState by habitListViewModel.uiState.collectAsState()
-    when (uiState) {
-        is HabitsUiState.Loading -> {
-            LoadingIndicator()
-        }
-        is HabitsUiState.Success -> {
-            val habits = (uiState as HabitsUiState.Success).habits
-            HabitList(habits, habitListViewModel, modifier, navController)
-        }
-        is HabitsUiState.Error -> {
-            val errorMessage = (uiState as HabitsUiState.Error).exception
-            ErrorMessage(errorMessage)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CategoryDropdown(
+    selectedCategory: HabitCategory?,
+    onCategorySelected: (HabitCategory?) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val categories = listOf<HabitCategory?>(null) + HabitCategory.entries
+
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }
+        ) {
+            TextField(
+                value = selectedCategory?.displayName ?: "All",
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Filter by Category") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+                modifier = Modifier.menuAnchor()
+            )
+
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                categories.forEach { category ->
+                    DropdownMenuItem(
+                        text = { Text(category?.displayName ?: "All") },
+                        onClick = {
+                            onCategorySelected(category)
+                            expanded = false
+                        }
+                    )
+                }
+            }
         }
     }
 }
@@ -102,15 +181,12 @@ fun Habits(modifier: Modifier = Modifier,
 fun HabitList(
     habits: List<Habit>,
     viewModel: HabitListViewModel,
-    modifier: Modifier = Modifier,
     navController: NavController
 ) {
     LazyColumn(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+            .padding(horizontal = 16.dp),
         contentPadding = PaddingValues(16.dp)
     ) {
         items(habits) { habit ->
@@ -131,6 +207,8 @@ fun HabitListItem(
     onDelete: (Habit) -> Unit,
     navController: NavController
 ) {
+    Log.d("HabitDebug", "Habit: $habit")
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -150,6 +228,16 @@ fun HabitListItem(
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f)
                 )
+
+                habit.category?.let{ category ->
+                    Text(
+                        text = category.displayName,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+
+                    )
+                }
 
                 if (habit.isCompleted) {
                     Icon(
@@ -187,7 +275,6 @@ fun HabitListItem(
                     Text(if (habit.isCompleted) "Completed" else "Mark Complete")
                 }
 
-                // Edit IconButton
                 IconButton(
                     onClick = {
                         navController.navigate("editHabit/${habit.id}")

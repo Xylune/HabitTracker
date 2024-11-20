@@ -1,5 +1,6 @@
 package no.hiof.groupone.habittracker.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 import no.hiof.groupone.habittracker.R
 import no.hiof.groupone.habittracker.model.Frequency
 import no.hiof.groupone.habittracker.model.Habit
+import no.hiof.groupone.habittracker.model.HabitCategory
 import no.hiof.groupone.habittracker.viewmodel.HabitListViewModel
 import no.hiof.groupone.habittracker.viewmodel.HabitViewModel
 import no.hiof.groupone.habittracker.viewmodel.HabitViewModelFactory
@@ -42,11 +43,16 @@ fun CreateHabit(
         factory = HabitViewModelFactory(habitListViewModel)
     )
 
+    var showDialog by remember { mutableStateOf(false) }
+    var dialogMessage by remember { mutableStateOf("") }
+
     val habitName by habitViewModel.habitName
     val habitDescription by habitViewModel.habitDescription
     val frequency by habitViewModel.frequency
     val selectedDate by habitViewModel.selectedDate
     val selectedTime by habitViewModel.selectedTime
+
+    val selectedCategory by habitViewModel.selectedCategory
 
     var expanded by remember { mutableStateOf(false) }
     val frequencyOptions = listOf(null, "Daily", "Weekly", "Monthly")
@@ -83,6 +89,15 @@ fun CreateHabit(
             onValueChange = { habitViewModel.updateHabitDescription(it) },
             label = { Text(text = stringResource(R.string.lbl_habit_description)) },
             singleLine = true
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        CategoryDropdown(
+            selectedCategory = selectedCategory,
+            onCategorySelected = { category ->
+                habitViewModel.updateCategory(category)
+            }
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -134,6 +149,7 @@ fun CreateHabit(
 
         Button(onClick = {
             try {
+                Log.d("HabitDebug", "Selected Category: $selectedCategory")
                 if (selectedDate == null || selectedTime == null) {
                     throw IllegalStateException(context.getString(R.string.error_date_time_required))
                 }
@@ -159,7 +175,8 @@ fun CreateHabit(
                     startTime = calendar.timeInMillis,
                     endTime = null,
                     basePoints = 0,
-                    currentStreak = 0
+                    currentStreak = 0,
+                    category = selectedCategory
                 )
 
                 coroutineScope.launch {
@@ -178,18 +195,65 @@ fun CreateHabit(
                     }
                 }
             } catch (e: IllegalStateException) {
-                coroutineScope.launch {
-                    snackbarHostState.showSnackbar(
-                        message = e.message ?: context.getString(R.string.snackbar_habit_created_failure),
-                        duration = SnackbarDuration.Short
-                    )
-                }
+                dialogMessage = e.message ?: context.getString(R.string.snackbar_habit_created_failure)
+                showDialog = true
             }
         }) {
             Text(text = stringResource(R.string.btn_create_habit))
         }
 
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                confirmButton = {
+                    TextButton(onClick = { showDialog = false }) {
+                        Text(text = "Ok")
+                    }
+                },
+                title = { Text(text = stringResource(R.string.snackbar_habit_created_failure)) },
+                text = { Text(text = dialogMessage) }
+            )
+        }
+
         SnackbarHost(hostState = snackbarHostState)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CategoryDropdown(
+    selectedCategory: HabitCategory?,
+    onCategorySelected: (HabitCategory) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        TextField(
+            value = selectedCategory?.displayName ?: stringResource(R.string.lbl_select_category),
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(stringResource(R.string.lbl_category)) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            modifier = Modifier.menuAnchor()
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            HabitCategory.entries.forEach { category ->
+                DropdownMenuItem(
+                    text = { Text(text = category.displayName) },
+                    onClick = {
+                        onCategorySelected(category)
+                        expanded = false
+                    }
+                )
+            }
+        }
     }
 }
 

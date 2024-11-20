@@ -79,6 +79,8 @@
     <string name="snackbar_habit_created_success">Habit created successfully</string>
     <string name="snackbar_habit_created_failure">Failed to create habit</string>
     <string name="error_date_time_required">Date and time required</string>
+    <string name="lbl_select_category">Select category</string>
+    <string name="lbl_category">Category</string>
 
 
     <!-- Edit Profile Screen labels -->

@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import no.hiof.groupone.habittracker.model.Frequency
 import no.hiof.groupone.habittracker.model.Habit
+import no.hiof.groupone.habittracker.model.HabitCategory
 import no.hiof.groupone.habittracker.ui.screens.HabitItem
 import java.time.Instant
 import java.time.LocalDate
@@ -32,6 +33,24 @@ class HabitListViewModel : ViewModel() {
 
     private val _habits = MutableStateFlow<List<Habit>>(emptyList())
     val habits: StateFlow<List<Habit>> get() = _habits
+
+    private val _selectedDate = MutableStateFlow<LocalDate?>(null)
+
+    private val _isOnline = MutableStateFlow(true)
+    val isOnline: StateFlow<Boolean> = _isOnline
+
+    private val _selectedCategory = MutableStateFlow<HabitCategory?>(null)
+    val selectedCategory: StateFlow<HabitCategory?> = _selectedCategory
+
+    fun updateSelectedCategory(category: HabitCategory?) {
+        _selectedCategory.value = category
+    }
+
+    fun getFilteredHabits(habits: List<Habit>): List<Habit> {
+        return _selectedCategory.value?.let { selectedCategory ->
+            habits.filter { it.category == selectedCategory }
+        } ?: habits
+    }
 
     private val _selectedDate = MutableStateFlow<LocalDate?>(null)
 
@@ -175,6 +194,47 @@ class HabitListViewModel : ViewModel() {
                     .get(source)
                     .await()
 
+                val habitIds = (userDoc.get("habits") as? List<*>)?.mapNotNull { it?.toString() } ?: emptyList()
+                val habits = habitIds.mapNotNull { habitId ->
+                    val habitDoc = FirebaseFirestore.getInstance()
+                        .collection("habits")
+                        .document(habitId)
+                        .get(source)
+                        .await()
+
+                    val data = habitDoc.data
+                    if (data != null) {
+                        Habit(
+                            id = habitDoc.id,
+                            name = data["name"] as? String ?: "",
+                            description = data["description"] as? String,
+                            frequency = try {
+                                (data["frequency"] as? String)?.let {
+                                    Frequency.valueOf(it)
+                                }
+                            } catch (e: Exception) { null },
+                            startTime = (data["startTime"] as? Long) ?: System.currentTimeMillis(),
+                            endTime = data["endTime"] as? Long,
+                            basePoints = (data["basePoints"] as? Number)?.toInt() ?: 0,
+                            currentStreak = (data["currentStreak"] as? Number)?.toInt() ?: 0,
+                            isCompleted = data["isCompleted"] as? Boolean ?: false,
+                            completedDates = (data["completedDates"] as? List<Long>) ?: emptyList(),
+                            category = try {
+                                (data["category"] as? String)?.let {
+                                    HabitCategory.valueOf(it)
+                                }
+                            } catch (e: Exception) { null }
+                        )
+                    } else null
+                }
+
+                _uiState.value = HabitsUiState.Success(habits)
+            } catch (e: Exception) {
+                if (_uiState.value !is HabitsUiState.Success) {
+                    _uiState.value = HabitsUiState.Error(e.message ?: "Failed to load habits")
+                }
+            }
+        }
                 val habitIds = (userDoc.get("habits") as? List<*>)?.mapNotNull { it?.toString() } ?: emptyList()
                 val habits = habitIds.mapNotNull { habitId ->
                     val habitDoc = FirebaseFirestore.getInstance()
