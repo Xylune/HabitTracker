@@ -58,8 +58,6 @@ fun CreateHabit(
     val frequencyOptions = listOf(null, "Daily", "Weekly", "Monthly")
 
     val snackbarHostState = remember { SnackbarHostState() }
-    var showSnackbar by remember { mutableStateOf(false) }
-    var snackbarSuccess by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
