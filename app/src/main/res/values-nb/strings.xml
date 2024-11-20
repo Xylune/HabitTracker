@@ -60,6 +60,7 @@
 
     <!-- Edit Profile Screen labels -->
     <string name="error_date_time_required">Dato og tid påkrevd</string>
+    <string name="lbl_select_category">Velg kategori</string>
     <string name="lbl_edit_profile_screen">Rediger Profil Skjerm</string>
     <string name="lbl_user_name_with_placeholder">Brukernavn: %1$s</string>
     <string name="lbl_no_user_name">Ingen Brukernavn</string>
@@ -137,6 +138,7 @@
     <string name="snackbar_habit_request_accepted">Vane godtatt</string>
     <string name="snackbar_habit_request_denied">Vane avslått</string>
     <string name="share_habit_label">Del vaner</string>
+    <string name="lbl_category">Kategori</string>
 
 </resources>
 

@@ -1,5 +1,6 @@
 package no.hiof.groupone.habittracker.viewmodel
 
+import android.util.Log
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TimePickerState
@@ -11,60 +12,83 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import no.hiof.groupone.habittracker.model.Habit
+import no.hiof.groupone.habittracker.model.HabitCategory
 
 
 class HabitViewModel(private val habitListViewModel: HabitListViewModel) : ViewModel() {
     private val _habitName = mutableStateOf("")
     val habitName: State<String> = _habitName
-    fun updateHabitName(name: String) { _habitName.value = name }
+    fun updateHabitName(name: String) {
+        _habitName.value = name
+    }
 
     private val _habitDescription = mutableStateOf("")
     val habitDescription: State<String> = _habitDescription
-    fun updateHabitDescription(description: String) { _habitDescription.value = description }
+    fun updateHabitDescription(description: String) {
+        _habitDescription.value = description
+    }
+
+    private val _selectedCategory = mutableStateOf<HabitCategory?>(null)
+    val selectedCategory: State<HabitCategory?> = _selectedCategory
+    fun updateCategory(category: HabitCategory?) {
+        _selectedCategory.value = category
+    }
 
     private val _frequency = mutableStateOf<String?>(null)
     val frequency: State<String?> = _frequency
-    fun updateFrequency(frequency: String?) { _frequency.value = frequency }
+    fun updateFrequency(frequency: String?) {
+        _frequency.value = frequency
+    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     private val _selectedDate = mutableStateOf<DatePickerState?>(null)
+
     @OptIn(ExperimentalMaterial3Api::class)
     val selectedDate: State<DatePickerState?> = _selectedDate
+
     @OptIn(ExperimentalMaterial3Api::class)
-    fun updateSelectedDate(datePickerState: DatePickerState) { _selectedDate.value = datePickerState }
+    fun updateSelectedDate(datePickerState: DatePickerState) {
+        _selectedDate.value = datePickerState
+    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     private val _selectedTime = mutableStateOf<TimePickerState?>(null)
+
     @OptIn(ExperimentalMaterial3Api::class)
     val selectedTime: State<TimePickerState?> = _selectedTime
+
     @OptIn(ExperimentalMaterial3Api::class)
-    fun updateSelectedTime(timePickerState: TimePickerState) { _selectedTime.value = timePickerState }
+    fun updateSelectedTime(timePickerState: TimePickerState) {
+        _selectedTime.value = timePickerState
+    }
 
     fun createHabit(habit: Habit, onHabitCreated: (Habit) -> Unit): Boolean {
+        Log.d("HabitDebug", "Creating Habit: $habit")
         return try {
-        viewModelScope.launch {
-            val newHabit = habit.copy(id = "")
+            viewModelScope.launch {
+                val habitRef = FirebaseFirestore.getInstance()
+                    .collection("habits")
+                    .document()
+                val habitWithId = habit.copy(id = habitRef.id)
 
-            val habitRef = FirebaseFirestore.getInstance()
-                .collection("habits")
-                .add(newHabit)
-                .await()
+                habitListViewModel.addNewHabit(habitWithId)
+                onHabitCreated(habitWithId)
 
-            val habitWithId = newHabit.copy(id = habitRef.id)
-            habitRef.set(habitWithId).await()
+                habitRef.set(habitWithId)
+                    .addOnSuccessListener {
+                        Log.d("HabitDebug", "Habit successfully written to Firestore: $habitWithId")
+                    }
+                    .addOnFailureListener{ e ->
+                        Log.e("HabitDebug", "Error writing habit to Firestore: ${e.message}")
+                    }
 
-            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-
-            FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(currentUserId)
-                .update("habits", FieldValue.arrayUnion(habitRef.id))
-                .await()
-
-            onHabitCreated(habitWithId)
+                val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+                FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(currentUserId)
+                    .update("habits", FieldValue.arrayUnion(habitRef.id))
             }
             habitListViewModel.refreshHabits()
             true
