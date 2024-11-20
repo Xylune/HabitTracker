@@ -43,10 +43,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import no.hiof.groupone.habittracker.R
 import no.hiof.groupone.habittracker.formatTime
 import no.hiof.groupone.habittracker.model.Habit
 import no.hiof.groupone.habittracker.model.HabitCategory
@@ -75,7 +78,7 @@ fun Habits(
                 color = MaterialTheme.colorScheme.error.copy(alpha = 0.1f)
             ) {
                 Text(
-                    text = "Offline mode - Changes will sync when online",
+                    text = stringResource(R.string.lbl_offline_notice),
                     modifier = Modifier.padding(8.dp),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error
@@ -125,7 +128,7 @@ fun Habits(
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
-                contentDescription = "Create Habit"
+                contentDescription = stringResource(R.string.lbl_create_habit)
             )
         }
     }
@@ -151,10 +154,10 @@ fun CategoryDropdown(
             onExpandedChange = { expanded = !expanded }
         ) {
             TextField(
-                value = selectedCategory?.displayName ?: "All",
+                value = selectedCategory?.getDisplayName(LocalContext.current) ?: stringResource(R.string.lbl_all),
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Filter by Category") },
+                label = { Text(stringResource(R.string.lbl_filter_category)) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
                 modifier = Modifier.menuAnchor()
             )
@@ -165,7 +168,7 @@ fun CategoryDropdown(
             ) {
                 categories.forEach { category ->
                     DropdownMenuItem(
-                        text = { Text(category?.displayName ?: "All") },
+                        text = { Text(category?.getDisplayName(LocalContext.current) ?: stringResource(R.string.lbl_all)) },
                         onClick = {
                             onCategorySelected(category)
                             expanded = false
@@ -231,7 +234,7 @@ fun HabitListItem(
 
                 habit.category?.let{ category ->
                     Text(
-                        text = category.displayName,
+                        text = category.getDisplayName(LocalContext.current),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.secondary,
                         modifier = Modifier.align(Alignment.CenterVertically)
@@ -242,7 +245,7 @@ fun HabitListItem(
                 if (habit.isCompleted) {
                     Icon(
                         imageVector = Icons.Filled.CheckCircle,
-                        contentDescription = "Completed",
+                        contentDescription = stringResource(R.string.lbl_completed),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -270,9 +273,14 @@ fun HabitListItem(
                 Button(
                     onClick = { onMarkComplete(habit) },
                     enabled = !habit.isCompleted,
-                    modifier = Modifier.weight(1f).padding(end = 8.dp)
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp)
                 ) {
-                    Text(if (habit.isCompleted) "Completed" else "Mark Complete")
+                    Text(if (habit.isCompleted) stringResource(R.string.lbl_completed) else stringResource(
+                        R.string.lbl_mark_complete
+                    )
+                    )
                 }
 
                 IconButton(
@@ -282,7 +290,7 @@ fun HabitListItem(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Edit,
-                        contentDescription = "Edit habit",
+                        contentDescription = stringResource(R.string.lbl_edit_habit),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -292,7 +300,7 @@ fun HabitListItem(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Delete,
-                        contentDescription = "Delete habit",
+                        contentDescription = stringResource(R.string.lbl_delete_habit),
                         tint = MaterialTheme.colorScheme.error
                     )
                 }

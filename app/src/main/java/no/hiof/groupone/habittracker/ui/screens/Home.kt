@@ -42,12 +42,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import no.hiof.groupone.habittracker.R
 import no.hiof.groupone.habittracker.viewmodel.AuthState
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
 import no.hiof.groupone.habittracker.viewmodel.HabitListViewModel
@@ -100,7 +102,7 @@ fun Home(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Create Habit"
+                    contentDescription = stringResource(R.string.lbl_create_habit)
                 )
             }
         }
@@ -127,7 +129,8 @@ fun Home(
                         IconButton(onClick = {
                             currentDate.value = currentDate.value.minusDays(1)
                         }) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, "Previous Day")
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack,
+                                stringResource(R.string.lbl_previous_day))
                         }
 
                         Text(
@@ -139,7 +142,8 @@ fun Home(
                         IconButton(onClick = {
                             currentDate.value = currentDate.value.plusDays(1)
                         }) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowForward, "Next Day")
+                            Icon(Icons.AutoMirrored.Filled.ArrowForward,
+                                stringResource(R.string.lbl_next_day))
                         }
                     }
 
@@ -167,7 +171,7 @@ fun Home(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = "No habits scheduled for this day",
+                                        text = stringResource(R.string.lbl_no_habits_scheduled),
                                         style = MaterialTheme.typography.bodyLarge,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -252,7 +256,7 @@ fun Home(
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "Leaderboard",
+                        text = stringResource(R.string.lbl_leaderboard),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.padding(bottom = 8.dp)
@@ -266,7 +270,7 @@ fun Home(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "No leaderboards available",
+                                text = stringResource(R.string.lbl_no_leaderboards_available),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -278,7 +282,7 @@ fun Home(
 
                         Column {
                             Text(
-                                text = leaderboardDetails.firstOrNull()?.name ?: "Leaderboard",
+                                text = leaderboardDetails.firstOrNull()?.name ?: stringResource(R.string.lbl_leaderboard),
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.padding(bottom = 8.dp)
                             )
@@ -324,10 +328,10 @@ fun Home(
                 ) {
                     Icon(
                         Icons.AutoMirrored.Filled.List,
-                        contentDescription = "View Leaderboards"
+                        contentDescription = stringResource(R.string.lbl_view_leaderboards)
                     )
                     Spacer(Modifier.width(4.dp))
-                    Text("All Leaderboards")
+                    Text(stringResource(R.string.lbl_all_leaderboards))
                 }
             }
 
