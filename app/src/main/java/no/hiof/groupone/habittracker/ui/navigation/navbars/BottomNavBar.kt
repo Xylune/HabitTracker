@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import no.hiof.groupone.habittracker.R
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
 fun BottomNavBar(navController: NavHostController) {
@@ -27,6 +28,27 @@ fun BottomNavBar(navController: NavHostController) {
         stringResource(R.string.lbl_map),
         stringResource(R.string.lbl_profile)
     )
+
+    // Observe the current route and set the selected item accordingly
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+    selectedItem = when (currentRoute) {
+        "home" -> 0
+
+        "calendar" -> 1
+
+        "habits" -> 2
+        "createHabit" -> 2
+        "editHabit/{habitId}" -> 2
+
+        "map" -> 3
+
+        "profile" -> 4
+        "editProfile" -> 4
+        "settings" -> 4
+        "SocialManagement" -> 4
+
+        else -> 0 // Default to the home screen if no match
+    }
 
     NavigationBar {
         items.forEachIndexed { index, item ->
