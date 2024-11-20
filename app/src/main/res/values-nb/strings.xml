@@ -162,7 +162,7 @@
     <string name="lbl_edit_habit">Rediger vane</string>
     <string name="lbl_delete_habit">Slett vane</string>
     <string name="lbl_completed">Fullført</string>
-    <string name="lbl_mark_complete">Merk som fullført</string>
+    <string name="lbl_mark_complete">Marker som fullført</string>
 
 
 </resources>
