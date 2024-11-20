@@ -26,6 +26,7 @@ appcompat = "1.7.0"
 threetenabpVersion = "1.4.7"
 ui = "1.7.5"
 uiToolingPreview = "1.7.5"
+uiTestJunit4Android = "1.7.5"
 
 [libraries]
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPager" }
@@ -41,6 +42,7 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 github-composecalendar = { module = "io.github.boguszpawlowski.composecalendar:composecalendar", version.ref = "githubComposecalendar" }
 google-firebase-auth = { module = "com.google.firebase:firebase-auth" }
+jetbrains-kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -64,6 +66,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 threetenabp-v146 = { module = "com.jakewharton.threetenabp:threetenabp", version.ref = "threetenabpVersion" }
 ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "uiToolingPreview" }
+androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

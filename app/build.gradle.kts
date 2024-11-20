@@ -71,6 +71,7 @@ dependencies {
     implementation(libs.threetenabp)
     implementation(libs.androidx.appcompat)
     testImplementation(libs.junit)
+    testImplementation(libs.androidx.ui.test.junit4.android)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -96,7 +97,10 @@ dependencies {
     // Import the Firebase BoM
     implementation(platform(libs.firebase.bom))
 
-    // When using the BoM, you don't specify versions in Firebase library dependencies
+    // Tests
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
+    testImplementation("io.mockk:mockk:1.13.13")
+    testImplementation("org.mockito:mockito-core:5.14.0")
 
     // Add the dependency for the Firebase SDK for Google Analytics
     implementation(libs.firebase.analytics)
