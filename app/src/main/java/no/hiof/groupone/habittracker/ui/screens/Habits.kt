@@ -283,16 +283,18 @@ fun HabitListItem(
                     )
                 }
 
-                IconButton(
-                    onClick = {
-                        navController.navigate("editHabit/${habit.id}")
+                if (!habit.isCompleted){
+                    IconButton(
+                        onClick = {
+                            navController.navigate("editHabit/${habit.id}")
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Edit,
+                            contentDescription = stringResource(R.string.lbl_edit_habit),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Edit,
-                        contentDescription = stringResource(R.string.lbl_edit_habit),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
                 }
 
                 IconButton(
