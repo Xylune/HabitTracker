@@ -47,6 +47,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import no.hiof.groupone.habittracker.R
@@ -93,7 +94,8 @@ fun Home(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 120.dp),
+                .padding(bottom = 120.dp)
+                .zIndex(10F),
             contentAlignment = Alignment.BottomEnd
         ) {
             FloatingActionButton(
