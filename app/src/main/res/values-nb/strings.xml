@@ -140,6 +140,30 @@
     <string name="snackbar_habit_request_denied">Vane avslått</string>
     <string name="share_habit_label">Del vaner</string>
     <string name="lbl_category">Kategori</string>
+    <string name="lbl_offline_notice">Offline-modus - Endringer vil synkroniseres når du er online</string>
+    <string name="lbl_filter_category">Filtrer etter Kategori</string>
+    <string name="lbl_all">Alle</string>
+    <string name="lbl_health">Helse</string>
+    <string name="lbl_fitness">Fitness</string>
+    <string name="lbl_work">Jobb</string>
+    <string name="lbl_study">Studere</string>
+    <string name="lbl_personal_development">Personlig Utvikling</string>
+    <string name="lbl_hobby">Hobby</string>
+    <string name="lbl_other">Andre</string>
+
+    <string name="dark_mode">Natt-modus</string>
+    <string name="lbl_all_leaderboards">Alle rangeringer</string>
+    <string name="lbl_leaderboard">Rangering</string>
+    <string name="lbl_no_habits_scheduled">Ingen vaner planlagt for denne dagen</string>
+    <string name="lbl_previous_day">Forrige dag</string>
+    <string name="lbl_next_day">Neste dag</string>
+    <string name="lbl_dismiss_picker">Lukk velger</string>
+    <string name="lbl_confirm_selection">Bekreft valg</string>
+    <string name="lbl_edit_habit">Rediger vane</string>
+    <string name="lbl_delete_habit">Slett vane</string>
+    <string name="lbl_completed">Fullført</string>
+    <string name="lbl_mark_complete">Marker som fullført</string>
+
 
 </resources>
 

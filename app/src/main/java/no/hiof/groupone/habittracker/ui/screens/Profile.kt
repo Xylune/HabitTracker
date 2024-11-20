@@ -124,11 +124,12 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             // Buttons
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp),
-                horizontalArrangement = Arrangement.SpaceAround
+                    .padding(top = 16.dp)
+                    .align(Alignment.CenterHorizontally),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Friend Manager button
                 Button(

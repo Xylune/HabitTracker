@@ -144,6 +144,28 @@
     <string name="btn_create">Create</string>
     <string name="lbl_no_leaderboards_available">No leaderboards available.</string>
     <string name="lbl_map">Map</string>
+    <string name="lbl_offline_notice">Offline mode - Changes will sync when online</string>
+    <string name="lbl_filter_category">Filter by Category</string>
+    <string name="lbl_all">All</string>
+    <string name="lbl_health">Health</string>
+    <string name="lbl_fitness">Fitness</string>
+    <string name="lbl_work">Work</string>
+    <string name="lbl_study">Study</string>
+    <string name="lbl_personal_development">Personal Development</string>
+    <string name="lbl_hobby">Hobby</string>
+    <string name="lbl_other">Other</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="lbl_all_leaderboards">All Leaderboards</string>
+    <string name="lbl_leaderboard">Leaderboard</string>
+    <string name="lbl_no_habits_scheduled">No habits scheduled for this day</string>
+    <string name="lbl_previous_day">Previous Day</string>
+    <string name="lbl_next_day">Next Day</string>
+    <string name="lbl_dismiss_picker">Dismiss picker</string>
+    <string name="lbl_confirm_selection">Confirm selection</string>
+    <string name="lbl_edit_habit">Edit habit</string>
+    <string name="lbl_delete_habit">Delete habit</string>
+    <string name="lbl_completed">Completed</string>
+    <string name="lbl_mark_complete">Mark Complete</string>
 
 
 </resources>

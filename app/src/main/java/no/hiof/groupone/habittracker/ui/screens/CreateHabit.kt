@@ -230,7 +230,7 @@ fun CategoryDropdown(
         onExpandedChange = { expanded = !expanded }
     ) {
         TextField(
-            value = selectedCategory?.displayName ?: stringResource(R.string.lbl_select_category),
+            value = selectedCategory?.getDisplayName(LocalContext.current) ?: stringResource(R.string.lbl_select_category),
             onValueChange = {},
             readOnly = true,
             label = { Text(stringResource(R.string.lbl_category)) },
@@ -244,7 +244,7 @@ fun CategoryDropdown(
         ) {
             HabitCategory.entries.forEach { category ->
                 DropdownMenuItem(
-                    text = { Text(text = category.displayName) },
+                    text = { Text(text = category.getDisplayName(LocalContext.current)) },
                     onClick = {
                         onCategorySelected(category)
                         expanded = false
@@ -350,7 +350,7 @@ fun DatePickerModal(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.btn_cancel))
             }
         }
     ) {
@@ -377,10 +377,10 @@ fun InputUseStateExample(
             state = timePickerState,
         )
         Button(onClick = onDismiss) {
-            Text("Dismiss picker")
+            Text(stringResource(R.string.lbl_dismiss_picker))
         }
         Button(onClick = { onConfirm(timePickerState) }) {
-            Text("Confirm selection")
+            Text(stringResource(R.string.lbl_confirm_selection))
         }
     }
 }

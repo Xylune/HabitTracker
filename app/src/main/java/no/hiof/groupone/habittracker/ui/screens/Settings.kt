@@ -12,7 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import no.hiof.groupone.habittracker.R
 
 @Composable
 fun SettingsScreen(
@@ -26,7 +28,7 @@ fun SettingsScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "Settings",
+            text = stringResource(R.string.lbl_settings),
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.padding(bottom = 16.dp)
         )
@@ -38,7 +40,7 @@ fun SettingsScreen(
                 .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Dark Mode")
+            Text(text = stringResource(R.string.dark_mode))
             Spacer(modifier = Modifier.weight(1f))
             Switch(
                 checked = isDarkMode,

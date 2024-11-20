@@ -1,5 +1,8 @@
 package no.hiof.groupone.habittracker.model
 
+import android.content.Context
+import no.hiof.groupone.habittracker.R
+
 
 data class Habit(
     val id: String = "",
@@ -36,14 +39,17 @@ enum class Frequency {
     MONTHLY
 }
 
-enum class HabitCategory(val displayName: String) {
-    HEALTH("Health"),
-    FITNESS("Fitness"),
-    WORK("Work"),
-    STUDY("Study"),
-    PERSONAL_DEVELOPMENT("Personal Development"),
-    HOBBY("Hobby"),
-    OTHER("Other");
+enum class HabitCategory(private val resourceId: Int) {
+    HEALTH(R.string.lbl_health),
+    FITNESS(R.string.lbl_fitness),
+    WORK(R.string.lbl_work),
+    STUDY(R.string.lbl_study),
+    PERSONAL_DEVELOPMENT(R.string.lbl_personal_development),
+    HOBBY(R.string.lbl_hobby),
+    OTHER(R.string.lbl_other);
 
-    override fun toString(): String = displayName
+    // Function to get the display name from the string resource
+    fun getDisplayName(context: Context): String {
+        return context.getString(resourceId)
+    }
 }
