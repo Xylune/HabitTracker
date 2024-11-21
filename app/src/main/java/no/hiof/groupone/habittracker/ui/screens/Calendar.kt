@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +24,7 @@ import no.hiof.groupone.habittracker.R
 import no.hiof.groupone.habittracker.viewmodel.HabitListForDate
 import no.hiof.groupone.habittracker.viewmodel.HabitListViewModel
 import java.text.SimpleDateFormat
+import java.time.ZoneId
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -31,6 +33,12 @@ import java.util.Locale
 fun CalendarScreen(habitListViewModel: HabitListViewModel = viewModel()) {
     var selectedDate by remember { mutableStateOf(Date()) }
     val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+
+    LaunchedEffect(Unit) {
+        habitListViewModel.getHabitsForDate(selectedDate.toInstant()
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate())
+    }
 
     Column(
         modifier = Modifier
@@ -64,6 +72,9 @@ fun AndroidCalendarView(onDateSelected: (Date) -> Unit) {
     AndroidView(
         modifier = Modifier.fillMaxWidth(),
         factory = { CalendarView(context).apply {
+            val today = Calendar.getInstance()
+            onDateSelected(today.time)
+
             setOnDateChangeListener { _, year, month, dayOfMonth ->
                 val calendar = Calendar.getInstance()
                 calendar.set(year, month, dayOfMonth)
