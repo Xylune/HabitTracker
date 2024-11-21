@@ -21,6 +21,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import no.hiof.groupone.habittracker.R
+import no.hiof.groupone.habittracker.ScheduleNotification
 import no.hiof.groupone.habittracker.model.Frequency
 import no.hiof.groupone.habittracker.model.Habit
 import no.hiof.groupone.habittracker.model.HabitCategory
@@ -42,6 +43,8 @@ fun CreateHabit(
     val habitViewModel: HabitViewModel = viewModel(
         factory = HabitViewModelFactory(habitListViewModel)
     )
+    // Notification
+    val scheduler = ScheduleNotification()
 
     var showDialog by remember { mutableStateOf(false) }
     var dialogMessage by remember { mutableStateOf("") }
@@ -147,6 +150,7 @@ fun CreateHabit(
 
         Button(onClick = {
             try {
+                scheduler.scheduleNotification(context, selectedTime!!, selectedDate!!, habitName)
                 Log.d("HabitDebug", "Selected Category: $selectedCategory")
                 if (selectedDate == null || selectedTime == null) {
                     throw IllegalStateException(context.getString(R.string.error_date_time_required))

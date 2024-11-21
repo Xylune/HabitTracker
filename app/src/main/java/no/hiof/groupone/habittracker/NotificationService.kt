@@ -1,7 +1,9 @@
 package no.hiof.groupone.habittracker
 
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.annotation.DrawableRes
@@ -13,12 +15,25 @@ class NotificationService(
 ) {
     private val notificationManager = context.getSystemService(NotificationManager::class.java)
 
+    private val intent = Intent(context, MainActivity::class.java).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+    }
+
+    private val pendingIntent: PendingIntent = PendingIntent.getActivity(
+        context,
+        0,
+        intent,
+        PendingIntent.FLAG_IMMUTABLE
+    )
+
     fun showNotification(title: String?) {
         val notification = NotificationCompat.Builder(context, "notification_channel_id")
-            .setContentTitle(title)
-            .setContentText("Do something")
+            .setContentTitle("Reminder for you habit: $title")
+            .setContentText("Click to open the app")
             .setSmallIcon(R.drawable.notification)
             .setPriority(NotificationManager.IMPORTANCE_HIGH)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
             .setAutoCancel(true)
             .build()
 
