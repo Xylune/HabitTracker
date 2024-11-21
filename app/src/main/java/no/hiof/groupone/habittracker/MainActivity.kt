@@ -69,6 +69,8 @@ class MainActivity : ComponentActivity() {
             var screenTitle by remember { mutableStateOf("Habit Tracker") }
             val context = LocalContext.current
 
+            val notificationCount by NotificationReceiver.notificationCount.observeAsState(0)
+
             HabitTrackerTheme(darkTheme = isDarkMode.value) {
                 LaunchedEffect(navController) {
                     navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -94,6 +96,10 @@ class MainActivity : ComponentActivity() {
                                 TopNavBar(
                                     navController = navController,
                                     screenTitle = screenTitle,
+                                    notificationCount = notificationCount,
+                                    onNotificationClick = {
+                                        NotificationReceiver.notificationCount.value = 0
+                                    },
                                     showBackButton = navController.previousBackStackEntry != null,
                                     onHeightChange = { height -> topNavBarHeight.intValue = height }
                                 )
