@@ -117,7 +117,7 @@ class MainActivity : ComponentActivity() {
                                     .fillMaxSize(),
                                 isDarkMode = isDarkMode.value,
                                 onDarkModeToggle = { isDarkMode.value = it },
-                                topNavBarHeight = topNavBarHeight.intValue
+                                // topNavBarHeight = topNavBarHeight.intValue
                             )
                             if (openDialog.value) {
                                 PopupScrollContent(onDismiss = { openDialog.value = false })
@@ -131,7 +131,7 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.fillMaxSize(),
                             isDarkMode = isDarkMode.value,
                             onDarkModeToggle = { isDarkMode.value = it },
-                            topNavBarHeight = topNavBarHeight.intValue
+                            // topNavBarHeight = topNavBarHeight.intValue
                         )
                     }
                 }

@@ -47,8 +47,6 @@ class ScheduleNotification {
             calendar.timeInMillis,
             pendingIntent
         )
-
-        Toast.makeText(context, "Reminder set!!", Toast.LENGTH_SHORT).show()
     }
 
 }

@@ -188,13 +188,17 @@ fun CreateHabit(
 
                     val result = snackbarHostState.showSnackbar(
                         message = if (success) context.getString(R.string.snackbar_habit_created_success) else context.getString(R.string.snackbar_habit_created_failure),
-                        actionLabel = "Undo"
+                        actionLabel = "Undo",
+                        duration = SnackbarDuration.Short
                     )
 
                     if (result == SnackbarResult.ActionPerformed && recentlyCreatedHabit != null) {
                         habitListViewModel.deleteHabit(recentlyCreatedHabit!!)
                         recentlyCreatedHabit = null
                     }
+
+                    navController.navigate("habits")
+
                 }
             } catch (e: IllegalStateException) {
                 dialogMessage = e.message ?: context.getString(R.string.snackbar_habit_created_failure)
