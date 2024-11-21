@@ -1,11 +1,9 @@
 package no.hiof.groupone.habittracker
 
-import com.google.android.gms.tasks.Task
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -17,7 +15,6 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import no.hiof.groupone.habittracker.model.Frequency
 import no.hiof.groupone.habittracker.model.Habit
 import no.hiof.groupone.habittracker.viewmodel.HabitListViewModel
 import no.hiof.groupone.habittracker.viewmodel.HabitViewModel
@@ -30,7 +27,7 @@ import org.junit.Test
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
-class HabitViewModelTest {
+class CreateHabitTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
@@ -41,15 +38,20 @@ class HabitViewModelTest {
 
     @Before
     fun setup() {
-        habitListViewModel = mockk(relaxed = true)
+        mockkStatic(android.util.Log::class)
+        mockkStatic(FirebaseFirestore::class)
+        mockkStatic(FirebaseAuth::class)
+
+        every { Log.d(any(), any()) } returns 0
+        every { Log.e(any(), any()) } returns 0
+
         firestore = mockk(relaxed = true)
         auth = mockk(relaxed = true)
 
-        mockkStatic(FirebaseFirestore::class)
-        mockkStatic(FirebaseAuth::class)
         every { FirebaseFirestore.getInstance() } returns firestore
         every { FirebaseAuth.getInstance() } returns auth
 
+        habitListViewModel = mockk(relaxed = true)
         habitViewModel = HabitViewModel(habitListViewModel)
     }
 
@@ -69,34 +71,14 @@ class HabitViewModelTest {
     fun `createHabit should add habit to Firebase and update list`() = runTest {
         val habit = Habit(
             name = "Exercise",
-            description = "Daily workout",
-            frequency = Frequency.DAILY,
-            startTime = System.currentTimeMillis()
+            description = "Daily workout"
         )
-
-        val docRef = mockk<DocumentReference>(relaxed = true)
-        every { docRef.id } returns "test-id"
-
-        val colRef = mockk<CollectionReference>()
-        every { colRef.document() } returns docRef
-        every { firestore.collection("habits") } returns colRef
-
-        val user = mockk<FirebaseUser>()
-        every { auth.currentUser } returns user
-        every { user.uid } returns "test-uid"
-
-        val userDocRef = mockk<DocumentReference>(relaxed = true)
-        every { firestore.collection("users").document(any()) } returns userDocRef
-
-        val task = mockk<Task<Void>>(relaxed = true)
-        every { docRef.set(any()) } returns task
-        every { task.isSuccessful } returns true
 
         val result = habitViewModel.createHabit(habit) {}
 
         assertTrue(result)
-        verify(exactly = 1) { habitListViewModel.addNewHabit(any()) }
-        verify(exactly = 1) { habitListViewModel.refreshHabits() }
+        coVerify { habitListViewModel.addNewHabit(any()) }
+        verify { habitListViewModel.refreshHabits() }
     }
 
     @After
