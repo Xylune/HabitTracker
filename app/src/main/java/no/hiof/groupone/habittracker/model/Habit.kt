@@ -3,7 +3,6 @@ package no.hiof.groupone.habittracker.model
 import android.content.Context
 import no.hiof.groupone.habittracker.R
 
-
 data class Habit(
     val id: String = "",
     val name: String,
