@@ -4,7 +4,9 @@ import CalendarScreen
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,6 +23,8 @@ import no.hiof.groupone.habittracker.ui.screens.SettingsScreen
 import no.hiof.groupone.habittracker.ui.screens.Signup
 import no.hiof.groupone.habittracker.ui.screens.SocialManagement
 import no.hiof.groupone.habittracker.viewmodel.AuthViewModel
+import no.hiof.groupone.habittracker.viewmodel.HabitListViewModel
+import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
@@ -29,8 +33,7 @@ fun AppNavigation(
     authViewModel: AuthViewModel,
     navController: NavHostController,
     isDarkMode: Boolean,
-    onDarkModeToggle: (Boolean) -> Unit,
-    topNavBarHeight: Int
+    onDarkModeToggle: (Boolean) -> Unit
 ) {
     NavHost(navController = navController, startDestination = "login", builder = {
         composable("login") {
@@ -79,7 +82,12 @@ fun AppNavigation(
             ProfileScreen(modifier, navController, authViewModel)
         }
         composable("calendar") {
-            CalendarScreen()
+            val habitListViewModel: HabitListViewModel = viewModel()
+            val localDate = LocalDate.now()
+            LaunchedEffect(Unit) {
+                habitListViewModel.updateSelectedDate(localDate)
+            }
+            CalendarScreen(habitListViewModel = habitListViewModel)
         }
         composable("editProfile") {
             EditProfile(modifier, navController, authViewModel)
